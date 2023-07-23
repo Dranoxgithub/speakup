@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react"
 import { getAuth } from "firebase/auth";
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { doc, getFirestore, onSnapshot } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage"
-import { getDocument, initializeFirebaseApp } from "../util/firebaseUtils";
+import { getDocument, initializeFirebaseApp, updateDocument } from "../util/firebaseUtils";
 import WebFont from 'webfontloader'
 import { secondsToHHMMSS } from "../util/helperFunctions";
+import Loading from "../components/Loading";
+import { v4 as uuidv4 } from 'uuid';
 
 const ResultScreen = () => {
     useEffect(() => {
@@ -16,14 +18,32 @@ const ResultScreen = () => {
         })
     }, [])
 
-    const location = useLocation()
-    const { userId } = location.state
+    const navigate = useNavigate()
+    
+    const [userId, setUserId] = useState('')
+    const [userEmail, setUserEmail] = useState('')
+    const [userDisplayName, setUserDisplayName] = useState('')
+    const [userProfilePic, setUserProfilePic] = useState('')
 
     const [script, setScript] = useState('')
     const [title, setTitle] = useState('')
     const [audioUrl, setAudioUrl] = useState('')
     const [contentId, setContentId] = useState('')
     const [shownotes, setShownotes] = useState([])
+
+    useEffect(() => {
+        const app = initializeFirebaseApp()
+        const auth = getAuth(app)
+        const currentUser = auth.currentUser
+        if (currentUser) {
+            setUserId(currentUser.uid)
+            setUserEmail(currentUser.email)
+            setUserDisplayName(currentUser.displayName)
+            setUserProfilePic(currentUser.photoURL)
+        } else {
+            navigate('/login', { replace: true, state: {contentUrl: undefined} })
+        }
+    }, [])
 
     useEffect(() => {
         const getContent = async() => {
@@ -53,7 +73,7 @@ const ResultScreen = () => {
         }
 
         getContent()
-    }, [])
+    }, [userId])
 
     useEffect(() => {
         const app = initializeFirebaseApp()
@@ -71,6 +91,7 @@ const ResultScreen = () => {
                         if (content.result.audio) {
                             setAudioUrl(content.result.audio.url)
                             setShownotes(content.result.audio.marks)
+                            sendEmailNotification()
                         }
                     }
                 }
@@ -95,22 +116,34 @@ const ResultScreen = () => {
           });
     }
 
+    const sendEmailNotification = () => {
+        const uuid = uuidv4()
+        updateDocument('mail', uuid, {
+            to: userEmail,
+            template: {
+                name: 'podcastready'
+            }
+        })
+    }
+
     return (
         <div className="resultContainer">
             <h2 className="title">{title}</h2>
 
-            <div>
+            {!audioUrl || !script || shownotes.length == 0 ? <Loading /> : <></>}
+
+            <div className={audioUrl ? "subsectionContainer" : "noDisplay"}>
                 <button className="largeButton" onClick={getPodcastDownloadUrl}>
                     <h1 className="largeButtonText">Get My Podcast!</h1>
                 </button>
             </div>
 
-            <div className="subsectionContainer">
+            <div className={script ? "subsectionContainerFlexStart" : "noDisplay"}>
                 <h3 className="subtitle">Script</h3>
                 <p className="contentText">{script}</p>
             </div>
 
-            <div className="subsectionContainer">
+            <div className={shownotes.length > 0 ? "subsectionContainerFlexStart" : "noDisplay"}>
                 <h3 className="subtitle">Shownotes</h3>
                 <ul className="shownotesList">
                     {shownotes.map((item, index) => (

@@ -102,6 +102,10 @@ input::placeholder {
     cursor: pointer;
 }
 
+.noDisplay {
+    display: none
+}
+
 .loginButton {
     padding: 1rem 1.5rem;
     border-radius: 10px;
@@ -131,6 +135,11 @@ a {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.subsectionContainer {
+.subsectionContainerFlexStart {
     align-self: flex-start;
+    margin-top: 1rem;
+}
+
+.subsectionContainer {
+    margin-top: 1rem;
 }

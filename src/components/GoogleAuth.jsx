@@ -63,9 +63,11 @@ const GoogleAuth = ({ contentUrl }) => {
                 const user = result.user;
                 await createUserDocument(user.uid)
 
-                await generatePodcast(user.accessToken)
+                if (contentUrl) {
+                    await generatePodcast(user.accessToken)
+                }
 
-                navigate('/result', { replace: true, state: {userId: user.uid} })
+                navigate('/result', { replace: true })
             }
         }).catch((error) => {
             // Handle Errors here.

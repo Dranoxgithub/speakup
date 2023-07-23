@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import WebFont from 'webfontloader'
 
 const HomeScreen = () => {
-
     useEffect(() => {
         WebFont.load({
             google: {
@@ -36,7 +35,6 @@ const HomeScreen = () => {
                     value={url}
                     onChange={handleUrlChange}
                 />
-                {/* <button onClick={handleCreatePodcast}>Create Podcast</button> */}
                 <Link 
                     className={isValidUrl(url) ? 'navigateButton' : 'disabledNavigateButton'} 
                     to={isValidUrl(url) ? '/login' : '#'}
