@@ -1,0 +1,136 @@
+.container {
+    background-color: #fff;
+    color: #2d3142;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.resultContainer {
+    background-color: #fff;
+    color: #2d3142;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem;
+}
+
+.title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    font-family: 'Gloock';
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-family: 'Gloock';
+}
+
+.contentText {
+    line-height: 2rem;
+    font-size: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.buttonText {
+    font-family: 'Gloock';
+    font-size: 18px;
+}
+
+.largeButtonText {
+    font-family: 'Gloock';
+    font-size: 24px;
+}
+
+.content {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: row;
+}
+
+input {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    border: none;
+    margin-right: 0.5rem;
+    font-family: 'Gloock';
+    background-color: #ebebeb;
+    font-size: 18px;
+    font-family: 'Gloock';
+    color: #2d3142;
+    outline: 0;
+}
+
+input::placeholder {
+    font-family: 'Gloock';
+    color: #9b9b9b;
+    font-size: 18px;
+}
+
+.disabledNavigateButton {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 10px;
+    border: none;
+    background-color: #ebebeb;
+    color: #757575;
+    cursor: not-allowed;
+}
+
+.navigateButton {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 10px;
+    border: none;
+    background-color: #EF8254;
+    color: #fff;
+    cursor: pointer;
+}
+
+.largeButton {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    border-radius: 10px;
+    border: none;
+    background-color: #EF8254;
+    color: #fff;
+    cursor: pointer;
+}
+
+.loginButton {
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    border: none;
+    background-color: #EF8254;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.result {
+    margin-top: 2rem;
+}
+
+a {
+    text-decoration: none;
+}
+
+.shownotesList {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 2rem;
+}
+
+.shownotesText {
+    font-size: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.subsectionContainer {
+    align-self: flex-start;
+}
