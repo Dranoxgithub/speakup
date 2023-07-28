@@ -10,7 +10,7 @@ import {
   createUserWithEmailAndPassword,
 } from "@firebase/auth";
 
-import { RootState } from "../store";
+import { RootState } from "./store";
 
 export interface UserState {
   id: string;

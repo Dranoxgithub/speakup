@@ -4,11 +4,12 @@ import { fetchUrl } from "../ajax/ajaxUtils";
 import { useState } from "react";
 import { createUserDocument } from "../util/firebaseUtils";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
+import Loading from "./Loading";
 
 const GoogleAuth = ({ contentUrl }) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
-    const [errorMessage, setErrorMessage] = useState('')
+    // const [errorMessage, setErrorMessage] = useState()
 
     const generatePodcast = async (idToken) => {
         setLoading(true)
@@ -22,21 +23,21 @@ const GoogleAuth = ({ contentUrl }) => {
                 "url": contentUrl.trim(),
             }
 
-            const saveEndpoint = "http://138.91.164.195:8080/save"
+            // const saveEndpoint = "http://138.91.164.195:8080/save"
+            const saveEndpoint = "http://localhost:8080/save"
             const requestOptions = {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(body)
             };
             const response = await fetchUrl(saveEndpoint, {}, requestOptions)
+            console.log(`response: ${JSON.stringify(response)}`)
             if (!response.id) {
                 setLoading(false)
                 if (response.ExceptionError) {
-                    setErrorMessage(response.ExceptionError)
-                    console.log(errorMessage)
+                    return response.ExceptionError
                 } else if (response.message) {
-                    setErrorMessage(response.message)
-                    console.log(errorMessage)
+                    return response.message
                 }
             } else {
                 setLoading(false)
@@ -45,45 +46,43 @@ const GoogleAuth = ({ contentUrl }) => {
             }
         } catch (error) {
             setLoading(false)
-            setErrorMessage(error.message)
-            console.log(errorMessage)
+            return error.message
         }
+
+        return 
     }
 
-    const signup = () => {
+    const signup = async () => {
+        console.log(`content url is: ${contentUrl}`)
         const app = initializeFirebaseApp()
-        const provider = new GoogleAuthProvider();
         const auth = getAuth(app);
-        signInWithPopup(auth, provider)
-        .then(async (result) => {
+        let user = auth.currentUser
+        if (!user) {
+            const provider = new GoogleAuthProvider();
+            const result = await signInWithPopup(auth, provider)
             // This gives you a Google Access Token. You can use it to access the Google API.
             const credential = GoogleAuthProvider.credentialFromResult(result);
             if (credential != null) {
                 // The signed-in user info.
-                const user = result.user;
+                user = result.user;
                 await createUserDocument(user.uid)
-
-                if (contentUrl) {
-                    await generatePodcast(user.accessToken)
-                }
-
-                navigate('/result', { replace: true })
             }
-        }).catch((error) => {
-            // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.customData.email;
-            // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
-            // ...
-        });
+        }
+
+        let errorMessage
+        if (contentUrl) {
+            errorMessage = await generatePodcast(user.accessToken)
+        }
+
+        navigate('/dashboard', { state: { errorMessage: errorMessage, contentUrl: contentUrl } })
     }
 
     return (
         <div>
-            <button className='loginButton' onClick={signup}>Continue with Google</button>
+            { loading ? 
+                <Loading /> : 
+                <button className='loginButton' onClick={signup}>Continue with Google</button>
+            }
         </div>
     )
 }

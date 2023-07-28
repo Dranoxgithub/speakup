@@ -1,7 +1,8 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import './styles.css'
+import '../styles.css'
 import { Link } from 'react-router-dom';
 import WebFont from 'webfontloader'
+import UrlInput from '../components/UrlInput';
 
 const HomeScreen = () => {
     useEffect(() => {
@@ -28,21 +29,7 @@ const HomeScreen = () => {
     return (
         <div className="container">
             <h1 className="title">Create Your Own Podcast</h1>
-            <div className="content">
-                <input
-                    type="text"
-                    placeholder="Your content url..."
-                    value={url}
-                    onChange={handleUrlChange}
-                />
-                <Link 
-                    className={isValidUrl(url) ? 'navigateButton' : 'disabledNavigateButton'} 
-                    to={isValidUrl(url) ? '/login' : '#'}
-                    state={{contentUrl: url}}
-                >
-                    <p className="buttonText">Create</p>
-                </Link>
-            </div>
+            <UrlInput input='' onChange={() => {}}/>
         </div>
     )
 }

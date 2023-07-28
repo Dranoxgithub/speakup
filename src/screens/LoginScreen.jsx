@@ -1,13 +1,10 @@
 import GoogleAuth from "../components/GoogleAuth"
-import { useLocation } from "react-router-dom"
+import { useLocation } from "react-router-dom";
 
 const LoginScreen = () => {
-    // const location = useLocation()
-    // const { contentUrl } = location.state
-
-    const queryParams = new URLSearchParams(window.location.search)
+    const location = useLocation()
+    const queryParams = new URLSearchParams(location.search)
     const contentUrl = queryParams.get("contentUrl")
-
 
     return (
         <div className="container">
