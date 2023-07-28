@@ -14,7 +14,10 @@ export async function createUserDocument(uid: string) {
 
     if (user === undefined) {
       console.log(`Creating a new user document for uid ${uid}.`);
-      await setDoc(docRef, { id: uid });
+      await setDoc(docRef, { 
+        id: uid, 
+        isFreeTrialUsed: false 
+      });
       return true;
     }
     return false;

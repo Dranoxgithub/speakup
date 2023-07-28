@@ -2,7 +2,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { fetchUrl } from "../ajax/ajaxUtils";
 import { useState } from "react";
-import { createUserDocument } from "../util/firebaseUtils";
+import { createUserDocument, getDocument } from "../util/firebaseUtils";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import Loading from "./Loading";
 
@@ -70,7 +70,10 @@ const GoogleAuth = ({ contentUrl }) => {
         }
 
         let errorMessage
-        if (contentUrl) {
+        const userDoc = await getDocument('users', user.uid)
+        if (userDoc.isFreeTrialUsed) {
+            errorMessage = 'Sorry, your free trial has already been used up :( \n Please subscribe for memebership!'
+        } else if (contentUrl) {
             errorMessage = await generatePodcast(user.accessToken)
         }
 
