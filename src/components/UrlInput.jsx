@@ -22,6 +22,10 @@ const UrlInput = (props) => {
     }
 
     const isValidUrl = (url) => {
+        if (!url || url == '') {
+            return false
+        }
+        
         // Extract the URL from the input string using a regular expression
         const urlRegex = /(https?:\/\/[^\s]+)/g
         const matches = url.toLowerCase().match(urlRegex)

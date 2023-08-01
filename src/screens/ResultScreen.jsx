@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react"
-import { getAuth } from "firebase/auth";
-import { useNavigate, useLocation } from "react-router-dom"
-import { doc, getFirestore, onSnapshot } from "firebase/firestore";
-import { getStorage, ref, getDownloadURL, getBlob } from "firebase/storage"
-import { getDocument, initializeFirebaseApp, updateDocument } from "../util/firebaseUtils";
+import { useLocation } from "react-router-dom"
+import { getStorage, ref, getBlob } from "firebase/storage"
+import { getDocument, initializeFirebaseApp } from "../util/firebaseUtils";
 import WebFont from 'webfontloader'
-import { secondsToHHMMSS } from "../util/helperFunctions";
 import Loading from "../components/Loading";
 import { useAppSelector } from "../redux/hooks";
-import { getUserEmail, getUserId } from "../redux/userSlice";
+import { getUserId } from "../redux/userSlice";
 
 const ResultScreen = () => {
     const location = useLocation()
@@ -59,7 +56,7 @@ const ResultScreen = () => {
 
         const populateContent = async () => {
             const queryParams = new URLSearchParams(location.search)
-            if (queryParams) {
+            if (queryParams.has('contentId')) {
                 const contentId = queryParams.get("contentId")
                 const user = await getDocument('users', userId)
                 console.log(JSON.stringify(user))
@@ -67,6 +64,7 @@ const ResultScreen = () => {
                     populateContentFromQueryParams(contentId)
                     console.log(`populated content from query params`)
                 } else {
+                    console.log(`setting error to no permission`)
                     setError(`Sorry, you don't have permission to view the content :(`)
                 }
             }
@@ -88,6 +86,8 @@ const ResultScreen = () => {
                 families: ["Gloock"],
             },
         })
+
+        setError()
     }, [])
 
     const getPodcastDownloadUrl = async () => {
@@ -103,7 +103,7 @@ const ResultScreen = () => {
         <div className="resultContainer">
             {error ? 
                 <h2>{error}</h2> : 
-                <div>
+                <div className="resultContainer">
                     <h2 className="title">{title}</h2>
 
                     { !audioUrl 
@@ -114,7 +114,7 @@ const ResultScreen = () => {
 
 
                     {audioUrl ? 
-                        <video controls name="podcast" class="audioPlayer">
+                        <video controls name="podcast" className="audioPlayer">
                             <source src={audioUrl} type='audio/mp3' />
                         </video> : 
                         <></>

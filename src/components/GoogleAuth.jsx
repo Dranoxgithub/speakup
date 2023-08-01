@@ -23,8 +23,7 @@ const GoogleAuth = ({ contentUrl }) => {
                 "url": contentUrl.trim(),
             }
 
-            // const saveEndpoint = "http://138.91.164.195:8080/save"
-            const saveEndpoint = "http://localhost:8080/save"
+            const saveEndpoint = "http://138.91.164.195:8080/save"
             const requestOptions = {
                 method: 'POST',
                 headers: headers,
@@ -72,7 +71,7 @@ const GoogleAuth = ({ contentUrl }) => {
         let errorMessage
         const userDoc = await getDocument('users', user.uid)
         if (userDoc.isFreeTrialUsed) {
-            errorMessage = 'Sorry, your free trial has already been used up :( \n Please subscribe for memebership!'
+            errorMessage = 'Sorry, your free trial has already been used up :( \n Please subscribe for membership!'
         } else if (contentUrl) {
             errorMessage = await generatePodcast(user.accessToken)
         }

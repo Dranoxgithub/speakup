@@ -1,10 +1,8 @@
-import { useLocation, useNavigate } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 import UrlInput from "../components/UrlInput"
 import { useEffect, useRef, useState } from "react"
-import { initializeFirebaseApp } from "../util/firebaseUtils"
-import { getAuth } from "@firebase/auth"
+import { initializeFirebaseApp, getDocument, updateDocument } from "../util/firebaseUtils"
 import PodcastResultPreview from "../components/PodcastResultPreview"
-import { getDocument, updateDocument } from "../util/firebaseUtils"
 import { getStorage, ref, getBlob } from "firebase/storage"
 import Loading from "../components/Loading"
 import { useAppSelector } from "../redux/hooks"
@@ -23,6 +21,11 @@ const DashBoardScreen = () => {
 
     const [contentList, setContentList] = useState([])
     const prevListRef = useRef([])
+
+    useEffect(() => {
+        setContentUrl('')
+        setErrorMessage()
+    })
 
     useEffect(() => {
         prevListRef.current = contentList
