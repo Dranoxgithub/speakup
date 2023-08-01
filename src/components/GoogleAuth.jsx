@@ -2,7 +2,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { fetchUrl } from "../ajax/ajaxUtils";
 import { useState } from "react";
-import { createUserDocument, getDocument } from "../util/firebaseUtils";
+import { createUserDocument, getDocument, updateDocument } from "../util/firebaseUtils";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import Loading from "./Loading";
 
@@ -76,6 +76,9 @@ const GoogleAuth = ({ contentUrl }) => {
             errorMessage = await generatePodcast(user.accessToken)
         }
 
+        userDoc.isFreeTrialUsed = true;
+        await updateDocument('users', user.uid, userDoc)
+        
         navigate('/dashboard', { state: { errorMessage: errorMessage, contentUrl: contentUrl } })
     }
 
