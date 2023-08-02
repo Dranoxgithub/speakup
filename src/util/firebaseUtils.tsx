@@ -4,7 +4,7 @@ import { getFirestore, getDoc, doc, setDoc } from "firebase/firestore";
 
 export async function createUserDocument(uid: string) {
   try {
-    console.log(`calling create user document with uid: ${uid}`);
+    // console.log(`calling create user document with uid: ${uid}`);
 
     const app = initializeFirebaseApp();
     const db = getFirestore(app);
@@ -13,7 +13,7 @@ export async function createUserDocument(uid: string) {
     const user = (await getDoc(docRef)).data();
 
     if (user === undefined) {
-      console.log(`Creating a new user document for uid ${uid}.`);
+      // console.log(`Creating a new user document for uid ${uid}.`);
       await setDoc(docRef, { 
         id: uid, 
         isFreeTrialUsed: false 
@@ -27,7 +27,7 @@ export async function createUserDocument(uid: string) {
 }
 
 export async function getDocument(collectionName: string, id: string) {
-  console.log(`getting ${collectionName} document with id: ${id}`);
+  // console.log(`getting ${collectionName} document with id: ${id}`);
 
   const app = initializeFirebaseApp();
   const db = getFirestore(app);
@@ -39,7 +39,7 @@ export async function updateDocument(
   id: string,
   newDocument: any
 ) {
-  console.log(`updating ${collectionName} document with id: ${id}`);
+  // console.log(`updating ${collectionName} document with id: ${id}`);
 
   const app = initializeFirebaseApp();
   const db = getFirestore(app);
