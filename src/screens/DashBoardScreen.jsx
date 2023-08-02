@@ -143,8 +143,8 @@ const DashBoardScreen = () => {
             
             <div className="subsectionContainer">
             {errorMessage ? 
-                errorMessage.split('\n').map(item => (
-                    <h4 className="errorMessage">{item}</h4>
+                errorMessage.split('\n').map((item, index) => (
+                    <h4 key={index} className="errorMessage">{item}</h4>
                 )) :
                 <></>
             }
