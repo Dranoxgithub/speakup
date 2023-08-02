@@ -15,7 +15,7 @@ const RouterScreen = () => {
     const app = initializeFirebaseApp()
     const auth = getAuth(app)
     onAuthStateChanged(auth, user => {
-      console.log(`current user id: ${user.uid}`)
+      // console.log(`current user id: ${user.uid}`) // this msg can cause error if user is null 
       dispatch(setUserId(user.uid))
       dispatch(setUserEmail(user.email))
     })

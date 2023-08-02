@@ -11,7 +11,7 @@ const GoogleAuth = ({ contentUrl }) => {
     const [loading, setLoading] = useState(false)
     // const [errorMessage, setErrorMessage] = useState()
 
-    const generatePodcast = async (idToken) => {
+    const generatePodcast = async (idToken, userid) => {
         setLoading(true)
         try {
             console.log(`Calling content generation for url: ${contentUrl}.`)
@@ -20,10 +20,17 @@ const GoogleAuth = ({ contentUrl }) => {
                 'Content-Type': 'application/json'
             }
             const body = {
-                "url": contentUrl.trim(),
+                "urls": [contentUrl.trim()],
+                "user_id": userid,
+                "intro_minutes": "30 seconds", 
+                // These are the default values for the other fields, so we don't need to specify them unless user wants to change them
+                // "host" :"Zuzu",
+                // "each_para_length": "2 minutes",
+                // "podcast_title":"Podcast Title",
+                // "ad":"This podcast is created using SpeakUp AI"
             }
-
-            const saveEndpoint = "http://138.91.164.195:8080/save"
+            
+            const saveEndpoint = "https://unified-save-articles-jcjaqcgmja-uc.a.run.app/save"
             const requestOptions = {
                 method: 'POST',
                 headers: headers,
@@ -73,10 +80,12 @@ const GoogleAuth = ({ contentUrl }) => {
         if (userDoc.isFreeTrialUsed) {
             errorMessage = 'Sorry, your free trial has already been used up :( \n Please subscribe for membership!'
         } else if (contentUrl) {
-            errorMessage = await generatePodcast(user.accessToken)
+            errorMessage = await generatePodcast(user.accessToken, user.uid)
         }
+        console.log(`errorMessage: ${errorMessage}`)
 
-        userDoc.isFreeTrialUsed = true;
+        userDoc.isFreeTrialUsed = true; // potential bugs: if the user podcast is not generated successfully, the user will still be marked as used free trial
+        // another bug: if the user indeed has used free trial, the page don't show the error message
         await updateDocument('users', user.uid, userDoc)
         
         navigate('/dashboard', { state: { errorMessage: errorMessage, contentUrl: contentUrl } })
