@@ -30,7 +30,7 @@ const GoogleAuth = ({ contentUrl }) => {
                 // "ad":"This podcast is created using SpeakUp AI"
             }
             
-            const saveEndpoint = "https://unified-save-articles-jcjaqcgmja-uc.a.run.app/save"
+            const saveEndpoint = "https://unified-save-articles-jcjaqcgmja-uc.a.run.app"
             const requestOptions = {
                 method: 'POST',
                 headers: headers,
