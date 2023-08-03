@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react"
 import { useAppSelector } from "../redux/hooks"
-import { getUserDisplayName, getUserProfilePic } from "../redux/userSlice"
+import { getUserDisplayName, getUserEmail, getUserProfilePic } from "../redux/userSlice"
 import { initializeFirebaseApp } from "../util/firebaseUtils"
 import { getAuth, signOut } from "@firebase/auth"
 
 const UserInfoDisplay = () => {
     const profilePic = useAppSelector(getUserProfilePic)
     const displayName = useAppSelector(getUserDisplayName)
+    const userEmail = useAppSelector(getUserEmail)
+
     const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
@@ -47,9 +49,10 @@ const UserInfoDisplay = () => {
             />
             { showModal ? 
                 <div className="profileDetailBox">
-                    <h4 className="userName">{displayName}</h4>
+                    <h3 className="userName">{displayName}</h3>
+                    <p>{userEmail}</p>
                     <button className="signoutButton" onClick={signoutUser}>
-                        <h4>Sign Out</h4>
+                        <h3>Sign Out</h3>
                     </button>
                 </div> : <></>
             }
