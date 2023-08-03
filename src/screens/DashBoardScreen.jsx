@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import UrlInput from "../components/UrlInput"
 import { useEffect, useRef, useState } from "react"
 import { initializeFirebaseApp, getDocument, updateDocument } from "../util/firebaseUtils"
@@ -9,13 +9,17 @@ import { useAppSelector } from "../redux/hooks"
 import { getUserId, getUserEmail } from "../redux/userSlice"
 import { v4 as uuidv4 } from 'uuid';
 import { onSnapshot, getFirestore, doc } from "firebase/firestore"
+import { PARSING_STATUS } from "../components/GoogleAuth"
+import UserInfoDisplay from "../components/UserInfoDisplay"
 
 const DashBoardScreen = () => {
     const location = useLocation()
     const userId = useAppSelector(getUserId)
     const userEmail = useAppSelector(getUserEmail)
+    
+    const navigate = useNavigate()
 
-    const [errorMessage, setErrorMessage] = useState()
+    const [statusMessage, setStatusMessage] = useState()
     const [contentUrl, setContentUrl] = useState('')
     const [loading, setLoading] = useState(false)
 
@@ -24,8 +28,8 @@ const DashBoardScreen = () => {
 
     useEffect(() => {
         setContentUrl('')
-        setErrorMessage()
-    })
+        setStatusMessage()
+    }, [])
 
     useEffect(() => {
         prevListRef.current = contentList
@@ -76,8 +80,8 @@ const DashBoardScreen = () => {
 
     useEffect(() => {
         if (location.state) {
-            setErrorMessage(location.state.errorMessage)
-            if (location.state.errorMessage) {
+            setStatusMessage(location.state.statusMessage)
+            if (location.state.statusMessage && location.state.statusMessage != PARSING_STATUS) {
                 console.log(`setting content url to ${location.state.contentUrl}`)
                 setContentUrl(location.state.contentUrl)
             }
@@ -89,11 +93,12 @@ const DashBoardScreen = () => {
             setLoading(true)
             const user = doc.data()
             if (user) {
-                const newList = await populateContentList(user)
+                const newList = (await populateContentList(user)).reverse()
                 if (prevListRef.current.length > 0) {
                     const difference = newList.filter(newItem => prevListRef.current.filter(oldItem => oldItem.contentId == newItem.contentId).length == 0)
-                    const updatedContentIdList = difference.map(item => item.contentId)
-                    if (difference.length > 0) {
+                    const differenceWithAudio = difference.filter(item => item.result && item.result.audio && item.result.audio.url)
+                    const updatedContentIdList = differenceWithAudio.map(item => item.contentId)
+                    if (updatedContentIdList.length > 0) {
                         sendEmailNotification(updatedContentIdList)
                     }
                 }
@@ -108,6 +113,8 @@ const DashBoardScreen = () => {
             onSnapshot(doc(db, 'users', userId), doc => {
                 processSnapshot(doc)
             })
+        } else {
+            navigate('/login', {replace: true})
         }
     }, [userId])
 
@@ -134,17 +141,21 @@ const DashBoardScreen = () => {
     }
 
     const onInputChanged = () => {
-        setErrorMessage()
+        setStatusMessage()
     }
 
     return (
         <div className="container">
+            <div className="headerContainer">
+                <h1>Dashboard</h1>
+                <UserInfoDisplay />
+            </div>
             <UrlInput input={contentUrl} onChange={onInputChanged}/>
             
             <div className="subsectionContainer">
-            {errorMessage ? 
-                errorMessage.split('\n').map((item, index) => (
-                    <h4 key={index} className="errorMessage">{item}</h4>
+            {statusMessage ? 
+                statusMessage.split('\n').map((item, index) => (
+                    <h4 key={index} className="statusMessage">{item}</h4>
                 )) :
                 <></>
             }

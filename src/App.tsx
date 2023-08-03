@@ -7,7 +7,7 @@ import RouterScreen from "./screens/RouterScreen";
 function App() {
   return (
     <Provider store={store}>
-      <div className="app">
+      <div className="App">
         <RouterScreen />
       </div>
     </Provider>

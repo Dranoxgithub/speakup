@@ -7,7 +7,7 @@ const LoginScreen = () => {
     const contentUrl = queryParams.get("contentUrl")
 
     return (
-        <div className="container">
+        <div className="centeredContainer">
             <h1 className="title">Get your podcast via email</h1>
             <GoogleAuth contentUrl={contentUrl} />
         </div>

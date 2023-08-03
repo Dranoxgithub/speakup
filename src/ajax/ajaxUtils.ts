@@ -21,7 +21,7 @@ export function fetchUrl(
   console.log(`Calling url: ${urlToCall}`);
   return fetch(urlToCall, requestOptions)
     .then((response) => {
-      return response.json();
+      return response;
     })
     .catch((error) => {
       console.error(

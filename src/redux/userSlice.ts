@@ -17,6 +17,8 @@ export interface UserState {
   email: string;
   idToken: string;
   refreshToken: string;
+  profilePic: string;
+  displayName: string;
 }
 
 interface UserInfo {
@@ -29,6 +31,8 @@ const initialState: UserState = {
   email: "",
   idToken: "",
   refreshToken: "",
+  profilePic: "",
+  displayName: "",
 };
 
 export const userLoginThunk = createAsyncThunk(
@@ -118,6 +122,14 @@ export const userSlice = createSlice({
       state.email = action.payload;
       console.log("Successfully set user email to " + state.email);
     },
+    setUserProfilePic: (state, action: PayloadAction<string>) => {
+      state.profilePic = action.payload;
+      console.log(`Successfully set user profile pic to ${state.profilePic}`)
+    },
+    setUserDisplayName: (state, action: PayloadAction<string>) => {
+      state.displayName = action.payload;
+      console.log(`Successfully set user display name to ${state.displayName}`)
+    }
   },
   extraReducers: (builder) => {
     createLoginExtraReducers(builder);
@@ -125,11 +137,13 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setUserId, setUserEmail } = userSlice.actions;
+export const { setUserId, setUserEmail, setUserDisplayName, setUserProfilePic } = userSlice.actions;
 
 export const getUserState = ({ user }: RootState) => user;
 
 export const getUserId = ({ user }: RootState) => user.id;
 export const getUserEmail = ({ user }: RootState) => user.email;
+export const getUserProfilePic = ({ user }: RootState) => user.profilePic;
+export const getUserDisplayName = ({ user }: RootState) => user.displayName;
 
 export default userSlice.reducer;

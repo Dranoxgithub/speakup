@@ -6,10 +6,11 @@ import { createUserDocument, getDocument, updateDocument } from "../util/firebas
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import Loading from "./Loading";
 
+export const PARSING_STATUS = "Parsing article..."
 const GoogleAuth = ({ contentUrl }) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
-    // const [errorMessage, setErrorMessage] = useState()
+    // const [statusMessage, setstatusMessage] = useState()
 
     const generatePodcast = async (idToken, userid) => {
         setLoading(true)
@@ -37,25 +38,18 @@ const GoogleAuth = ({ contentUrl }) => {
                 body: JSON.stringify(body)
             };
             const response = await fetchUrl(saveEndpoint, {}, requestOptions)
-            console.log(`response: ${JSON.stringify(response)}`)
-            if (!response.id) {
+            console.log(`response status: ${JSON.stringify(response.status)}`)
+            if (response.status != 200) {
                 setLoading(false)
-                if (response.ExceptionError) {
-                    return response.ExceptionError
-                } else if (response.message) {
-                    return response.message
-                }
+                return await response.text()
             } else {
                 setLoading(false)
-                console.log(`Result: ${JSON.stringify(response)}`)
-                console.log(`Successfully got result for url: ${contentUrl}`)
+                return PARSING_STATUS
             }
         } catch (error) {
             setLoading(false)
             return error.message
         }
-
-        return 
     }
 
     const signup = async () => {
@@ -75,20 +69,20 @@ const GoogleAuth = ({ contentUrl }) => {
             }
         }
 
-        let errorMessage
+        let statusMessage
         const userDoc = await getDocument('users', user.uid)
         if (userDoc.isFreeTrialUsed) {
-            errorMessage = 'Sorry, your free trial has already been used up :( \n Please subscribe for membership!'
+            statusMessage = 'Sorry, your free trial has already been used up :( \n Please subscribe for membership!'
         } else if (contentUrl) {
-            errorMessage = await generatePodcast(user.accessToken, user.uid)
+            statusMessage = await generatePodcast(user.accessToken, user.uid)
         }
-        console.log(`errorMessage: ${errorMessage}`)
+        console.log(`statusMessage: ${statusMessage}`)
 
-        userDoc.isFreeTrialUsed = true; // potential bugs: if the user podcast is not generated successfully, the user will still be marked as used free trial
-        // another bug: if the user indeed has used free trial, the page don't show the error message
-        await updateDocument('users', user.uid, userDoc)
-        
-        navigate('/dashboard', { state: { errorMessage: errorMessage, contentUrl: contentUrl } })
+        // userDoc.isFreeTrialUsed = true; // potential bugs: if the user podcast is not generated successfully, the user will still be marked as used free trial
+        // // another bug: if the user indeed has used free trial, the page don't show the error message
+        // await updateDocument('users', user.uid, userDoc)
+
+        navigate('/dashboard', { state: { statusMessage: statusMessage, contentUrl: contentUrl } })
     }
 
     return (
