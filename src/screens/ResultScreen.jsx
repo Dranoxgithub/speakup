@@ -6,15 +6,18 @@ import Loading from "../components/Loading";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId } from "../redux/userSlice";
 
+
 const ResultScreen = () => {
     const location = useLocation()
-    
     const userId = useAppSelector(getUserId)
-
     const [title, setTitle] = useState()
     const [script, setScript] = useState()
+    const [shownotes, setShownotes] = useState()
+    const [created, setCreated] = useState()
+    const [urls, setUrls] = useState()
     const [audioUrl, setAudioUrl] = useState()
     const [blob, setBlob] = useState()
+    const [duration, setDuration] = useState()
     const [error, setError] = useState()
 
     
@@ -41,7 +44,23 @@ const ResultScreen = () => {
 
                     if (content.result.audio) {
                         await populateAudioBlob(content.result.audio.url)
+                        if (content.result.audio.duration) {
+                            setDuration(content.result.audio.duration)
+                            console.log(`duration: ${content.result.audio.duration}`)
+                        }
                     }
+
+                    if (content.result.shownotes && content.result.shownotes.highlights) {
+                        setShownotes(content.result.shownotes.highlights)
+                    }
+                }
+                if (content.created_at) {
+                    setCreated(content.created_at)
+                    console.log(`created at: ${content.created_at}`)
+                }
+                if (content.original_content && content.original_content.urls) {
+                    setUrls(content.original_content.urls)
+                    console.log(`urls: ${content.original_content.urls}`)
                 }
             }
         }
@@ -96,15 +115,23 @@ const ResultScreen = () => {
         <div className="resultContainer">
             {error ? 
                 <h2>{error}</h2> : 
-                <div className="resultContainer">
+                <div>
                     <h2 className="title">{title}</h2>
+                    <div className="contentRow">
+
+                        {created ? <p className="contentText">Created at: {created.slice(0,10)}</p> : null}
+                        {duration ? <p className="contentText">Audio length: {duration} seconds</p> : null}
+                        {urls ? urls.map((url, index) => (
+                            <p className="contentText" key={index}>{url}</p>
+                        )) : null}
+                    </div>
+
 
                     { !audioUrl 
                     || !script 
                     // || !shownotes 
                     // || shownotes.length == 0 
                     ? <Loading /> : <></>}
-
 
                     {audioUrl ? 
                         <video controls name="podcast" className="audioPlayer">
@@ -120,19 +147,28 @@ const ResultScreen = () => {
 
                     <div className={script ? "subsectionContainerFlexStart" : "noDisplay"}>
                         <h3 className="subtitle">Script</h3>
-                        <p className="contentText">{script}</p>
+                        {
+                            (typeof script === 'string' ? script.split('<br>') : []).map((note, index) => (
+                                <p className="contentText" key={index}>{note}</p>
+                            ))
+                        }
                     </div>
 
-                    {/* <div className={(shownotes && shownotes.length > 0) ? "subsectionContainerFlexStart" : "noDisplay"}>
-                        <h3 className="subtitle">Shownotes</h3>
-                        <ul className="shownotesList">
+                    <div className={shownotes ? "subsectionContainerFlexStart" : "noDisplay"}>
+                        <h3 className="subtitle">Show Notes</h3>
+                        {
+                            (typeof shownotes === 'string' ? shownotes.split('<br>') : []).map((note, index) => (
+                                <p className="shownotesTextNew" key={index}>{note}</p>
+                            ))
+                        }
+                        {/* <ul className="shownotesList">
                             {shownotes && shownotes.map((item, index) => (
                                 <li key={index}>
                                     <p className="shownotesText">{secondsToHHMMSS(item.sec)}: {item.name}</p>
                                 </li>
                             ))}
-                        </ul>
-                    </div> */}
+                        </ul> */}
+                    </div>
                 </div>
             }
         </div>
