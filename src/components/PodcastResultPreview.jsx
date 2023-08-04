@@ -10,8 +10,12 @@ const PodcastResultPreview = (props) => {
         navigate('/result', {state: {
             title: props.title,
             script: props.script,
+            blob: props.blob,
             audioUrl: props.audioUrl,
-            blob: props.blob
+            duration: props.duration,
+            shownotes: props.shownotes,
+            created: props.created,
+            urls: props.urls
         }})
     }
 
@@ -19,7 +23,7 @@ const PodcastResultPreview = (props) => {
         <div className='previewContainer' onClick={navigateToResult}>
             <h2>{props.title}</h2>
             {props.audioUrl ? 
-                <video controls name="podcast">
+                <video controls name="podcast" className="audioPlayer">
                     <source src={props.audioUrl} type='audio/mp3' />
                 </video> : 
                 <h2 className="generatingText">Generating...</h2>

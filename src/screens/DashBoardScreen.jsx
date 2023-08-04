@@ -58,6 +58,12 @@ const DashBoardScreen = () => {
                 const title = content.original_content.title
                 let script
                 let blobInfo
+                let duration
+                let shownotes
+                let urls
+                if (content.original_content) {
+                    urls = content.original_content.urls
+                }
                 if (content.result) {
                     if (content.result.script) {
                         script = content.result.script.best_summary
@@ -65,6 +71,11 @@ const DashBoardScreen = () => {
 
                     if (content.result.audio) {
                         blobInfo = await populateAudioBlob(content.result.audio.url)
+                        duration = content.result.audio.duration
+                    }
+
+                    if (content.result.shownotes) {
+                        shownotes = content.result.shownotes.highlights
                     }
                 }
                 return {
@@ -73,6 +84,10 @@ const DashBoardScreen = () => {
                     script: script,
                     blob: blobInfo ? blobInfo.blob : undefined,
                     audioUrl: blobInfo ? blobInfo.audioUrl : undefined,
+                    duration: duration,
+                    shownotes: shownotes,
+                    created: content.created_at,
+                    urls: urls,  
                 }
             }
         })
@@ -195,11 +210,15 @@ const DashBoardScreen = () => {
                 <div className="previewBoxesContainer">
                     {contentList.map(item => (
                         <PodcastResultPreview 
+                            key={item.contentId}
                             title={item.title}
-                            audioUrl={item.audioUrl}
                             script={item.script}
                             blob={item.blob}
-                            key={item.contentId}
+                            audioUrl={item.audioUrl}
+                            duration={item.duration}
+                            shownotes={item.shownotes}
+                            created={item.created}
+                            urls={item.urls}
                         />
                     ))}
                 </div>

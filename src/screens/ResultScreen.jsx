@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { getStorage, ref, getBlob } from "firebase/storage"
 import { getDocument, initializeFirebaseApp } from "../util/firebaseUtils";
 import Loading from "../components/Loading";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId } from "../redux/userSlice";
+import { AiOutlineArrowLeft } from 'react-icons/ai'
 
 
 const ResultScreen = () => {
@@ -19,6 +20,8 @@ const ResultScreen = () => {
     const [blob, setBlob] = useState()
     const [duration, setDuration] = useState()
     const [error, setError] = useState()
+
+    const navigate = useNavigate()
 
     
     useEffect(() => {
@@ -70,6 +73,10 @@ const ResultScreen = () => {
             setScript(location.state.script)
             setBlob(location.state.blob)
             setAudioUrl(location.state.audioUrl)
+            setDuration(location.state.duration)
+            setShownotes(location.state.shownotes)
+            setCreated(location.state.created)
+            setUrls(location.state.urls)
         }
 
         const populateContent = async () => {
@@ -111,8 +118,17 @@ const ResultScreen = () => {
         tempLink.click();
     }
 
+    const goBackToDashboard = () => {
+        navigate('/Dashboard', {replace: true})
+    }
+
     return (
         <div className="resultContainer">
+            <div className="backNavigator" onClick={goBackToDashboard} >
+                <AiOutlineArrowLeft size={25} style={{marginRight: 10}}/>
+                <h1>Dashboard</h1>
+            </div>
+            
             {error ? 
                 <h2>{error}</h2> : 
                 <div>

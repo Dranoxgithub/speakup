@@ -64,6 +64,15 @@
     flex-direction: row;
 }
 
+.backNavigator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-family: 'Gloock';
+    font-size: 10px;
+    cursor: pointer;
+}
+
 input {
     padding: 0.5rem 1rem;
     border-radius: 10px;
