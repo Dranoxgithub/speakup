@@ -9,7 +9,7 @@ import { useAppSelector } from "../redux/hooks"
 import { getUserId, getUserEmail } from "../redux/userSlice"
 import { v4 as uuidv4 } from 'uuid';
 import { onSnapshot, getFirestore, doc } from "firebase/firestore"
-import { PARSING_STATUS } from "../components/GoogleAuth"
+import { PARSING_STATUS } from "../util/helperFunctions"
 import UserInfoDisplay from "../components/UserInfoDisplay"
 
 const DashBoardScreen = () => {
@@ -89,14 +89,20 @@ const DashBoardScreen = () => {
     }, [location])
 
     useEffect(() => {
+        const audioExists = (content) => {
+            return content.result && content.result.audio && content.result.audio.url
+        }
+
         const processSnapshot = async (doc) => {
+            setStatusMessage()
+            setContentUrl('')
             setLoading(true)
             const user = doc.data()
             if (user) {
                 const newList = (await populateContentList(user)).reverse()
                 if (prevListRef.current.length > 0) {
-                    const difference = newList.filter(newItem => prevListRef.current.filter(oldItem => oldItem.contentId == newItem.contentId).length == 0)
-                    const differenceWithAudio = difference.filter(item => item.result && item.result.audio && item.result.audio.url)
+                    const difference = newList.filter(newItem => prevListRef.current.filter(oldItem => oldItem.contentId == newItem.contentId && audioExists(oldItem)).length == 0)
+                    const differenceWithAudio = difference.filter(item => audioExists(item))
                     const updatedContentIdList = differenceWithAudio.map(item => item.contentId)
                     if (updatedContentIdList.length > 0) {
                         sendEmailNotification(updatedContentIdList)
@@ -150,16 +156,20 @@ const DashBoardScreen = () => {
                 <h1>Dashboard</h1>
                 <UserInfoDisplay />
             </div>
-            <UrlInput input={contentUrl} onChange={onInputChanged}/>
             
-            <div className="subsectionContainer">
+            <UrlInput 
+                input={contentUrl} 
+                onChange={onInputChanged} 
+                setStatusMessage={setStatusMessage} 
+                setContentUrl={setContentUrl} 
+            />
+            
             {statusMessage ? 
                 statusMessage.split('\n').map((item, index) => (
                     <h4 key={index} className="statusMessage">{item}</h4>
                 )) :
                 <></>
             }
-            </div>
 
             {loading ? 
                 <Loading /> : 

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 import { getStorage, ref, getBlob } from "firebase/storage"
 import { getDocument, initializeFirebaseApp } from "../util/firebaseUtils";
-import WebFont from 'webfontloader'
 import Loading from "../components/Loading";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId } from "../redux/userSlice";
@@ -81,12 +80,6 @@ const ResultScreen = () => {
     }, [location, userId])
 
     useEffect(() => {
-        WebFont.load({
-            google: {
-                families: ["Gloock"],
-            },
-        })
-
         setError()
     }, [])
 

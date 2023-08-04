@@ -118,6 +118,9 @@ export const userSlice = createSlice({
       state.id = action.payload;
       console.log("Successfully set user id to " + state.id);
     },
+    setUserIdToken: (state, action: PayloadAction<string>) => {
+      state.idToken = action.payload;
+    },
     setUserEmail: (state, action: PayloadAction<string>) => {
       state.email = action.payload;
       console.log("Successfully set user email to " + state.email);
@@ -137,11 +140,12 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setUserId, setUserEmail, setUserDisplayName, setUserProfilePic } = userSlice.actions;
+export const { setUserId, setUserIdToken, setUserEmail, setUserDisplayName, setUserProfilePic } = userSlice.actions;
 
 export const getUserState = ({ user }: RootState) => user;
 
 export const getUserId = ({ user }: RootState) => user.id;
+export const getUserIdToken = ({ user }: RootState) => user.idToken;
 export const getUserEmail = ({ user }: RootState) => user.email;
 export const getUserProfilePic = ({ user }: RootState) => user.profilePic;
 export const getUserDisplayName = ({ user }: RootState) => user.displayName;

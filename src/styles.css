@@ -172,7 +172,7 @@ a {
     animation: spin 1s linear infinite;
 }
 
-.errorMessage {
+.statusMessage {
     padding-left: 2rem;
     padding-right: 2rem;
     margin: 5px;

@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react"
 import '../styles.css'
-import { Link } from 'react-router-dom';
-import WebFont from 'webfontloader'
+import { Link, useNavigate } from 'react-router-dom';
+import { useAppSelector } from "../redux/hooks";
+import { getUserId, getUserIdToken } from "../redux/userSlice";
+import { generatePodcast } from "../util/helperFunctions";
 
 const UrlInput = (props) => {
-    useEffect(() => {
-        WebFont.load({
-            google: {
-                families: ["Gloock"],
-            },
-        })
-        console.log(`current input is ${props.input}`)
-        setUrl(props.input)
-    }, [props.input])
+    const userId = useAppSelector(getUserId)
+    const userIdToken = useAppSelector(getUserIdToken)
+
+    const navigate = useNavigate()
     
     const [url, setUrl] = useState('')
+    const [loading, setLoading] = useState(false)
 
     const handleUrlChange = (e) => {
         props.onChange()
@@ -32,6 +30,18 @@ const UrlInput = (props) => {
         return matches && matches.length > 0
     }
 
+    const onCreatePodcast = async () => {
+        if (isValidUrl(url)) {
+            if (userId) {
+                const statusMessage = await generatePodcast(userIdToken, [url.trim()], userId, setLoading)
+                props.setStatusMessage(statusMessage)
+                props.setContentUrl(url)
+            } else {
+                navigate(`/login?contentUrl=${url}`, {replace: true})
+            }
+        }
+    }
+
     return (
         <div className="content">
             <input
@@ -40,12 +50,12 @@ const UrlInput = (props) => {
                 value={url}
                 onChange={handleUrlChange}
             />
-            <Link 
-                className={isValidUrl(url) ? 'navigateButton' : 'disabledNavigateButton'} 
-                to={isValidUrl(url) ? `/login?contentUrl=${url}` : '#'}
+            <button 
+                className={isValidUrl(url) && !loading ? 'navigateButton' : 'disabledNavigateButton'} 
+                onClick={onCreatePodcast}
             >
                 <p className="buttonText">Create</p>
-            </Link>
+            </button>
         </div>
     )
 }
