@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { onSnapshot, getFirestore, doc } from "firebase/firestore"
 import { PARSING_STATUS } from "../util/helperFunctions"
 import UserInfoDisplay from "../components/UserInfoDisplay"
+import { getAuth } from "@firebase/auth"
 
 const DashBoardScreen = () => {
     const location = useLocation()
@@ -22,6 +23,7 @@ const DashBoardScreen = () => {
     const [statusMessage, setStatusMessage] = useState()
     const [contentUrl, setContentUrl] = useState('')
     const [loading, setLoading] = useState(false)
+    const [fetchingUser, setFetchingUser] = useState(true)
 
     const [contentList, setContentList] = useState([])
     const prevListRef = useRef([])
@@ -113,6 +115,7 @@ const DashBoardScreen = () => {
             setLoading(false)
         }
 
+        console.log(`user id is ${userId}`)
         if (userId) {
             const app = initializeFirebaseApp()
             const db = getFirestore(app)
@@ -120,9 +123,20 @@ const DashBoardScreen = () => {
                 processSnapshot(doc)
             })
         } else {
-            navigate('/login', {replace: true})
+            
         }
     }, [userId])
+
+    useEffect(() => {
+        setTimeout(() => {
+            const app = initializeFirebaseApp()
+            const auth = getAuth(app)
+            if (!auth.currentUser) {
+                navigate('/login', {replace: true})
+            }
+            setFetchingUser(false)
+        }, 500)
+    }, [])
 
     const sendEmailNotification = (contentIdList) => {
         const uuid = uuidv4()
@@ -151,42 +165,45 @@ const DashBoardScreen = () => {
     }
 
     return (
-        <div className="container">
-            <div className="headerContainer">
-                <h1>Dashboard</h1>
-                <UserInfoDisplay />
-            </div>
-            
-            <UrlInput 
-                input={contentUrl} 
-                onChange={onInputChanged} 
-                setStatusMessage={setStatusMessage} 
-                setContentUrl={setContentUrl} 
-            />
-            
-            {statusMessage ? 
-                statusMessage.split('\n').map((item, index) => (
-                    <h4 key={index} className="statusMessage">{item}</h4>
-                )) :
-                <></>
-            }
+        <div>
+            {fetchingUser ? <></> : 
+            <div className="container">
+                <div className="headerContainer">
+                    <h1>Dashboard</h1>
+                    <UserInfoDisplay />
+                </div>
+                
+                <UrlInput 
+                    input={contentUrl} 
+                    onChange={onInputChanged} 
+                    setStatusMessage={setStatusMessage} 
+                    setContentUrl={setContentUrl} 
+                />
+                
+                {statusMessage ? 
+                    statusMessage.split('\n').map((item, index) => (
+                        <h4 key={index} className="statusMessage">{item}</h4>
+                    )) :
+                    <></>
+                }
 
-            {loading ? 
-                <Loading /> : 
-                <></>
-            }
+                {loading ? 
+                    <Loading /> : 
+                    <></>
+                }
 
-            <div className="previewBoxesContainer">
-                {contentList.map(item => (
-                    <PodcastResultPreview 
-                        title={item.title}
-                        audioUrl={item.audioUrl}
-                        script={item.script}
-                        blob={item.blob}
-                        key={item.contentId}
-                    />
-                ))}
-            </div>
+                <div className="previewBoxesContainer">
+                    {contentList.map(item => (
+                        <PodcastResultPreview 
+                            title={item.title}
+                            audioUrl={item.audioUrl}
+                            script={item.script}
+                            blob={item.blob}
+                            key={item.contentId}
+                        />
+                    ))}
+                </div>
+            </div>}
 
         </div>
     )
