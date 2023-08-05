@@ -157,7 +157,7 @@ const ResultScreen = () => {
                     }
                     <div className={audioUrl ? "subsectionContainer" : "noDisplay"}>
                         <button className="largeButton" onClick={getPodcastDownloadUrl}>
-                            <h1 className="largeButtonText">Get My Podcast!</h1>
+                            <h1 className="largeButtonText">Download</h1>
                         </button>
                     </div>
 
