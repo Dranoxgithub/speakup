@@ -33,7 +33,7 @@ const UrlInput = (props) => {
     const onCreatePodcast = async () => {
         if (isValidUrl(url)) {
             if (userId) {
-                const statusMessage = await generatePodcast(userIdToken, [url.trim()], userId, setLoading)
+                const statusMessage = await generatePodcast(userIdToken, userId, [url.trim()], setLoading)
                 props.setStatusMessage(statusMessage)
                 props.setContentUrl(url)
             } else {
@@ -49,6 +49,7 @@ const UrlInput = (props) => {
                 placeholder="Your content url..."
                 value={url}
                 onChange={handleUrlChange}
+                className="urlInput"
             />
             <button 
                 className={isValidUrl(url) && !loading ? 'navigateButton' : 'disabledNavigateButton'} 

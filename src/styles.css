@@ -73,7 +73,7 @@
     cursor: pointer;
 }
 
-input {
+.urlInput {
     padding: 0.5rem 1rem;
     border-radius: 10px;
     border: none;
@@ -86,10 +86,43 @@ input {
     outline: 0;
 }
 
-input::placeholder {
+.urlInput::placeholder {
     font-family: 'Gloock';
     color: #9b9b9b;
     font-size: 18px;
+}
+
+.customizedInputContainer {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #ebebeb;
+    border-radius: 10px;
+    font-family: 'Gloock';
+    font-size: 16px;
+    padding: 10px 0px;
+}
+
+.customizedInputBlock {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 5px 20px;
+}
+
+.customizedInput {
+    padding: 15px 10px;
+    border-radius: 10px;
+    margin-left: 50px;
+    font-family: 'Gloock';
+    border-style: solid;
+    border-width: 1px;
+    border-color: #ebebeb;
+    font-size: 16px;
+    font-family: 'Gloock';
+    color: #2d3142;
+    outline: 0;
+    width: 300px;
+    align-self: center;
 }
 
 .disabledNavigateButton {
@@ -159,8 +192,8 @@ a {
 .subsectionContainerFlexStart {
     margin-top: 1rem;
     text-align: initial;
-    margin-left: 10%;
-    margin-right:10%;
+    margin-left: 5%;
+    margin-right: 5%;
     justify-content: flex-start;
 }
 

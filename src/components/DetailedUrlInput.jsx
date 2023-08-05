@@ -3,6 +3,9 @@ import { getUserId, getUserIdToken } from "../redux/userSlice"
 import { PARSING_STATUS, generatePodcast } from "../util/helperFunctions"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
+import { BiSolidCustomize } from 'react-icons/bi'
+import { MdMenu, MdMenuOpen } from 'react-icons/md'
+import CustomizedInput from "./CustomizedInput"
 
 const DetailedUrlInput = () => {
     const userId = useAppSelector(getUserId)
@@ -12,7 +15,12 @@ const DetailedUrlInput = () => {
 
     const [url, setUrl] = useState('')
     const [loading, setLoading] = useState(false)
-    const [statusMessage, setStatusMessage] = useState()
+    const [showCustomization, setShowCustomization] = useState(false)
+
+    const [podcastTitle, setPodcastTitle] = useState()
+    const [hostName, setHostName] = useState()
+    const [introLength, setIntroLength] = useState()
+    const [paragraphLength, setParagraphLength] = useState()
 
     const handleUrlChange = (e) => {
         setUrl(e.target.value)
@@ -36,31 +44,34 @@ const DetailedUrlInput = () => {
 
     const onCreatePodcast = async () => {
         const urls = extractUrls(url)
+        console.log(`extracted following urls: ${urls}`)
         if (urls) {
             if (userId) {
-                const status = await generatePodcast(
+                const statusMessage = await generatePodcast(
                     userIdToken,
-                    urls,
                     userId,
-                    setLoading)
-                setStatusMessage(status)
-                if (status == PARSING_STATUS) {
-                    setUrl('')
-                }
+                    urls,
+                    setLoading,
+                    podcastTitle,
+                    hostName,
+                    introLength,
+                    paragraphLength)
+                navigate('/dashboard', { state: { statusMessage: statusMessage, contentUrl: url } })
             } else {
-
+                navigate(`/login?contentUrl=${urls.join(',')}&podcastTitle=${podcastTitle}&hostName=${hostName}&introLength=${introLength}&paragraphLength=${paragraphLength}`)
             }
         }
     }
 
     return (
-        <div>
+        <div className="container">
             <div className="content">
                 <input
                     type="text"
                     placeholder="Your content url..."
                     value={url}
                     onChange={handleUrlChange}
+                    className="urlInput"
                 />
                 <button 
                     className={containsValidUrl(url) && !loading ? 'navigateButton' : 'disabledNavigateButton'} 
@@ -68,14 +79,34 @@ const DetailedUrlInput = () => {
                 >
                     <p className="buttonText">Create</p>
                 </button>
+                {!showCustomization ? 
+                    <MdMenu 
+                        size={50} 
+                        color="#9b9b9b" 
+                        style={{marginLeft: 10, alignSelf: 'center', cursor: 'pointer'}} 
+                        onClick={() => setShowCustomization(true)}
+                    /> : 
+                    <MdMenuOpen 
+                        size={50} 
+                        color="#9b9b9b" 
+                        style={{marginLeft: 10, alignSelf: 'center', cursor: 'pointer'}} 
+                        onClick={() => setShowCustomization(false)}
+                    />
+                }
             </div>
 
-            {statusMessage ? 
-                statusMessage.split('\n').map((item, index) => (
-                    <h4 key={index} className="statusMessage">{item}</h4>
-                )) :
-                <></>
-            }
+            {showCustomization ? 
+                <CustomizedInput 
+                    podcastTitle={podcastTitle}
+                    setPodcastTitle={setPodcastTitle}
+                    hostName={hostName}
+                    setHostName={setHostName}
+                    introLength={introLength}
+                    setIntroLength={setIntroLength}
+                    paragraphLength={paragraphLength}
+                    setParagraphLength={setParagraphLength}
+                /> : 
+                <></>}
         </div>
     )
 }

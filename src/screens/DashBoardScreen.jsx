@@ -97,6 +97,7 @@ const DashBoardScreen = () => {
 
     useEffect(() => {
         if (location.state) {
+            console.log(`[dashboard] setting status message to ${location.state.statusMessage}`)
             setStatusMessage(location.state.statusMessage)
             if (location.state.statusMessage && location.state.statusMessage != PARSING_STATUS) {
                 console.log(`setting content url to ${location.state.contentUrl}`)
@@ -111,19 +112,25 @@ const DashBoardScreen = () => {
         }
 
         const processSnapshot = async (doc) => {
-            setStatusMessage()
-            setContentUrl('')
             setLoading(true)
             const user = doc.data()
             if (user) {
                 const newList = (await populateContentList(user)).reverse()
                 if (prevListRef.current.length > 0) {
-                    const difference = newList.filter(newItem => prevListRef.current.filter(oldItem => oldItem.contentId == newItem.contentId && audioExists(oldItem)).length == 0)
-                    const differenceWithAudio = difference.filter(item => audioExists(item))
-                    const updatedContentIdList = differenceWithAudio.map(item => item.contentId)
-                    if (updatedContentIdList.length > 0) {
-                        sendEmailNotification(updatedContentIdList)
+                    const difference = newList.filter(newItem => prevListRef.current.filter(oldItem => oldItem.contentId == newItem.contentId).length == 0)
+                    if (difference.length > 0 && statusMessage == PARSING_STATUS) {
+                        setStatusMessage()
                     }
+                    // @TODO: fix bug
+                    // email will never be sent
+                    // this only listens for changes in user doc, not content doc, so it will not be triggered when content audio is populated
+                    
+                    // const differenceWithAudio = difference.filter(item => audioExists(item))
+                    // const updatedContentIdList = differenceWithAudio.map(item => item.contentId)
+                    // console.log(`updated content id list is: ${updatedContentIdList}`)
+                    // if (updatedContentIdList.length > 0) {
+                    //     sendEmailNotification(updatedContentIdList)
+                    // }
                 }
                 setContentList(newList)
             }

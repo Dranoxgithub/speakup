@@ -41,21 +41,25 @@ const UserInfoDisplay = () => {
     }
 
     return (
-        <div className="profilePicContainer">
-            <img 
-                className="profilePic" 
-                src={profilePic} 
-                onClick={showOrHideModal}
-            />
-            { showModal ? 
-                <div className="profileDetailBox">
-                    <h3 className="userName">{displayName}</h3>
-                    <p>{userEmail}</p>
-                    <button className="signoutButton" onClick={signoutUser}>
-                        <h3>Sign Out</h3>
-                    </button>
-                </div> : <></>
-            }
+        <div>
+            {profilePic ? 
+                <div className="profilePicContainer">
+                    <img 
+                        className="profilePic" 
+                        src={profilePic} 
+                        onClick={showOrHideModal}
+                    />
+                    { showModal ? 
+                        <div className="profileDetailBox">
+                            <h3 className="userName">{displayName}</h3>
+                            <p>{userEmail}</p>
+                            <button className="signoutButton" onClick={signoutUser}>
+                                <h3>Sign Out</h3>
+                            </button>
+                        </div> : <></>
+                    }
+                </div> : 
+                <></> }
         </div>
     )
 }

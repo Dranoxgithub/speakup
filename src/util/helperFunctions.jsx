@@ -1,6 +1,7 @@
 import { fetchUrl } from "../ajax/ajaxUtils";
 
 export const PARSING_STATUS = "Parsing article..."
+export const AD_CONTENT = "This podcast is created with ListenUp AI."
 
 export const secondsToHHMMSS = (seconds) => {
     // credits - https://stackoverflow.com/a/37096512
@@ -15,7 +16,17 @@ export const secondsToHHMMSS = (seconds) => {
     return `${hrs}${mins}${scnds}`;
 };
 
-export const generatePodcast = async (idToken, contentUrls, userid, setLoading) => {
+export const generatePodcast = async (
+    idToken, 
+    userid, 
+    contentUrls,
+    setLoading,
+    podcastTitle=null, 
+    hostName=null,
+    introLength=null,
+    paragraphLength=null,
+    ad=AD_CONTENT) => 
+{
     setLoading(true)
     try {
         const headers = {
@@ -25,12 +36,11 @@ export const generatePodcast = async (idToken, contentUrls, userid, setLoading) 
         const body = {
             "urls": contentUrls,
             "user_id": userid,
-            "intro_minutes": "30 seconds", 
-            // These are the default values for the other fields, so we don't need to specify them unless user wants to change them
-            // "host" :"Zuzu",
-            // "each_para_length": "2 minutes",
-            // "podcast_title":"Podcast Title",
-            // "ad":"This podcast is created using SpeakUp AI"
+            "intro_minutes": introLength, 
+            "host": hostName,
+            "each_para_length": paragraphLength,
+            "podcast_title": podcastTitle,
+            "ad": ad
         }
         
         const saveEndpoint = "https://unified-save-articles-jcjaqcgmja-uc.a.run.app"
