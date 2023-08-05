@@ -30,15 +30,15 @@ const GoogleAuth = (props) => {
             if (userDoc.isFreeTrialUsed) {
                 statusMessage = 'Sorry, your free trial has already been used up :( \n Please subscribe for membership!'
             } else if (props.contentUrl) {
-                // statusMessage = await generatePodcast(
-                //     user.accessToken, 
-                //     user.uid, 
-                //     props.contentUrl.trim().split(','), 
-                //     setLoading,
-                //     props.podcastTitle,
-                //     props.hostName,
-                //     props.introLength,
-                //     props.paragraphLength)
+                statusMessage = await generatePodcast(
+                    user.accessToken, 
+                    user.uid, 
+                    props.contentUrl.trim().split(','), 
+                    setLoading,
+                    props.podcastTitle,
+                    props.hostName,
+                    props.introLength,
+                    props.paragraphLength)
             }
             statusMessage = PARSING_STATUS
             console.log(`statusMessage: ${statusMessage}`)
