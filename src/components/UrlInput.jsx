@@ -46,7 +46,7 @@ const UrlInput = (props) => {
         <div className="content">
             <input
                 type="text"
-                placeholder="Your content url..."
+                placeholder="Your content urls..."
                 value={url}
                 onChange={handleUrlChange}
                 className="urlInput"
