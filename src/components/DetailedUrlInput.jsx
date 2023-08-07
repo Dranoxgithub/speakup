@@ -137,13 +137,13 @@ const DetailedUrlInput = () => {
                     className={activeTab === 'url' ? 'activeTab' : ''} 
                     onClick={() => setActiveTab('url')}
                 >
-                    Drop URLs
+                    Create from URLs
                 </button>
                 <button 
                     className={activeTab === 'text' ? 'activeTab' : ''} 
                     onClick={() => setActiveTab('text')}
                 >
-                    Paste in plain text
+                    Create from text
                 </button>
             </div>
 

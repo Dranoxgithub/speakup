@@ -86,10 +86,10 @@
 .urlInput {
     padding: 1rem;
     border-radius: 10px;
-    border: none;
+    border-color: #e8e8e8;
     margin-bottom: 1rem; 
     font-family: 'Gloock';
-    background-color: #ebebeb;
+    background-color: #FFFFFF;
     font-size: 18px;
     color: #2d3142;
     outline: 0;
@@ -104,6 +104,10 @@
     font-family: 'Gloock';
     color: #9b9b9b;
     font-size: 18px;
+}
+
+.urlInput:focus {
+    box-shadow: 0 0 5px 2px #EF8254; /* This adds the orange glow */
 }
 
 .tabContainer {
@@ -141,6 +145,7 @@
     padding: 10px 0px;
     width: 70%;
     max-width: 700px;
+    min-width: 350px;
 }
 
 
