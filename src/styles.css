@@ -61,7 +61,17 @@
     margin-bottom: 1rem;
     margin-top: 2rem;
     display: flex;
-    flex-direction: row;
+    flex-direction: column; /* Changed from row to column */
+    align-items: center; /* To center align children vertically */
+    width: 100%;
+}
+
+.inputContainer{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center horizontally */
+    align-items: center;     /* Center vertically */
 }
 
 .backNavigator {
@@ -74,23 +84,52 @@
 }
 
 .urlInput {
-    padding: 0.5rem 1rem;
+    padding: 1rem;
     border-radius: 10px;
     border: none;
-    margin-right: 0.5rem;
+    margin-bottom: 1rem; 
     font-family: 'Gloock';
     background-color: #ebebeb;
     font-size: 18px;
-    font-family: 'Gloock';
     color: #2d3142;
     outline: 0;
+    width: 80%; 
+    max-width: 700px; 
+    min-height: 500px; 
+    resize: vertical; 
 }
+
 
 .urlInput::placeholder {
     font-family: 'Gloock';
     color: #9b9b9b;
     font-size: 18px;
 }
+
+.tabContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.tabContainer button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: #ebebeb;
+    margin: 0 0.5rem;
+    transition: background-color 0.3s;
+    font-size: 18px;
+    font-weight: 500;
+    font-family: "Gloock";
+}
+
+.tabContainer button.activeTab {
+    background-color: #EF8254;
+    color: #fff;
+}
+
 
 .customizedInputContainer {
     border-style: solid;
@@ -100,7 +139,10 @@
     font-family: 'Gloock';
     font-size: 16px;
     padding: 10px 0px;
+    width: 70%;
+    max-width: 700px;
 }
+
 
 .customizedInputBlock {
     display: flex;
@@ -126,13 +168,16 @@
 }
 
 .disabledNavigateButton {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    border-radius: 10px;
-    border: none;
+    /* Add styles to make the button appear as desired */
     background-color: #ebebeb;
     color: #757575;
     cursor: not-allowed;
+    border-radius: 10px;
+    border: none;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .navigateButton {
@@ -222,6 +267,7 @@ a {
     padding-right: 2rem;
     margin: 5px;
 }
+
 
 .previewBoxesContainer {
     display: flex;
@@ -315,6 +361,25 @@ a {
     margin-top: 0px;
 }
 
+.customizeSettingButton {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 10px;
+    border: none;
+    background-color: #ebebeb;
+    color: #757575;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: center; /* Center align buttons horizontally */
+    gap: 1rem; /* Space between buttons */
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);
@@ -323,3 +388,4 @@ a {
         transform: rotate(360deg);
     }
 }
+

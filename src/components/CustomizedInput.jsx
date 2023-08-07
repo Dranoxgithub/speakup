@@ -3,6 +3,7 @@ import { AD_CONTENT } from "../util/helperFunctions"
 const CustomizedInput = (props) => {
     return (
         <div className="customizedInputContainer">
+            <h2>Customize generation</h2>
 
             <div className="customizedInputBlock">
                 <h4>Podcast Title: </h4>
