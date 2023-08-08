@@ -39,6 +39,17 @@ const GoogleAuth = (props) => {
                     props.hostName,
                     props.introLength,
                     props.paragraphLength)
+            } else if (props.plainTextInput) {
+                errorMessage = await generatePodcast(
+                    user.accessToken, 
+                    user.uid, 
+                    null, 
+                    props.plainTextInput,
+                    setLoading,
+                    props.podcastTitle,
+                    props.hostName,
+                    props.introLength,
+                    props.paragraphLength)
             }
             console.log(`errorMessage: ${errorMessage}`)
     

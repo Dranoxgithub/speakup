@@ -55,15 +55,17 @@ const DetailedUrlInput = (props) => {
     }, [activeTab]);
     
     useEffect(() => {
-        if (currentCharIndex < placeholders[currentPlaceholder].length) {
-            timeoutRef.current = setTimeout(() => {
-                setCurrentCharIndex((prevIndex) => prevIndex + 1);
-            }, 10); // adjust timing as needed
-        } else {
-            timeoutRef.current = setTimeout(() => {
-                setCurrentPlaceholder((prevPlaceholder) => (prevPlaceholder + 1) % placeholders.length);
-                setCurrentCharIndex(0);
-            }, 3000);
+        if (placeholders[currentPlaceholder]) {
+            if (currentCharIndex < placeholders[currentPlaceholder].length) {
+                timeoutRef.current = setTimeout(() => {
+                    setCurrentCharIndex((prevIndex) => prevIndex + 1);
+                }, 10); // adjust timing as needed
+            } else {
+                timeoutRef.current = setTimeout(() => {
+                    setCurrentPlaceholder((prevPlaceholder) => (prevPlaceholder + 1) % placeholders.length);
+                    setCurrentCharIndex(0);
+                }, 3000);
+            }
         }
     
         // This will clear the timeout when the component is unmounted or the effect is re-run.
@@ -114,18 +116,53 @@ const DetailedUrlInput = (props) => {
                         hostName,
                         introLength,
                         paragraphLength)
-                    console.log(`[DetailedUrlInput] setting status message to ${errorMessage}`)
                     props.setErrorMessage(errorMessage)
                     if (!errorMessage) {
                         props.setInputContent('')
                     }
                 } else {
-                    navigate(`/login?contentUrl=${urls.join(',')}&podcastTitle=${podcastTitle}&hostName=${hostName}&introLength=${introLength}&paragraphLength=${paragraphLength}`)
+                    // navigate(`/login?contentUrl=${urls.join(',')}&podcastTitle=${podcastTitle}&hostName=${hostName}&introLength=${introLength}&paragraphLength=${paragraphLength}`)
+                    navigate('/login', {
+                        replace: true,
+                        state: {
+                            contentUrl: urls.join(','),
+                            podcastTitle: podcastTitle,
+                            hostName: hostName,
+                            introLength: introLength,
+                            paragraphLength: paragraphLength
+                        }
+                    })
                 }
             }
         }
         else {
-            // Handle plain text input logic
+            if (userId) {
+                const errorMessage = await generatePodcast(
+                    userIdToken,
+                    userId,
+                    null,
+                    props.inputContent,
+                    setLoading,
+                    podcastTitle,
+                    hostName,
+                    introLength,
+                    paragraphLength)
+                props.setErrorMessage(errorMessage)
+                if (!errorMessage) {
+                    props.setInputContent('')
+                }
+            } else {
+                navigate('/login', {
+                    replace: true,
+                    state: {
+                        plainTextInput: props.inputContent,
+                        podcastTitle: podcastTitle,
+                        hostName: hostName,
+                        introLength: introLength,
+                        paragraphLength: paragraphLength
+                    }
+                })
+            }
         }
     }
 

@@ -92,7 +92,6 @@ const DashBoardScreen = () => {
 
     useEffect(() => {
         if (location.state) {
-            console.log(`[dashboard] setting status message to ${location.state.errorMessage}`)
             setErrorMessage(location.state.errorMessage)
             if (location.state.errorMessage) {
                 console.log(`setting content url to ${location.state.contentUrl}`)

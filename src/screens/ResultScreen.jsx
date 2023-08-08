@@ -131,7 +131,7 @@ const ResultScreen = () => {
             
             {error ? 
                 <h2>{error}</h2> : 
-                <div>
+                <div className="container">
                     <h2 className="title">{title}</h2>
                     <div className="contentRow">
 
