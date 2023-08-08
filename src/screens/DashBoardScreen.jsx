@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from "react-router-dom"
-import UrlInput from "../components/UrlInput"
 import { useEffect, useRef, useState } from "react"
 import { initializeFirebaseApp, getDocument, updateDocument } from "../util/firebaseUtils"
 import PodcastResultPreview from "../components/PodcastResultPreview"
@@ -9,9 +8,9 @@ import { useAppSelector } from "../redux/hooks"
 import { getUserId, getUserEmail } from "../redux/userSlice"
 import { v4 as uuidv4 } from 'uuid';
 import { onSnapshot, getFirestore, doc } from "firebase/firestore"
-import { PARSING_STATUS } from "../util/helperFunctions"
 import UserInfoDisplay from "../components/UserInfoDisplay"
 import { getAuth } from "@firebase/auth"
+import DetailedUrlInput from "../components/DetailedUrlInput"
 
 const DashBoardScreen = () => {
     const location = useLocation()
@@ -20,18 +19,13 @@ const DashBoardScreen = () => {
     
     const navigate = useNavigate()
 
-    const [statusMessage, setStatusMessage] = useState()
-    const [contentUrl, setContentUrl] = useState('')
+    const [errorMessage, setErrorMessage] = useState()
+    const [inputContent, setInputContent] = useState('')
     const [loading, setLoading] = useState(false)
     const [fetchingUser, setFetchingUser] = useState(true)
 
     const [contentList, setContentList] = useState([])
     const prevListRef = useRef([])
-
-    useEffect(() => {
-        setContentUrl('')
-        setStatusMessage()
-    }, [])
 
     useEffect(() => {
         prevListRef.current = contentList
@@ -88,6 +82,7 @@ const DashBoardScreen = () => {
                     shownotes: shownotes,
                     created: content.created_at,
                     urls: urls,  
+                    status: content.status
                 }
             }
         })
@@ -97,11 +92,11 @@ const DashBoardScreen = () => {
 
     useEffect(() => {
         if (location.state) {
-            console.log(`[dashboard] setting status message to ${location.state.statusMessage}`)
-            setStatusMessage(location.state.statusMessage)
-            if (location.state.statusMessage && location.state.statusMessage != PARSING_STATUS) {
+            console.log(`[dashboard] setting status message to ${location.state.errorMessage}`)
+            setErrorMessage(location.state.errorMessage)
+            if (location.state.errorMessage) {
                 console.log(`setting content url to ${location.state.contentUrl}`)
-                setContentUrl(location.state.contentUrl)
+                setInputContent(location.state.contentUrl)
             }
         }
     }, [location])
@@ -117,20 +112,13 @@ const DashBoardScreen = () => {
             if (user) {
                 const newList = (await populateContentList(user)).reverse()
                 if (prevListRef.current.length > 0) {
-                    const difference = newList.filter(newItem => prevListRef.current.filter(oldItem => oldItem.contentId == newItem.contentId).length == 0)
-                    if (difference.length > 0 && statusMessage == PARSING_STATUS) {
-                        setStatusMessage()
+                    const addedContent = newList.filter(newItem => prevListRef.current.filter(oldItem => oldItem.contentId == newItem.contentId && audioExists(oldItem)).length == 0)
+                    const addedContentWithAudio = addedContent.filter(item => audioExists(item))
+                    const updatedContentIdList = addedContentWithAudio.map(item => item.contentId)
+                    console.log(`updated content id list is: ${updatedContentIdList}`)
+                    if (updatedContentIdList.length > 0) {
+                        sendEmailNotification(updatedContentIdList)
                     }
-                    // @TODO: fix bug
-                    // email will never be sent
-                    // this only listens for changes in user doc, not content doc, so it will not be triggered when content audio is populated
-                    
-                    // const differenceWithAudio = difference.filter(item => audioExists(item))
-                    // const updatedContentIdList = differenceWithAudio.map(item => item.contentId)
-                    // console.log(`updated content id list is: ${updatedContentIdList}`)
-                    // if (updatedContentIdList.length > 0) {
-                    //     sendEmailNotification(updatedContentIdList)
-                    // }
                 }
                 setContentList(newList)
             }
@@ -183,7 +171,7 @@ const DashBoardScreen = () => {
     }
 
     const onInputChanged = () => {
-        setStatusMessage()
+        setErrorMessage()
     }
 
     return (
@@ -195,16 +183,16 @@ const DashBoardScreen = () => {
                     <UserInfoDisplay />
                 </div>
                 
-                <UrlInput 
-                    input={contentUrl} 
+                <DetailedUrlInput 
+                    inputContent={inputContent} 
+                    setInputContent={setInputContent} 
                     onChange={onInputChanged} 
-                    setStatusMessage={setStatusMessage} 
-                    setContentUrl={setContentUrl} 
+                    setErrorMessage={setErrorMessage} 
                 />
                 
-                {statusMessage ? 
-                    statusMessage.split('\n').map((item, index) => (
-                        <h4 key={index} className="statusMessage">{item}</h4>
+                {errorMessage ? 
+                    errorMessage.split('\n').map((item, index) => (
+                        <h4 key={index} className="errorMessage">{item}</h4>
                     )) :
                     <></>
                 }
@@ -226,6 +214,7 @@ const DashBoardScreen = () => {
                             shownotes={item.shownotes}
                             created={item.created}
                             urls={item.urls}
+                            status={item.status}
                         />
                     ))}
                 </div>

@@ -6,7 +6,7 @@ import Loading from "../components/Loading";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId } from "../redux/userSlice";
 import { AiOutlineArrowLeft } from 'react-icons/ai'
-
+import { secondsToHHMMSS } from "../util/helperFunctions";
 
 const ResultScreen = () => {
     const location = useLocation()
@@ -136,7 +136,7 @@ const ResultScreen = () => {
                     <div className="contentRow">
 
                         {created ? <p className="contentText">Created at: {created.slice(0,10)}</p> : null}
-                        {duration ? <p className="contentText">Audio length: {duration} seconds</p> : null}
+                        {duration ? <p className="contentText">Audio length: {secondsToHHMMSS(duration)}</p> : null}
                         {urls ? urls.map((url, index) => (
                             <p className="contentText" key={index}>{url}</p>
                         )) : null}

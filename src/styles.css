@@ -95,7 +95,7 @@
     outline: 0;
     width: 80%; 
     max-width: 700px; 
-    min-height: 500px; 
+    min-height: 300px; 
     resize: vertical; 
 }
 
@@ -174,15 +174,13 @@
 
 .disabledNavigateButton {
     /* Add styles to make the button appear as desired */
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 10px;
+    border: none;
     background-color: #ebebeb;
     color: #757575;
     cursor: not-allowed;
-    border-radius: 10px;
-    border: none;
-    padding: 0.5rem 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .navigateButton {
@@ -267,7 +265,7 @@ a {
     animation: spin 1s linear infinite;
 }
 
-.statusMessage {
+.errorMessage {
     padding-left: 2rem;
     padding-right: 2rem;
     margin: 5px;
@@ -367,21 +365,20 @@ a {
 }
 
 .customizeSettingButton {
-    padding-left: 1rem;
-    padding-right: 1rem;
     border-radius: 10px;
     border: none;
-    background-color: #ebebeb;
     color: #757575;
     width: 50px;
     display: flex;
-    align-items: center;
     justify-content: center;
+    position: absolute;
+    margin-left: 250px;
 }
 
 .buttons-container {
     display: flex;
-    justify-content: center; /* Center align buttons horizontally */
+    justify-content: center; 
+    align-items: center;
     gap: 1rem; /* Space between buttons */
 }
 

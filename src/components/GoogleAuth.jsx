@@ -5,12 +5,11 @@ import { useState } from "react";
 import { createUserDocument, getDocument, updateDocument } from "../util/firebaseUtils";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import Loading from "./Loading";
-import { PARSING_STATUS, generatePodcast } from "../util/helperFunctions";
+import { generatePodcast } from "../util/helperFunctions";
 
 const GoogleAuth = (props) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
-    // const [statusMessage, setstatusMessage] = useState()
 
     const signup = async () => {
         console.log(`content url is: ${props.contentUrl}`)
@@ -25,29 +24,29 @@ const GoogleAuth = (props) => {
             const user = result.user;
             await createUserDocument(user.uid)
 
-            let statusMessage
+            let errorMessage
             const userDoc = await getDocument('users', user.uid)
             if (userDoc.isFreeTrialUsed) {
-                statusMessage = 'Sorry, your free trial has already been used up :( \n Please subscribe for membership!'
+                errorMessage = 'Sorry, your free trial has already been used up :( \n Please subscribe for membership!'
             } else if (props.contentUrl) {
-                statusMessage = await generatePodcast(
+                errorMessage = await generatePodcast(
                     user.accessToken, 
                     user.uid, 
                     props.contentUrl.trim().split(','), 
+                    null,
                     setLoading,
                     props.podcastTitle,
                     props.hostName,
                     props.introLength,
                     props.paragraphLength)
             }
-            statusMessage = PARSING_STATUS
-            console.log(`statusMessage: ${statusMessage}`)
+            console.log(`errorMessage: ${errorMessage}`)
     
             // userDoc.isFreeTrialUsed = true; // potential bugs: if the user podcast is not generated successfully, the user will still be marked as used free trial
             // // another bug: if the user indeed has used free trial, the page don't show the error message
             // await updateDocument('users', user.uid, userDoc)
     
-            navigate('/dashboard', { state: { statusMessage: statusMessage, contentUrl: props.contentUrl } })
+            navigate('/dashboard', { state: { errorMessage: errorMessage, contentUrl: props.contentUrl } })
         }
     }
 

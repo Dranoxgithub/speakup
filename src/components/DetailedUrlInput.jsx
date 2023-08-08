@@ -1,19 +1,19 @@
 import { useAppSelector } from "../redux/hooks"
 import { getUserId, getUserIdToken } from "../redux/userSlice"
-import { PARSING_STATUS, generatePodcast } from "../util/helperFunctions"
+import { generatePodcast } from "../util/helperFunctions"
 import { useNavigate } from "react-router-dom"
 import { useState, useEffect, useRef } from "react"
 import { BiSolidCustomize } from 'react-icons/bi'
 import { MdMenu, MdMenuOpen, MdTune, MdClose } from 'react-icons/md'
 import CustomizedInput from "./CustomizedInput"
+import Loading from "./Loading"
 
-const DetailedUrlInput = () => {
+const DetailedUrlInput = (props) => {
     const userId = useAppSelector(getUserId)
     const userIdToken = useAppSelector(getUserIdToken)
 
     const navigate = useNavigate()
 
-    const [url, setUrl] = useState('')
     const [loading, setLoading] = useState(false)
     const [showCustomization, setShowCustomization] = useState(false)
 
@@ -26,12 +26,6 @@ const DetailedUrlInput = () => {
     const timeoutRef = useRef(null);
     const [activeTab, setActiveTab] = useState('url'); // possible values: 'url', 'text'
     
-
-    useEffect(() => {
-        setCurrentPlaceholder(0);
-        setCurrentCharIndex(0);
-    }, [activeTab]);
-
     const urlPlaceholders = [
         "Drop URLs to turn articles into podcasts instantly...",
         "Drop multiple links for a longer, richer, cohesive episode...",
@@ -80,24 +74,24 @@ const DetailedUrlInput = () => {
         };
     }, [currentCharIndex, currentPlaceholder, activeTab]);
 
-    const handleUrlChange = (e) => {
-        setUrl(e.target.value)
+    const handleContentChange = (e) => {
+        props.setInputContent(e.target.value)
+        props.onChange()
     }
 
-
-    const containsValidUrl = (url) => {
-        const urls = extractUrls(url)
+    const containsValidUrl = (urlText) => {
+        const urls = extractUrls(urlText)
         return urls && urls.length > 0
     }
 
-    const extractUrls = (url) => {
-        if (!url || url == '') {
+    const extractUrls = (urlText) => {
+        if (!urlText || urlText == '') {
             return false
         }
         
         // Extract the URL from the input string using a regular expression
         const urlRegex = /(https?:\/\/[^\s]+)/g
-        const matches = url.toLowerCase().match(urlRegex)
+        const matches = urlText.toLowerCase().match(urlRegex)
         if (!matches) {
             return [];
         }
@@ -106,75 +100,102 @@ const DetailedUrlInput = () => {
 
     const onCreatePodcast = async () => {
         if (activeTab === 'url'){
-        const urls = extractUrls(url)
-        console.log(`extracted following urls: ${urls}`)
-        if (urls) {
-            if (userId) {
-                const statusMessage = await generatePodcast(
-                    userIdToken,
-                    userId,
-                    urls,
-                    setLoading,
-                    podcastTitle,
-                    hostName,
-                    introLength,
-                    paragraphLength)
-                navigate('/dashboard', { state: { statusMessage: statusMessage, contentUrl: url } })
-            } else {
-                navigate(`/login?contentUrl=${urls.join(',')}&podcastTitle=${podcastTitle}&hostName=${hostName}&introLength=${introLength}&paragraphLength=${paragraphLength}`)
+            const urls = extractUrls(props.inputContent)
+            console.log(`extracted following urls: ${urls}`)
+            if (urls) {
+                if (userId) {
+                    const errorMessage = await generatePodcast(
+                        userIdToken,
+                        userId,
+                        urls,
+                        null,
+                        setLoading,
+                        podcastTitle,
+                        hostName,
+                        introLength,
+                        paragraphLength)
+                    console.log(`[DetailedUrlInput] setting status message to ${errorMessage}`)
+                    props.setErrorMessage(errorMessage)
+                    if (!errorMessage) {
+                        props.setInputContent('')
+                    }
+                } else {
+                    navigate(`/login?contentUrl=${urls.join(',')}&podcastTitle=${podcastTitle}&hostName=${hostName}&introLength=${introLength}&paragraphLength=${paragraphLength}`)
+                }
             }
-        }}
+        }
         else {
             // Handle plain text input logic
+        }
+    }
+
+    const isButtonDisabled = () => {
+        if (loading) {
+            return true
+        }
+
+        if (activeTab == 'url') {
+            return !containsValidUrl(props.inputContent)
+        } else {
+            return props.inputContent == null || props.inputContent == ''
         }
     }
 
     return (
         <div className="inputContainer">
             <div className="content">
-            <div className="tabContainer">
-                <button 
-                    className={activeTab === 'url' ? 'activeTab' : ''} 
-                    onClick={() => setActiveTab('url')}
-                >
-                    Create from URLs
-                </button>
-                <button 
-                    className={activeTab === 'text' ? 'activeTab' : ''} 
-                    onClick={() => setActiveTab('text')}
-                >
-                    Create from text
-                </button>
-            </div>
+                <div className="tabContainer">
+                    <button 
+                        className={activeTab === 'url' ? 'activeTab' : ''} 
+                        onClick={() => {
+                            setActiveTab('url')
+                            props.setInputContent('')
+                        }}
+                    >
+                        Create from URLs
+                    </button>
+                    <button 
+                        className={activeTab === 'text' ? 'activeTab' : ''} 
+                        onClick={() => {
+                            setActiveTab('text')
+                            props.setInputContent('')
+                        }}
+                    >
+                        Create from text
+                    </button>
+                </div>
 
                 <textarea
-                    placeholder={placeholders[currentPlaceholder].substring(0, currentCharIndex)}
-                    value={url}
-                    onChange={handleUrlChange}
+                    placeholder={placeholders[currentPlaceholder] ? placeholders[currentPlaceholder].substring(0, currentCharIndex) : ''}
+                    value={props.inputContent}
+                    onChange={handleContentChange}
                     className="urlInput"
                 />
+
                 <div className="buttons-container">
-                <button 
-                    className={containsValidUrl(url) && !loading ? 'navigateButton' : 'disabledNavigateButton'} 
-                    onClick={onCreatePodcast}
-                >
-                    <p className="buttonText">Generate podcast</p>
-                </button>
-                <div className="customizeSettingButton">
-                {!showCustomization ? 
-                    <MdTune 
-                        size={36} 
-                        color="#9b9b9b" 
-                        style={{ alignSelf: 'center', cursor: 'pointer'}} 
-                        onClick={() => setShowCustomization(true)}
-                    />: 
-                    <MdClose 
-                        size={36} 
-                        color="#9b9b9b" 
-                        style={{ alignSelf: 'center', cursor: 'pointer'}} 
-                        onClick={() => setShowCustomization(false)}
-                    />
-                }</div>
+                    <button 
+                        className={!isButtonDisabled() ? 'navigateButton' : 'disabledNavigateButton'} 
+                        onClick={onCreatePodcast}
+                        disabled={isButtonDisabled()}
+                    >
+                        <p className="buttonText">Generate podcast</p>
+                    </button>
+                    <div className="customizeSettingButton">
+                    {!showCustomization ? 
+                        <MdTune 
+                            size={36} 
+                            color="#9b9b9b" 
+                            style={{ alignSelf: 'center', cursor: 'pointer'}} 
+                            onClick={() => setShowCustomization(true)}
+                        />: 
+                        <MdClose 
+                            size={36} 
+                            color="#9b9b9b" 
+                            style={{ alignSelf: 'center', cursor: 'pointer'}} 
+                            onClick={() => setShowCustomization(false)}
+                        />
+                    }
+                    </div>
                 </div>
             </div>
 
@@ -190,6 +211,8 @@ const DetailedUrlInput = () => {
                     setParagraphLength={setParagraphLength}
                 /> : 
                 <></>}
+
+            {loading ? <Loading /> : <></>}
         </div>
     )
 }

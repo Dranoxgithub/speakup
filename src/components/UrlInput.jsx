@@ -33,8 +33,8 @@ const UrlInput = (props) => {
     const onCreatePodcast = async () => {
         if (isValidUrl(url)) {
             if (userId) {
-                const statusMessage = await generatePodcast(userIdToken, userId, [url.trim()], setLoading)
-                props.setStatusMessage(statusMessage)
+                const errorMessage = await generatePodcast(userIdToken, userId, [url.trim()], null, setLoading)
+                props.setErrorMessage(errorMessage)
                 props.setContentUrl(url)
             } else {
                 navigate(`/login?contentUrl=${url}`, {replace: true})

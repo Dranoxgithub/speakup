@@ -26,7 +26,9 @@ const PodcastResultPreview = (props) => {
                 <video controls name="podcast" className="audioPlayer">
                     <source src={props.audioUrl} type='audio/mp3' />
                 </video> : 
-                <h2 className="generatingText">Generating...</h2>
+                (props.status == 'failed' ? 
+                    <h2 className="generatingText" style={{color: 'red'}}>🚨 Failed</h2> :
+                    <h2 className="generatingText">Generating...</h2>)
             }
         </div>
     )

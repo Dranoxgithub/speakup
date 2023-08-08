@@ -1,6 +1,5 @@
 import { fetchUrl } from "../ajax/ajaxUtils";
 
-export const PARSING_STATUS = "Parsing article...";
 export const AD_CONTENT = "This podcast is created with ListenUp AI.";
 
 export const secondsToHHMMSS = (seconds) => {
@@ -19,7 +18,8 @@ export const secondsToHHMMSS = (seconds) => {
 export const generatePodcast = async (
   idToken,
   userid,
-  contentUrls,
+  contentUrls = null,
+  plainText = null,
   setLoading,
   podcastTitle = null,
   hostName = null,
@@ -34,7 +34,6 @@ export const generatePodcast = async (
       "Content-Type": "application/json",
     };
     const body = {
-      urls: contentUrls,
       user_id: userid,
       intro_minutes: introLength,
       host: hostName,
@@ -42,6 +41,12 @@ export const generatePodcast = async (
       podcast_title: podcastTitle,
       ad: ad,
     };
+
+    if (contentUrls != null) {
+      body.urls = contentUrls
+    } else if (plainText != null) {
+      body.plain_text = plainText
+    }
 
     const saveEndpoint =
       "https://unified-save-articles-jcjaqcgmja-uc.a.run.app";
@@ -57,7 +62,7 @@ export const generatePodcast = async (
       return await response.text();
     } else {
       setLoading(false);
-      return PARSING_STATUS;
+      return undefined;
     }
   } catch (error) {
     setLoading(false);
@@ -86,7 +91,7 @@ export const cloneVoice = async (idToken, userid) => {
     if (response.status != 200) {
       return await response.text();
     } else {
-      return PARSING_STATUS;
+      return undefined;
     }
   } catch (error) {
     return error.message;
