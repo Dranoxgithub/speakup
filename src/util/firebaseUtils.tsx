@@ -31,7 +31,11 @@ export async function getDocument(collectionName: string, id: string) {
 
   const app = initializeFirebaseApp();
   const db = getFirestore(app);
-  return (await getDoc(doc(db, collectionName, id))).data();
+  try {
+    return (await getDoc(doc(db, collectionName, id))).data();
+  } catch {
+    return null
+  }
 }
 
 export async function updateDocument(
@@ -39,11 +43,13 @@ export async function updateDocument(
   id: string,
   newDocument: any
 ) {
-  // console.log(`updating ${collectionName} document with id: ${id}`);
-
   const app = initializeFirebaseApp();
   const db = getFirestore(app);
-  await setDoc(doc(db, collectionName, id), newDocument, { merge: true });
+  try {
+    await setDoc(doc(db, collectionName, id), newDocument, { merge: true });
+  } catch {
+
+  }
 }
 
 export function initializeFirebaseApp() {
