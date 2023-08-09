@@ -11,6 +11,7 @@ const LoginScreen = () => {
     const [hostName, setHostName] = useState()
     const [introLength, setIntroLength] = useState()
     const [paragraphLength, setParagraphLength] = useState()
+    const [contentId, setContentid] = useState()
 
     useEffect(() => {
         const populateContentFromQueryParams = (queryParams) => {
@@ -29,6 +30,7 @@ const LoginScreen = () => {
             setHostName(location.state.hostName)
             setIntroLength(location.state.introLength)
             setParagraphLength(location.state.paragraphLength)
+            setContentid(location.state.contentId)
         }
 
         const populateContent = async () => {
@@ -55,6 +57,7 @@ const LoginScreen = () => {
                 hostName={hostName}
                 introLength={introLength}
                 paragraphLength={paragraphLength}
+                contentId={contentId}
             />
         </div>
     )

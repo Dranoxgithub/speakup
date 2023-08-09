@@ -92,8 +92,8 @@ const DetailedUrlInput = (props) => {
         }
         
         // Extract the URL from the input string using a regular expression
-        const urlRegex = /(https?:\/\/[^\s]+)/g
-        const matches = urlText.toLowerCase().match(urlRegex)
+        const urlRegex = /(https?:\/\/[^\s]+)/gi
+        const matches = urlText.match(urlRegex)
         if (!matches) {
             return [];
         }

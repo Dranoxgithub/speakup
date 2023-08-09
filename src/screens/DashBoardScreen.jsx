@@ -25,11 +25,7 @@ const DashBoardScreen = () => {
     const [fetchingUser, setFetchingUser] = useState(true)
 
     const [contentList, setContentList] = useState([])
-    const prevListRef = useRef([])
-
-    useEffect(() => {
-        prevListRef.current = contentList
-    }, [contentList])
+    const [contentIdEmailSent, setContentIdEmailSent] = useState({})
 
     const populateAudioBlob = async (url) => {
         if (url) {
@@ -45,8 +41,24 @@ const DashBoardScreen = () => {
     }
 
     const populateContentList = async (user) => {
-        const asyncOperations = user.user_saved.map(async userSavedContent => {
-            const contentId = userSavedContent.content_id
+        console.log(`calling populate content list`)
+        const asyncOperations = user.user_saved.map(async (item, index) => {
+            const contentId = item.content_id
+            setContentIdEmailSent(prevDict => contentId in prevDict ? prevDict : ({
+                ...prevDict,
+                [contentId]: item.status && item.status == 'notified'
+            }))
+
+            if (item.status && item.status == 'success' && !contentIdEmailSent[contentId]) {
+                sendEmailNotification(contentId)
+                setContentIdEmailSent(prevDict => ({
+                    ...prevDict,
+                    [contentId]: true
+                }))
+                user.user_saved[index].status = 'notified'
+                await updateDocument('users', userId, user)
+            }
+
             const content = await getDocument('contents', contentId)
             if (content) {
                 const title = content.original_content.title
@@ -87,7 +99,7 @@ const DashBoardScreen = () => {
             }
         })
         const list = await Promise.all(asyncOperations)
-        return list.filter(item => item && item != null)
+        return list.filter(item => item && item != null).reverse()
     }
 
     useEffect(() => {
@@ -101,25 +113,11 @@ const DashBoardScreen = () => {
     }, [location])
 
     useEffect(() => {
-        const audioExists = (content) => {
-            return content.result && content.result.audio && content.result.audio.url
-        }
-
         const processSnapshot = async (doc) => {
             setLoading(true)
             const user = doc.data()
             if (user) {
-                const newList = (await populateContentList(user)).reverse()
-                if (prevListRef.current.length > 0) {
-                    const addedContent = newList.filter(newItem => prevListRef.current.filter(oldItem => oldItem.contentId == newItem.contentId && audioExists(oldItem)).length == 0)
-                    const addedContentWithAudio = addedContent.filter(item => audioExists(item))
-                    const updatedContentIdList = addedContentWithAudio.map(item => item.contentId)
-                    console.log(`updated content id list is: ${updatedContentIdList}`)
-                    if (updatedContentIdList.length > 0) {
-                        sendEmailNotification(updatedContentIdList)
-                    }
-                }
-                setContentList(newList)
+                setContentList(await populateContentList(user))
             }
             setLoading(false)
         }
@@ -128,11 +126,9 @@ const DashBoardScreen = () => {
         if (userId) {
             const app = initializeFirebaseApp()
             const db = getFirestore(app)
-            onSnapshot(doc(db, 'users', userId), doc => {
-                processSnapshot(doc)
+            onSnapshot(doc(db, 'users', userId), async (doc) => {
+                await processSnapshot(doc)
             })
-        } else {
-            
         }
     }, [userId])
 
@@ -147,26 +143,17 @@ const DashBoardScreen = () => {
         }, 500)
     }, [])
 
-    const sendEmailNotification = (contentIdList) => {
+    const sendEmailNotification = (contentId) => {
         const uuid = uuidv4()
-        if (contentIdList.length > 1) {
-            updateDocument('mail', uuid, {
-                to: userEmail,
-                template: {
-                    name: 'toDashboard'
+        updateDocument('mail', uuid, {
+            to: userEmail,
+            template: {
+                name: 'toResult',
+                data: {
+                    contentId: contentId
                 }
-            })
-        } else {
-            updateDocument('mail', uuid, {
-                to: userEmail,
-                template: {
-                    name: 'toResult',
-                    data: {
-                        contentId: contentIdList[0]
-                    }
-                }
-            })
-        }
+            }
+        })
     }
 
     const onInputChanged = () => {

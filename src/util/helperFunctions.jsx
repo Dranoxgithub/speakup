@@ -56,7 +56,6 @@ export const generatePodcast = async (
       body: JSON.stringify(body),
     };
     const response = await fetchUrl(saveEndpoint, {}, requestOptions);
-    console.log(`response status: ${JSON.stringify(response.status)}`);
     if (response.status != 200) {
       setLoading(false);
       return await response.text();
