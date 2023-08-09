@@ -4,24 +4,31 @@ import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId, getUserIdToken } from "../redux/userSlice";
 import { cloneVoice } from "../util/helperFunctions";
+import {CiCircleRemove} from 'react-icons/ci'
+import Loading from "./Loading";
 
 const storage = getStorage(initializeFirebaseApp());
 
-const CloneVoice = () => {
+const CloneVoice = (props) => {
   const userId = useAppSelector(getUserId);
   const userIdToken = useAppSelector(getUserIdToken);
 
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [inputKey, setInputKey] = useState(0)
+
+  const removeFile = (fileName) => {
+    setFiles(files.filter(file => file.name != fileName))
+    setInputKey(prevValue => prevValue + 1)
+  }
 
   const handleFileChange = (event) => {
-    console.log("here" + event.target.files);
-    console.log(event);
-    Array.from(event.target.files).map((file) => console.log(file.type));
     const selectedFiles = Array.from(event.target.files).filter(
       (file) => file.type === "audio/mpeg"
-    );
-    setFiles(selectedFiles.slice(0, 5));
+    )
+    console.log(`files: ${selectedFiles.map(file => JSON.stringify(file))}`)
+    setFiles(selectedFiles.slice(0, 5))
+    setInputKey(prevValue => prevValue + 1)
   };
 
   const handleUpload = async () => {
@@ -37,29 +44,41 @@ const CloneVoice = () => {
 
       await Promise.all(uploadPromises);
 
-      await cloneVoice(userIdToken, userId);
-
-      alert("Files uploaded successfully!");
+      const voiceId = await cloneVoice(userIdToken, userId);
       setFiles([]);
+      props.setVoiceId(voiceId)
     } catch (error) {
       console.error("Error uploading files:", error);
     } finally {
       setUploading(false);
+      setInputKey(prevValue => prevValue + 1)
     }
   };
 
   return (
     <div>
-      <input type="file" accept=".mp3" multiple onChange={handleFileChange} />
-      <button onClick={handleUpload}>
-        {uploading ? "Uploading..." : "Upload Files"}
-      </button>
+      <div className="fileUploadContainer">
+        <label htmlFor="filePicker" className="fileSelectButton">
+          Choose Files
+        </label>
+        <input id="filePicker" type="file" accept=".mp3" multiple onChange={handleFileChange} key={inputKey} style={{visibility: 'hidden'}} />
+        <button 
+          onClick={handleUpload} 
+          className={files.length == 0 ? "disabledFileUploadButton": "fileUploadButton"}
+          disabled={files.length == 0}
+        >
+          {uploading ? "Uploading..." : "Upload Files"}
+        </button>
+      </div>
+      {uploading ? <Loading /> : <></>}
       {files.length > 0 && (
-        <div>
-          <h3>Selected Files:</h3>
-          <ul>
+        <div style={{marginLeft: '25%', marginRight:'25%'}}>
+          <ul className="fileList">
             {files.map((file, index) => (
-              <li key={index}>{file.name}</li>
+              <li key={index} className="fileTextContainer">
+                <p className="fileText">{file.name}</p>
+                <CiCircleRemove size={20} onClick={() => removeFile(file.name)}/>
+              </li>
             ))}
           </ul>
         </div>

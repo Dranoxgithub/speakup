@@ -37,6 +37,7 @@ const GoogleAuth = (props) => {
                     setLoading,
                     props.podcastTitle,
                     props.hostName,
+                    props.voiceId,
                     props.introLength,
                     props.paragraphLength)
             } else if (props.plainTextInput) {
@@ -48,6 +49,7 @@ const GoogleAuth = (props) => {
                     setLoading,
                     props.podcastTitle,
                     props.hostName,
+                    props.voiceId,
                     props.introLength,
                     props.paragraphLength)
             }

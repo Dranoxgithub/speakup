@@ -7,6 +7,7 @@ import { BiSolidCustomize } from 'react-icons/bi'
 import { MdMenu, MdMenuOpen, MdTune, MdClose } from 'react-icons/md'
 import CustomizedInput from "./CustomizedInput"
 import Loading from "./Loading"
+import CloneVoice from "./CloneVoice"
 
 const DetailedUrlInput = (props) => {
     const userId = useAppSelector(getUserId)
@@ -19,6 +20,7 @@ const DetailedUrlInput = (props) => {
 
     const [podcastTitle, setPodcastTitle] = useState()
     const [hostName, setHostName] = useState()
+    const [voiceId, setVoiceId] = useState('default')
     const [introLength, setIntroLength] = useState()
     const [paragraphLength, setParagraphLength] = useState()
     const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
@@ -114,6 +116,7 @@ const DetailedUrlInput = (props) => {
                         setLoading,
                         podcastTitle,
                         hostName,
+                        voiceId == 'default' || voiceId == 'clone' ? null : voiceId,
                         introLength,
                         paragraphLength)
                     props.setErrorMessage(errorMessage)
@@ -121,13 +124,13 @@ const DetailedUrlInput = (props) => {
                         props.setInputContent('')
                     }
                 } else {
-                    // navigate(`/login?contentUrl=${urls.join(',')}&podcastTitle=${podcastTitle}&hostName=${hostName}&introLength=${introLength}&paragraphLength=${paragraphLength}`)
                     navigate('/login', {
                         replace: true,
                         state: {
                             contentUrl: urls.join(','),
                             podcastTitle: podcastTitle,
                             hostName: hostName,
+                            voiceId: voiceId == 'default' || voiceId == 'clone' ? null : voiceId,
                             introLength: introLength,
                             paragraphLength: paragraphLength
                         }
@@ -145,6 +148,7 @@ const DetailedUrlInput = (props) => {
                     setLoading,
                     podcastTitle,
                     hostName,
+                    voiceId == 'default' || voiceId == 'clone' ? null : voiceId,
                     introLength,
                     paragraphLength)
                 props.setErrorMessage(errorMessage)
@@ -158,6 +162,7 @@ const DetailedUrlInput = (props) => {
                         plainTextInput: props.inputContent,
                         podcastTitle: podcastTitle,
                         hostName: hostName,
+                        voiceId: voiceId == 'default' || voiceId == 'clone' ? null : voiceId,
                         introLength: introLength,
                         paragraphLength: paragraphLength
                     }
@@ -238,10 +243,13 @@ const DetailedUrlInput = (props) => {
 
             {showCustomization ? 
                 <CustomizedInput 
+                    userVoiceId={props.userVoiceId}
                     podcastTitle={podcastTitle}
                     setPodcastTitle={setPodcastTitle}
                     hostName={hostName}
                     setHostName={setHostName}
+                    voiceId={voiceId}
+                    setVoiceId={setVoiceId}
                     introLength={introLength}
                     setIntroLength={setIntroLength}
                     paragraphLength={paragraphLength}

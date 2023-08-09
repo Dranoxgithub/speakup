@@ -1,4 +1,5 @@
 import { AD_CONTENT } from "../util/helperFunctions"
+import CloneVoice from "./CloneVoice"
 
 const CustomizedInput = (props) => {
     return (
@@ -26,6 +27,20 @@ const CustomizedInput = (props) => {
                     className="customizedInput"
                 />
             </div>
+
+            <div className="customizedInputBlock">
+                <h4>Voice: </h4>
+                <select 
+                    value={props.voiceId} 
+                    onChange={(e) => props.setVoiceId(e.target.value)}
+                    className="customizedInput"
+                >
+                    <option value="default">Default</option>
+                    {props.userVoiceId && <option value={props.userVoiceId}>Yours</option>}
+                    <option value="clone">Clone your voice</option>
+                </select>
+            </div>
+            {props.voiceId == 'clone' && <CloneVoice setVoiceId={(voiceId) => props.setVoiceId(voiceId)}/>}
 
             <div className="customizedInputBlock">
                 <h4>Intro Length: </h4>

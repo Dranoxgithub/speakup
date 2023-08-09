@@ -23,6 +23,7 @@ export const generatePodcast = async (
   setLoading,
   podcastTitle = null,
   hostName = null,
+  voiceId = null,
   introLength = null,
   paragraphLength = null,
   ad = AD_CONTENT
@@ -37,6 +38,7 @@ export const generatePodcast = async (
       user_id: userid,
       intro_minutes: introLength,
       host: hostName,
+      voice: voiceId,
       each_para_length: paragraphLength,
       podcast_title: podcastTitle,
       ad: ad,
@@ -47,6 +49,8 @@ export const generatePodcast = async (
     } else if (plainText != null) {
       body.plain_text = plainText
     }
+
+    console.log(`body: ${JSON.stringify(body)}`)
 
     const saveEndpoint =
       "https://unified-save-articles-jcjaqcgmja-uc.a.run.app";
@@ -88,9 +92,9 @@ export const cloneVoice = async (idToken, userid) => {
     const response = await fetchUrl(cloneVoiceEnpoint, {}, requestOptions);
     console.log(`response status: ${JSON.stringify(response.status)}`);
     if (response.status != 200) {
-      return await response.text();
+      return null;
     } else {
-      return undefined;
+      return response.text();
     }
   } catch (error) {
     return error.message;

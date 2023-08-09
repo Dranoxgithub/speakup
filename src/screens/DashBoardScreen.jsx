@@ -27,6 +27,8 @@ const DashBoardScreen = () => {
     const [contentList, setContentList] = useState([])
     const [contentIdEmailSent, setContentIdEmailSent] = useState({})
 
+    const [userVoiceId, setUserVoiceId] = useState()
+
     const populateAudioBlob = async (url) => {
         if (url) {
             const app = initializeFirebaseApp()
@@ -41,7 +43,6 @@ const DashBoardScreen = () => {
     }
 
     const populateContentList = async (user) => {
-        console.log(`calling populate content list`)
         const asyncOperations = user.user_saved.map(async (item, index) => {
             const contentId = item.content_id
             setContentIdEmailSent(prevDict => contentId in prevDict ? prevDict : ({
@@ -117,6 +118,7 @@ const DashBoardScreen = () => {
             setLoading(true)
             const user = doc.data()
             if (user) {
+                setUserVoiceId(user['clone_voice_id'])
                 setContentList(await populateContentList(user))
             }
             setLoading(false)
@@ -126,8 +128,8 @@ const DashBoardScreen = () => {
         if (userId) {
             const app = initializeFirebaseApp()
             const db = getFirestore(app)
-            onSnapshot(doc(db, 'users', userId), async (doc) => {
-                await processSnapshot(doc)
+            onSnapshot(doc(db, 'users', userId), (doc) => {
+                processSnapshot(doc)
             })
         }
     }, [userId])
@@ -174,6 +176,7 @@ const DashBoardScreen = () => {
                     setInputContent={setInputContent} 
                     onChange={onInputChanged} 
                     setErrorMessage={setErrorMessage} 
+                    userVoiceId={userVoiceId}
                 />
                 
                 {errorMessage ? 
