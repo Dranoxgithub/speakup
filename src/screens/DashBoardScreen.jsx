@@ -51,7 +51,7 @@ const DashBoardScreen = () => {
             }))
 
             if (item.status && item.status == 'success' && !contentIdEmailSent[contentId]) {
-                sendEmailNotification(contentId)
+                await sendEmailNotification(contentId)
                 setContentIdEmailSent(prevDict => ({
                     ...prevDict,
                     [contentId]: true
@@ -128,8 +128,8 @@ const DashBoardScreen = () => {
         if (userId) {
             const app = initializeFirebaseApp()
             const db = getFirestore(app)
-            onSnapshot(doc(db, 'users', userId), (doc) => {
-                processSnapshot(doc)
+            onSnapshot(doc(db, 'users', userId), async (doc) => {
+                await processSnapshot(doc)
             })
         }
     }, [userId])
@@ -145,9 +145,9 @@ const DashBoardScreen = () => {
         }, 500)
     }, [])
 
-    const sendEmailNotification = (contentId) => {
+    const sendEmailNotification = async (contentId) => {
         const uuid = uuidv4()
-        updateDocument('mail', uuid, {
+        await updateDocument('mail', uuid, {
             to: userEmail,
             template: {
                 name: 'toResult',
