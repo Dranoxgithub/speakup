@@ -275,9 +275,7 @@ a {
 .previewBoxesContainer {
     display: flex;
     flex-flow: wrap;
-    justify-content: flex-start;
-    margin-left: 5%;
-    margin-right: 5%;
+    justify-content: center;
     margin-top: 20px;
 }
 
