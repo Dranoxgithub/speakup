@@ -45,12 +45,12 @@ const DashBoardScreen = () => {
     const populateContentList = async (user) => {
         const asyncOperations = user.user_saved.map(async (item, index) => {
             const contentId = item.content_id
-            setContentIdEmailSent(prevDict => contentId in prevDict ? prevDict : ({
+            setContentIdEmailSent(prevDict => ({
                 ...prevDict,
                 [contentId]: item.status && item.status == 'notified'
             }))
-
-            if (item.status && item.status == 'success' && !contentIdEmailSent[contentId]) {
+            
+            if (item.status && item.status == 'success' && contentIdEmailSent[contentId] == false) {
                 await sendEmailNotification(contentId)
                 setContentIdEmailSent(prevDict => ({
                     ...prevDict,

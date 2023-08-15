@@ -27,8 +27,6 @@ export async function createUserDocument(uid: string) {
 }
 
 export async function getDocument(collectionName: string, id: string) {
-  // console.log(`getting ${collectionName} document with id: ${id}`);
-
   const app = initializeFirebaseApp();
   const db = getFirestore(app);
   try {

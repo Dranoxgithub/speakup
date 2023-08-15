@@ -10,6 +10,8 @@ import { secondsToHHMMSS } from "../util/helperFunctions";
 import { getAuth } from "@firebase/auth";
 import UserInfoDisplay from "../components/UserInfoDisplay";
 
+const DEMO_CONTENTS = ['vVWsGQK20MIChYitXGma']
+
 const ResultScreen = () => {
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
@@ -26,10 +28,18 @@ const ResultScreen = () => {
     const [error, setError] = useState()
     const [fetchingUser, setFetchingUser] = useState(true)
 
+    const [isDemoResult, setIsDemoResult] = useState(false)
+
     const navigate = useNavigate()
 
     useEffect(() => {
         setTimeout(() => {
+            if (queryParams.has('contentId') && DEMO_CONTENTS.includes(queryParams.get('contentId'))) {
+                setFetchingUser(false)
+                setIsDemoResult(true)
+                return
+            }
+
             const app = initializeFirebaseApp()
             const auth = getAuth(app)
             if (!auth.currentUser) {
@@ -98,8 +108,7 @@ const ResultScreen = () => {
             if (queryParams.has('contentId')) {
                 const contentId = queryParams.get("contentId")
                 const user = await getDocument('users', userId)
-                console.log(JSON.stringify(user))
-                if (user.user_saved.filter(item => item.content_id == contentId).length > 0) {
+                if (user && user.user_saved && user.user_saved.filter(item => item.content_id == contentId).length > 0 || isDemoResult) {
                     populateContentFromQueryParams(contentId)
                     console.log(`populated content from query params`)
                 } else {
@@ -114,10 +123,10 @@ const ResultScreen = () => {
             }
         }
 
-        if (userId && location) {
+        if ((userId || isDemoResult) && location) {
             populateContent() 
         }       
-    }, [location, userId])
+    }, [location, userId, isDemoResult])
 
     const getPodcastDownloadUrl = async () => {
         var data = new Blob([blob], {type: 'audio/mp3'});
@@ -136,13 +145,14 @@ const ResultScreen = () => {
         <div>
             {fetchingUser ? <></> : 
             <div className="resultContainer">
+                {!isDemoResult &&
                 <div className="headerContainer">
                     <div className="backNavigator" onClick={goBackToDashboard} >
                         <AiOutlineArrowLeft size={25} style={{marginRight: 10}}/>
                         <h1>Dashboard</h1>
                     </div>
                     <UserInfoDisplay />
-                </div>
+                </div>}
                 
                 {error ? 
                     <h2>{error}</h2> : 
