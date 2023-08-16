@@ -37,7 +37,7 @@ const UserInfoDisplay = () => {
         const app = initializeFirebaseApp()
         const auth = getAuth(app)
         await signOut(auth)
-        window.location.replace('https://speakup.framer.ai/')
+        window.location.replace('https://creator.getlistenup.com/')
     }
 
     return (

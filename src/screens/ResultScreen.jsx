@@ -10,7 +10,7 @@ import { secondsToHHMMSS } from "../util/helperFunctions";
 import { getAuth } from "@firebase/auth";
 import UserInfoDisplay from "../components/UserInfoDisplay";
 
-const DEMO_CONTENTS = ['vVWsGQK20MIChYitXGma']
+const DEMO_CONTENTS = ['Rfg4OgKngtJ6eSmrD17Q']
 
 const ResultScreen = () => {
     const location = useLocation()
