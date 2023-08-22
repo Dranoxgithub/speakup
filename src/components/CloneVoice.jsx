@@ -46,7 +46,7 @@ const CloneVoice = (props) => {
 
       const voiceId = await cloneVoice(userIdToken, userId);
       setFiles([]);
-      props.setVoiceId(voiceId)
+      props.setVoice(voiceId)
     } catch (error) {
       console.error("Error uploading files:", error);
     } finally {

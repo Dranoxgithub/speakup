@@ -3,11 +3,9 @@ import { getUserId, getUserIdToken } from "../redux/userSlice"
 import { generatePodcast } from "../util/helperFunctions"
 import { useNavigate } from "react-router-dom"
 import { useState, useEffect, useRef } from "react"
-import { BiSolidCustomize } from 'react-icons/bi'
-import { MdMenu, MdMenuOpen, MdTune, MdClose } from 'react-icons/md'
-import CustomizedInput from "./CustomizedInput"
+import { MdTune, MdClose } from 'react-icons/md'
+import CustomizedInput, { YOUR_OWN_VOICE } from "./CustomizedInput"
 import Loading from "./Loading"
-import CloneVoice from "./CloneVoice"
 
 const DetailedUrlInput = (props) => {
     const userId = useAppSelector(getUserId)
@@ -20,7 +18,8 @@ const DetailedUrlInput = (props) => {
 
     const [podcastTitle, setPodcastTitle] = useState()
     const [hostName, setHostName] = useState()
-    const [voiceId, setVoiceId] = useState('default')
+    const [voiceId, setVoiceId] = useState()
+    const [selectedVoice, setSelectedVoice] = useState('Alex')
     const [introLength, setIntroLength] = useState()
     const [paragraphLength, setParagraphLength] = useState()
     const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
@@ -116,7 +115,7 @@ const DetailedUrlInput = (props) => {
                         setLoading,
                         podcastTitle,
                         hostName,
-                        voiceId == 'default' || voiceId == 'clone' ? null : voiceId,
+                        selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
                         introLength,
                         paragraphLength)
                     props.setErrorMessage(errorMessage)
@@ -130,7 +129,7 @@ const DetailedUrlInput = (props) => {
                             contentUrl: urls.join(','),
                             podcastTitle: podcastTitle,
                             hostName: hostName,
-                            voiceId: voiceId == 'default' || voiceId == 'clone' ? null : voiceId,
+                            voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
                             introLength: introLength,
                             paragraphLength: paragraphLength
                         }
@@ -148,7 +147,7 @@ const DetailedUrlInput = (props) => {
                     setLoading,
                     podcastTitle,
                     hostName,
-                    voiceId == 'default' || voiceId == 'clone' ? null : voiceId,
+                    selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
                     introLength,
                     paragraphLength)
                 props.setErrorMessage(errorMessage)
@@ -162,7 +161,7 @@ const DetailedUrlInput = (props) => {
                         plainTextInput: props.inputContent,
                         podcastTitle: podcastTitle,
                         hostName: hostName,
-                        voiceId: voiceId == 'default' || voiceId == 'clone' ? null : voiceId,
+                        voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
                         introLength: introLength,
                         paragraphLength: paragraphLength
                     }
@@ -248,6 +247,8 @@ const DetailedUrlInput = (props) => {
                     setPodcastTitle={setPodcastTitle}
                     hostName={hostName}
                     setHostName={setHostName}
+                    selectedVoice={selectedVoice}
+                    setSelectedVoice={setSelectedVoice}
                     voiceId={voiceId}
                     setVoiceId={setVoiceId}
                     introLength={introLength}

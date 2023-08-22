@@ -170,6 +170,7 @@
     width: 300px;
     box-sizing: border-box;
     align-self: center;
+    text-align: start;
 }
 
 .disabledNavigateButton {
@@ -403,6 +404,8 @@ a {
     background-color: #ebebeb;
     color: #000;
     cursor: pointer;
+    font-family: 'Gloock';
+    font-size: 16px;
 }
 .fileUploadButton {
     padding: 10px 10px;
@@ -423,6 +426,38 @@ a {
     cursor: not-allowed;
     font-family: 'Gloock';
     font-size: 16px;
+}
+
+.selectionDropDownContainer {
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #ebebeb;
+    margin: 0px 20px;
+}
+
+.selectionDropDownItem {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 20px;  
+    cursor: pointer; 
+}
+
+.tagText {
+    background-color: #edc1adad;
+    margin: 0px 5px;
+    border-radius: 15px;
+    padding: 5px 10px;
+    font-weight: 100;
+    text-align: center;
+}
+
+.divider {
+    border-style: solid;
+    border-width: 0.5px;
+    border-color: #ebebeb;
 }
 
 @keyframes spin {
