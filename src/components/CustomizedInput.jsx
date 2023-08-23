@@ -53,6 +53,18 @@ const CustomizedInput = (props) => {
         })
     }, [])
 
+    useEffect(() => {
+        if (props.voiceId) {
+            setVoiceLibrary(prevVoiceLibrary => [
+                ...prevVoiceLibrary,
+                {
+                    name: 'Your Own Voice',
+                    tags: []
+                }
+            ])
+        }
+    }, [props.voiceId])
+
     const toggleAudio = (voiceName) => {
         const selectedVoice = voiceLibrary.filter(item => item.name == voiceName)[0]
         if (selectedVoice.audio) {
@@ -140,20 +152,23 @@ const CustomizedInput = (props) => {
                                 </div>
                             ))}
                         </div>
-                        <button
-                            className={isCloneVoiceShown ? "disabledFileUploadButton" : "fileUploadButton"}
-                            style={{marginTop: '10px', marginBottom: '10px', cursor: 'pointer'}}
-                            onClick={() => setIsCloneVoiceShown(prevValue => !prevValue)}
-                        >
-                            {isCloneVoiceShown ? 'Back' : 'Clone Your Voice'}
-                        </button>
-                        {isCloneVoiceShown && <CloneVoice setVoice={(voiceId) => {
-                            props.setVoiceId(voiceId)
-                            props.setSelectedVoice(YOUR_OWN_VOICE)
-                        }}/> }
                     </div> : 
                     <></>
                 }
+            </div>
+
+            <div>
+                <button
+                    className={isCloneVoiceShown ? "disabledFileUploadButton" : "fileUploadButton"}
+                    style={{marginTop: '10px', marginBottom: '10px', cursor: 'pointer'}}
+                    onClick={() => setIsCloneVoiceShown(prevValue => !prevValue)}
+                >
+                    {isCloneVoiceShown ? 'Back' : 'Clone Your Voice'}
+                </button>
+                {isCloneVoiceShown && <CloneVoice setVoice={(voiceId) => {
+                    props.setVoiceId(voiceId)
+                    props.setSelectedVoice(YOUR_OWN_VOICE)
+                }}/> }
             </div>
 
             <div className="customizedInputBlock">

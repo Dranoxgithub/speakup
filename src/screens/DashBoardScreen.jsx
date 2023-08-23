@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { initializeFirebaseApp, getDocument, updateDocument } from "../util/firebaseUtils"
 import PodcastResultPreview from "../components/PodcastResultPreview"
 import { getStorage, ref, getBlob } from "firebase/storage"
@@ -43,64 +43,67 @@ const DashBoardScreen = () => {
     }
 
     const populateContentList = async (user) => {
-        const asyncOperations = user.user_saved.map(async (item, index) => {
-            const contentId = item.content_id
-            setContentIdEmailSent(prevDict => ({
-                ...prevDict,
-                [contentId]: item.status && item.status == 'notified'
-            }))
-            
-            if (item.status && item.status == 'success' && contentIdEmailSent[contentId] == false) {
-                await sendEmailNotification(contentId)
+        if (user.user_saved) {
+            const asyncOperations = user.user_saved.map(async (item, index) => {
+                const contentId = item.content_id
                 setContentIdEmailSent(prevDict => ({
                     ...prevDict,
-                    [contentId]: true
+                    [contentId]: item.status && item.status == 'notified'
                 }))
-                user.user_saved[index].status = 'notified'
-                await updateDocument('users', userId, user)
-            }
-
-            const content = await getDocument('contents', contentId)
-            if (content) {
-                const title = content.original_content.title
-                let script
-                let blobInfo
-                let duration
-                let shownotes
-                let urls
-                if (content.original_content) {
-                    urls = content.original_content.urls
+                
+                if (item.status && item.status == 'success' && contentIdEmailSent[contentId] == false) {
+                    await sendEmailNotification(contentId)
+                    setContentIdEmailSent(prevDict => ({
+                        ...prevDict,
+                        [contentId]: true
+                    }))
+                    user.user_saved[index].status = 'notified'
+                    await updateDocument('users', userId, user)
                 }
-                if (content.result) {
-                    if (content.result.script) {
-                        script = content.result.script.best_summary
-                    }
 
-                    if (content.result.audio) {
-                        blobInfo = await populateAudioBlob(content.result.audio.url)
-                        duration = content.result.audio.duration
+                const content = await getDocument('contents', contentId)
+                if (content) {
+                    const title = content.original_content.title
+                    let script
+                    let blobInfo
+                    let duration
+                    let shownotes
+                    let urls
+                    if (content.original_content) {
+                        urls = content.original_content.urls
                     }
+                    if (content.result) {
+                        if (content.result.script) {
+                            script = content.result.script.best_summary
+                        }
 
-                    if (content.result.shownotes) {
-                        shownotes = content.result.shownotes.highlights
+                        if (content.result.audio) {
+                            blobInfo = await populateAudioBlob(content.result.audio.url)
+                            duration = content.result.audio.duration
+                        }
+
+                        if (content.result.shownotes) {
+                            shownotes = content.result.shownotes.highlights
+                        }
+                    }
+                    return {
+                        contentId: contentId,
+                        title: title,
+                        script: script,
+                        blob: blobInfo ? blobInfo.blob : undefined,
+                        audioUrl: blobInfo ? blobInfo.audioUrl : undefined,
+                        duration: duration,
+                        shownotes: shownotes,
+                        created: content.created_at,
+                        urls: urls,  
+                        status: content.status
                     }
                 }
-                return {
-                    contentId: contentId,
-                    title: title,
-                    script: script,
-                    blob: blobInfo ? blobInfo.blob : undefined,
-                    audioUrl: blobInfo ? blobInfo.audioUrl : undefined,
-                    duration: duration,
-                    shownotes: shownotes,
-                    created: content.created_at,
-                    urls: urls,  
-                    status: content.status
-                }
-            }
-        })
-        const list = await Promise.all(asyncOperations)
-        return list.filter(item => item && item != null).reverse()
+            })
+            const list = await Promise.all(asyncOperations)
+            return list.filter(item => item && item != null).reverse()
+        }
+        return []
     }
 
     useEffect(() => {
