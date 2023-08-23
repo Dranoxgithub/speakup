@@ -6,6 +6,20 @@ import { useState, useEffect, useRef } from "react"
 import { MdTune, MdClose } from 'react-icons/md'
 import CustomizedInput, { YOUR_OWN_VOICE } from "./CustomizedInput"
 import Loading from "./Loading"
+import CloneVoice from "./CloneVoice"
+import { initializeFirebaseApp } from "../util/firebaseUtils"
+import { getStorage, ref, getBlob } from "@firebase/storage"
+import { FaPlay, FaPause } from "react-icons/fa"
+
+
+const AVAILABLE_VOICES = [
+    { name: 'Alex', tags: ['american', 'male', 'young'] },
+    { name: 'Bruce', tags: ['american', 'male', 'middle-aged'] },
+    { name: 'Joanne', tags: ['american', 'female', 'young'] },
+    { name: 'Valley Girl', tags: ['american', 'female', 'young'] },
+    { name: 'Victoria', tags: ['british', 'female', 'middle-aged'] },
+    { name: 'Zeus', tags: ['british', 'male', 'middle-aged'] }
+]
 
 const DetailedUrlInput = (props) => {
     const userId = useAppSelector(getUserId)
@@ -26,6 +40,11 @@ const DetailedUrlInput = (props) => {
     const [currentCharIndex, setCurrentCharIndex] = useState(0);
     const timeoutRef = useRef(null);
     const [activeTab, setActiveTab] = useState('url'); // possible values: 'url', 'text'
+
+    const voiceSelectionDivRef = useRef(null)
+    const [isVoicePreviewShown, setIsVoicePreviewShown] = useState(false)
+    const [isCloneVoiceShown, setIsCloneVoiceShown] = useState(false)
+    const [voiceLibrary, setVoiceLibrary] = useState(AVAILABLE_VOICES)
     
     const urlPlaceholders = [
         "Drop URLs to turn articles into podcasts instantly...",
@@ -45,6 +64,65 @@ const DetailedUrlInput = (props) => {
         // ... other potential placeholders ...
     ];
     const placeholders = activeTab === 'url' ? urlPlaceholders : textPlaceholders;
+
+    useEffect(() => {
+        const app = initializeFirebaseApp()
+        const storage = getStorage(app)
+        const asyncOperations = AVAILABLE_VOICES.map(async voice => {
+            voice.isPlaying = false
+            try {
+                const url = `demo/voice_preview/${voice.name.split(' ').join('').toLowerCase()}.mp3`
+                const audioRef = ref(storage, url)
+                const blob = await getBlob(audioRef)
+                voice.audio = URL.createObjectURL(blob)
+            } catch {
+
+            }
+
+            return voice
+        })
+
+        Promise.all(asyncOperations).then(newVoiceLibrary => {
+            if (props.userVoiceId) {
+                newVoiceLibrary = [
+                    ...newVoiceLibrary,
+                    {
+                        name: 'Your Own Voice',
+                        tags: []
+                    }
+                ]
+            }
+            setVoiceLibrary(newVoiceLibrary)
+        })
+    }, [])
+
+    useEffect(() => {
+        if (voiceId && !props.userVoiceId) {
+            setVoiceLibrary(prevVoiceLibrary => [
+                ...prevVoiceLibrary,
+                {
+                    name: 'Your Own Voice',
+                    tags: []
+                }
+            ])
+        }
+    }, [voiceId])
+
+    const handleClickOutside = (event) => {
+        if (voiceSelectionDivRef.current && !voiceSelectionDivRef.current.contains(event.target)) {
+            setIsVoicePreviewShown(false)
+        }
+    };
+
+    useEffect(() => {
+        // Add event listener when the component mounts
+        document.addEventListener('click', handleClickOutside);
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
 
     useEffect(() => {
         setCurrentPlaceholder(0);
@@ -182,6 +260,50 @@ const DetailedUrlInput = (props) => {
         }
     }
 
+    const stopAllOtherMusic = (voiceName) => {
+        voiceLibrary.map(item => {
+            if (item.name !== voiceName) {
+                item.isPlaying = false
+                if (item.audioElement) {
+                    item.audioElement.pause()
+                    item.audioElement = undefined
+                }
+            }
+        })
+    }
+
+    const toggleAudio = (event, voiceName) => {
+        //@TODO: bring voice selection out of customized input
+        event.stopPropagation()
+        stopAllOtherMusic(voiceName)
+        const selectedVoice = voiceLibrary.filter(item => item.name == voiceName)[0]
+        if (selectedVoice.audio) {
+            const audioElement = selectedVoice.audioElement ? selectedVoice.audioElement : new Audio(selectedVoice.audio)
+
+            if (selectedVoice.isPlaying) {
+                audioElement.pause()
+            } else {
+                audioElement.play()
+            }
+
+
+            const newVoiceLibrary = voiceLibrary.map(item => item.name == voiceName ? { ...item, isPlaying: !item.isPlaying, audioElement: audioElement } : item)
+            setVoiceLibrary(newVoiceLibrary)
+            
+            audioElement.addEventListener('ended', () => {
+                selectedVoice.isPlaying = false;
+                const newVoiceLibrary = voiceLibrary.map(item => item.name == voiceName ? selectedVoice : item)
+                setVoiceLibrary(newVoiceLibrary)
+            })
+        }
+    }
+
+    const handleVoiceSelection = (voiceName) => {
+        stopAllOtherMusic()
+        setSelectedVoice(voiceName)
+        setIsVoicePreviewShown(false)
+    }
+
     return (
         <div className="inputContainer">
             <div className="content">
@@ -204,6 +326,67 @@ const DetailedUrlInput = (props) => {
                     >
                         Create from text
                     </button>
+                </div>
+
+                <div ref={voiceSelectionDivRef} style={{width: '700px'}}>
+                    <div className="customizedInputBlock" style={{marginBottom: '10px'}}>
+                        <div style={{flexDirection: 'row', display: 'flex'}}>
+                            <h4>Voice: </h4>
+                            <div 
+                                className="customizedInput" 
+                                onClick={() => setIsVoicePreviewShown(prevValue => !prevValue)} 
+                                style={{cursor: 'pointer', marginLeft: '10px'}}
+                            >
+                                {selectedVoice}
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <button
+                                className={isCloneVoiceShown ? "disabledFileUploadButton" : "fileUploadButton"}
+                                style={{marginTop: '10px', marginBottom: '10px', marginLeft: '20px', cursor: 'pointer', paddingTop: '15px', paddingBottom: '15px'}}
+                                onClick={() => setIsCloneVoiceShown(prevValue => !prevValue)}
+                            >
+                                {isCloneVoiceShown ? 'Back' : 'Clone Your Voice'}
+                            </button>
+                        </div>
+                    </div>
+
+                    {isVoicePreviewShown ?
+                        <div>
+                            <div className="selectionDropDownContainer">
+                                {voiceLibrary.map((item, index) => (
+                                    <div key={item.name}>
+                                        <div className="selectionDropDownItem" onClick={() => handleVoiceSelection(item.name)}>
+                                            <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                                                {item.audio && (item.isPlaying ? 
+                                                    <FaPause onClick={(e) => toggleAudio(e, item.name)} style={{marginRight: '10px'}}/> :
+                                                    <FaPlay onClick={(e) => toggleAudio(e, item.name)} style={{marginRight: '10px'}}/>
+                                                )}
+                                                <p>{item.name}</p>
+                                            </div>
+
+                                            <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                                                {item.tags.map((tag) => (
+                                                    <p key={tag} className="tagText">{tag}</p>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {index === voiceLibrary.length-1 ? <></> : <div className="divider"></div>}
+                                    </div>
+                                ))}
+                            </div>
+                        </div> : 
+                        <></>
+                    }
+
+                    {isCloneVoiceShown && <CloneVoice setVoice={(voiceId) => {
+                        setVoiceId(voiceId)
+                        setSelectedVoice(YOUR_OWN_VOICE)
+                        setIsVoicePreviewShown(false)
+                    }}/> }
                 </div>
 
                 <textarea

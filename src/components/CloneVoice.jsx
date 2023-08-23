@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from "firebase/storage";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId, getUserIdToken } from "../redux/userSlice";
@@ -34,6 +34,13 @@ const CloneVoice = (props) => {
   const handleUpload = async () => {
     try {
       setUploading(true);
+
+      const listRef = ref(storage, `clone/${userId}`);
+      const allFiles = await listAll(listRef)
+      const asyncOperations = allFiles.items.map(async (itemRef) => {
+        await deleteObject(itemRef)
+      })
+      await Promise.all(asyncOperations)
 
       const uploadPromises = files.map(async (file) => {
         const storageRef = ref(storage, `clone/${userId}/${file.name}`);
