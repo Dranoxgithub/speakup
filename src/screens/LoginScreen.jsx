@@ -16,13 +16,13 @@ const LoginScreen = () => {
 
     useEffect(() => {
         const populateContentFromQueryParams = (queryParams) => {
-            queryParams.has('contentUrl') ?? setContentUrl(queryParams.get('contentUrl'))
-            queryParams.has('plainTextInput') ?? setPlainTextInput(queryParams.get('plainTextInput'))
-            queryParams.has('podcastTitle') ?? setPodcastTitle(queryParams.get('podcastTitle'))
-            queryParams.has('hostName') ?? setHostName(queryParams.get('hostName'))
-            queryParams.has('voiceId') ?? setVoiceId(queryParams.get('voiceId'))
-            queryParams.has('introLength') ?? setIntroLength(queryParams.get('introLength'))
-            queryParams.has('paragraphLength') ?? setParagraphLength(queryParams.get('paragraphLength'))
+            queryParams.has('contentUrl') && setContentUrl(queryParams.get('contentUrl'))
+            queryParams.has('plainTextInput') && setPlainTextInput(queryParams.get('plainTextInput'))
+            queryParams.has('podcastTitle') && setPodcastTitle(queryParams.get('podcastTitle'))
+            queryParams.has('hostName') && setHostName(queryParams.get('hostName'))
+            queryParams.has('voiceId') && setVoiceId(queryParams.get('voiceId'))
+            queryParams.has('introLength') && setIntroLength(queryParams.get('introLength'))
+            queryParams.has('paragraphLength') && setParagraphLength(queryParams.get('paragraphLength'))
         }
 
         const populateContentFromState = () => {
@@ -49,6 +49,10 @@ const LoginScreen = () => {
             populateContent() 
         }       
     }, [location])
+
+    useEffect(() => {
+        console.log(`content url is ${contentUrl}`)
+    }, [contentUrl])
 
     return (
         <div className="centeredContainer">
