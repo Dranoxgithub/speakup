@@ -11,7 +11,6 @@ const AVAILABLE_VOICES = [
     { name: 'Joanne', tags: ['american', 'female', 'young'] },
     { name: 'Valley Girl', tags: ['american', 'female', 'young'] },
     { name: 'Victoria', tags: ['british', 'female', 'middle-aged'] },
-    { name: 'Wayne', tags: ['american', 'male', 'old'] },
     { name: 'Zeus', tags: ['british', 'male', 'middle-aged'] }
 ]
 
