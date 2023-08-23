@@ -9,10 +9,10 @@ const AVAILABLE_VOICES = [
     { name: 'Alex', tags: ['american', 'male', 'young'] },
     { name: 'Bruce', tags: ['american', 'male', 'middle-aged'] },
     { name: 'Joanne', tags: ['american', 'female', 'young'] },
-    { name: 'Marcus', tags: ['american', 'male', 'middle-aged'] },
     { name: 'Valley Girl', tags: ['american', 'female', 'young'] },
     { name: 'Victoria', tags: ['british', 'female', 'middle-aged'] },
     { name: 'Wayne', tags: ['american', 'male', 'old'] },
+    { name: 'Zeus', tags: ['british', 'male', 'middle-aged'] }
 ]
 
 export const YOUR_OWN_VOICE = 'Your Own Voice'

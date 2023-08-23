@@ -23,7 +23,7 @@ export const generatePodcast = async (
   setLoading,
   podcastTitle = null,
   hostName = null,
-  voiceId = null,
+  voiceId = "Valley Girl",
   introLength = null,
   paragraphLength = null,
   ad = AD_CONTENT
