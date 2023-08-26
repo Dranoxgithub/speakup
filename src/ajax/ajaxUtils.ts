@@ -30,3 +30,18 @@ export function fetchUrl(
       );
     });
 }
+
+// doesn't work
+export function getWordCountFromUrl(url: string): Promise<any> {
+  console.log(`Calling url: ${url}`);
+  return fetch(url)
+    .then((response) => {
+      return response.text;
+    })
+    .catch((error) => {
+      console.error(
+        "There has been a problem with your fetch operation:",
+        error
+      );
+    });
+}
