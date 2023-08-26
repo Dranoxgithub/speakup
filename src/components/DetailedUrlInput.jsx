@@ -559,8 +559,8 @@ const DetailedUrlInput = (props) => {
       {showAckWordCountButton ? (
         <div>
           <h4 className="errorMessage">
-            Your word count is less than 650. It might not generate podcast of
-            your ideal length. Are you sure you want to proceed?
+            Your provided content has less than 650 words. It won’t be enough
+            for generating a 20-minute podcast. Do you want to proceed?
           </h4>
           <button
             onClick={() => {
