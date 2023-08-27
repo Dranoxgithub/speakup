@@ -29,6 +29,7 @@ const DetailedUrlInput = (props) => {
   const [loading, setLoading] = useState(false);
   const [showCustomization, setShowCustomization] = useState(false);
 
+  const [podcastLength, setPodcastLength] = useState("short_podcast_length");
   const [podcastTitle, setPodcastTitle] = useState();
   const [hostName, setHostName] = useState();
   const [voiceId, setVoiceId] = useState();
@@ -187,6 +188,7 @@ const DetailedUrlInput = (props) => {
   };
 
   const wordCountCheck = () => {
+    console.log("annchn in wordCOuntCheck" + podcastLength);
     var passWordCountCheck = false;
     if (activeTab === "url") {
       console.log(props.inputContent);
@@ -217,6 +219,7 @@ const DetailedUrlInput = (props) => {
           const errorMessage = await generatePodcast(
             userIdToken,
             userId,
+            podcastLength,
             urls,
             null,
             setLoading,
@@ -258,6 +261,7 @@ const DetailedUrlInput = (props) => {
         const errorMessage = await generatePodcast(
           userIdToken,
           userId,
+          podcastLength,
           null,
           props.inputContent,
           setLoading,
@@ -539,6 +543,8 @@ const DetailedUrlInput = (props) => {
       {showCustomization ? (
         <CustomizedInput
           userVoiceId={props.userVoiceId}
+          podcastLength={podcastLength}
+          setPodcastLength={setPodcastLength}
           podcastTitle={podcastTitle}
           setPodcastTitle={setPodcastTitle}
           hostName={hostName}

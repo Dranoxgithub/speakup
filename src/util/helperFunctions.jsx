@@ -18,6 +18,7 @@ export const secondsToHHMMSS = (seconds) => {
 export const generatePodcast = async (
   idToken,
   userid,
+  podcastLength = "short_podcast_length",
   contentUrls = null,
   plainText = null,
   setLoading,
@@ -42,15 +43,16 @@ export const generatePodcast = async (
       each_para_length: paragraphLength,
       podcast_title: podcastTitle,
       ad: ad,
+      podcastLength: podcastLength,
     };
 
     if (contentUrls != null) {
-      body.urls = contentUrls
+      body.urls = contentUrls;
     } else if (plainText != null) {
-      body.plain_text = plainText
+      body.plain_text = plainText;
     }
 
-    console.log(`body: ${JSON.stringify(body)}`)
+    console.log(`body: ${JSON.stringify(body)}`);
 
     const saveEndpoint =
       "https://unified-save-articles-jcjaqcgmja-uc.a.run.app";
