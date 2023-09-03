@@ -1,4 +1,5 @@
 import { AD_CONTENT } from "../util/helperFunctions"
+import { Slider } from '@mui/material';
 
 export const YOUR_OWN_VOICE = 'Your Own Voice'
 
@@ -28,26 +29,21 @@ const CustomizedInput = (props) => {
                     className="customizedInput"
                 />
             </div>
-
+            
             <div className="customizedInputBlock">
-                <h4>Intro Length: </h4>
-                <input 
-                    type="text"
-                    placeholder="e.g. 30 seconds"
-                    value={props.introLength}
-                    onChange={(e) => props.setIntroLength(e.target.value)}
-                    className="customizedInput"
-                />
+                <h4 style={{marginBottom: '0px'}}>Estimated Length: </h4>
+                <p className="customizedInput" style={{marginBottom: '0px'}}>{props.totalLength} minutes</p>
             </div>
-
-            <div className="customizedInputBlock">
-                <h4>Paragraph length: </h4>
-                <input 
-                    type="text"
-                    placeholder="e.g. 1 - 2 minutes"
-                    value={props.paragraphLength}
-                    onChange={(e) => props.setParagraphLength(e.target.value)}
-                    className="customizedInput"
+            <div className="customizedInputBlock" style={{marginTop: '0px'}}>
+                <Slider
+                    value={props.totalLength}
+                    onChange={(event, value, activeThumb) => props.setTotalLength(value)}
+                    valueLabelDisplay="auto"
+                    step={5}
+                    marks
+                    min={5}
+                    max={60}
+                    color="warning"
                 />
             </div>
 

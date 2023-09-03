@@ -10,8 +10,7 @@ const LoginScreen = () => {
     const [podcastTitle, setPodcastTitle] = useState()
     const [hostName, setHostName] = useState()
     const [voiceId, setVoiceId] = useState()
-    const [introLength, setIntroLength] = useState()
-    const [paragraphLength, setParagraphLength] = useState()
+    const [totalLength, setTotalLength] = useState()
     const [contentId, setContentid] = useState()
 
     useEffect(() => {
@@ -21,8 +20,7 @@ const LoginScreen = () => {
             queryParams.has('podcastTitle') && setPodcastTitle(queryParams.get('podcastTitle'))
             queryParams.has('hostName') && setHostName(queryParams.get('hostName'))
             queryParams.has('voiceId') && setVoiceId(queryParams.get('voiceId'))
-            queryParams.has('introLength') && setIntroLength(queryParams.get('introLength'))
-            queryParams.has('paragraphLength') && setParagraphLength(queryParams.get('paragraphLength'))
+            queryParams.has('totalLength') && setTotalLength(queryParams.get('totalLength'))
         }
 
         const populateContentFromState = () => {
@@ -31,8 +29,7 @@ const LoginScreen = () => {
             setPodcastTitle(location.state.podcastTitle)
             setHostName(location.state.hostName)
             setVoiceId(location.state.voiceId)
-            setIntroLength(location.state.introLength)
-            setParagraphLength(location.state.paragraphLength)
+            setTotalLength(location.state.totalLength)
             setContentid(location.state.contentId)
         }
 
@@ -63,8 +60,7 @@ const LoginScreen = () => {
                 podcastTitle={podcastTitle}
                 hostName={hostName}
                 voiceId={voiceId}
-                introLength={introLength}
-                paragraphLength={paragraphLength}
+                totalLength={totalLength}
                 contentId={contentId}
             />
         </div>

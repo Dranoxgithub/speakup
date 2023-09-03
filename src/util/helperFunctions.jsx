@@ -24,8 +24,7 @@ export const generatePodcast = async (
   podcastTitle = null,
   hostName = null,
   voiceId = "Valley Girl",
-  introLength = null,
-  paragraphLength = null,
+  totalLength = null,
   ad = AD_CONTENT
 ) => {
   setLoading(true);
@@ -36,10 +35,9 @@ export const generatePodcast = async (
     };
     const body = {
       user_id: userid,
-      intro_minutes: introLength,
       host: hostName,
       voice: voiceId,
-      each_para_length: paragraphLength,
+      total_length: totalLength,
       podcast_title: podcastTitle,
       ad: ad,
     };

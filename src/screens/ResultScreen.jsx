@@ -30,6 +30,8 @@ const ResultScreen = () => {
 
     const [isDemoResult, setIsDemoResult] = useState(false)
 
+    const [showModal, setShowModal] = useState(false)
+
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -48,6 +50,23 @@ const ResultScreen = () => {
             setFetchingUser(false)
         }, 500)
     }, [])
+    
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            const modalContent = document.querySelector('.profileDetailBox');
+            if (modalContent && !modalContent.contains(event.target)) {
+                setShowModal(false)
+            }
+        };
+
+        if (showModal) {
+            window.addEventListener('click', handleOutsideClick);
+        }
+
+        return () => {
+            window.removeEventListener('click', handleOutsideClick);
+        };
+    }, [showModal]);
     
     useEffect(() => {
         const populateAudioBlob = async (url) => {
@@ -151,7 +170,7 @@ const ResultScreen = () => {
                         <AiOutlineArrowLeft size={25} style={{marginRight: 10}}/>
                         <h1>Dashboard</h1>
                     </div>
-                    <UserInfoDisplay />
+                    <UserInfoDisplay showModal={showModal} setShowModal={setShowModal} />
                 </div>}
                 
                 {error ? 

@@ -38,8 +38,7 @@ const GoogleAuth = (props) => {
                     props.podcastTitle,
                     props.hostName,
                     props.voiceId,
-                    props.introLength,
-                    props.paragraphLength)
+                    props.totalLength)
             } else if (props.plainTextInput) {
                 errorMessage = await generatePodcast(
                     user.accessToken, 
@@ -50,8 +49,7 @@ const GoogleAuth = (props) => {
                     props.podcastTitle,
                     props.hostName,
                     props.voiceId,
-                    props.introLength,
-                    props.paragraphLength)
+                    props.totalLength)
             }
     
             // userDoc.isFreeTrialUsed = true; // potential bugs: if the user podcast is not generated successfully, the user will still be marked as used free trial

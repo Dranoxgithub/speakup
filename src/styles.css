@@ -33,6 +33,7 @@
     font-size: 2.5rem;
     margin-bottom: 2rem;
     font-family: 'Gloock';
+    max-width: 60%;
 }
 
 .subtitle {
@@ -94,7 +95,7 @@
     font-size: 18px;
     color: #2d3142;
     outline: 0;
-    width: 80%; 
+    width: 100%; 
     max-width: 700px; 
     min-height: 300px; 
     resize: vertical; 
@@ -322,9 +323,9 @@ a {
 }
 
 .profilePic {
-    height: 50px;
-    width: 50px;
-    border-radius: 50px;
+    height: 40px;
+    width: 40px;
+    border-radius: 40px;
 }
 
 .profilePicContainer {
@@ -334,31 +335,44 @@ a {
 }
 
 .profileDetailBox {
-    background-color: #ebebeb;
+    background-color: #fff;
     font-family: 'Gloock';
-    padding: 20px;
-    padding-left: 30px;
-    padding-right: 30px;
     border-radius: 10px;
     position: absolute;
     z-index: 10;
     margin-top: 55px;
+    border-style: solid;
+    border-color: #ebebeb;
+    border-width: 0.5px;
+    text-align: start;
+    max-width: 250px;
 }
 
 .userName {
-    margin-top: 10px;
+    margin: 20px;
     color: #2d3142;
+    font-size: 16px;
 }
 
-.signoutButton {
-    border-radius: 10px;
-    border: none;
-    background-color: white;
+.profileSelection {
     color: #2d3142;
     font-family: 'Gloock';
-    padding-left: 1rem;
-    padding-right: 1rem;
     cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.profileSelection:hover {
+    background-color: #ebebeb;
+}
+
+.profileSelectionText {
+    margin: 15px 10px;
+    color: #2d3142;
+    font-size: 16px;
 }
 
 .headerContainer {
@@ -462,6 +476,17 @@ a {
     border-style: solid;
     border-width: 0.5px;
     border-color: #ebebeb;
+}
+
+.subscriptionContainer {
+    width: 100%;
+    margin-top: 5%;
+}
+
+.subscriptionPlanText {
+    font-family: 'Gloock';
+    font-size: 14px;
+    margin-top: 5%;
 }
 
 @keyframes spin {

@@ -3,33 +3,17 @@ import { useAppSelector } from "../redux/hooks"
 import { getUserDisplayName, getUserEmail, getUserProfilePic } from "../redux/userSlice"
 import { initializeFirebaseApp } from "../util/firebaseUtils"
 import { getAuth, signOut } from "@firebase/auth"
+import { useNavigate } from "react-router-dom"
+import {RiMoneyCnyCircleFill} from 'react-icons/ri'
+import {PiSignOutBold} from 'react-icons/pi'
 
-const UserInfoDisplay = () => {
+const UserInfoDisplay = (props) => {
     const profilePic = useAppSelector(getUserProfilePic)
     const displayName = useAppSelector(getUserDisplayName)
-    const userEmail = useAppSelector(getUserEmail)
-
-    const [showModal, setShowModal] = useState(false)
-
-    useEffect(() => {
-        const handleOutsideClick = (event) => {
-            const modalContent = document.querySelector('.profileDetailBox');
-            if (modalContent && !modalContent.contains(event.target)) {
-                setShowModal(false)
-            }
-        };
-
-        if (showModal) {
-            window.addEventListener('click', handleOutsideClick);
-        }
-
-        return () => {
-            window.removeEventListener('click', handleOutsideClick);
-        };
-    }, [showModal]);
+    const navigate = useNavigate()
 
     const showOrHideModal = (e) => {
-        setShowModal(!showModal)
+        props.setShowModal(!props.showModal)
         e.stopPropagation()
     }
 
@@ -38,6 +22,10 @@ const UserInfoDisplay = () => {
         const auth = getAuth(app)
         await signOut(auth)
         window.location.replace('https://creator.getlistenup.com/')
+    }
+
+    const navigateToSubscriptionPage = () => {
+        navigate('/subscription', {replace: true})
     }
 
     return (
@@ -49,13 +37,19 @@ const UserInfoDisplay = () => {
                         src={profilePic} 
                         onClick={showOrHideModal}
                     />
-                    { showModal ? 
+                    { props.showModal ? 
                         <div className="profileDetailBox">
-                            <h3 className="userName">{displayName}</h3>
-                            <p>{userEmail}</p>
-                            <button className="signoutButton" onClick={signoutUser}>
-                                <h3>Sign Out</h3>
-                            </button>
+                            <h3 className="userName">Signed in as {displayName}</h3>
+                            <div className="divider" />
+                            <div className="profileSelection" onClick={navigateToSubscriptionPage}>
+                                <RiMoneyCnyCircleFill size={20} style={{marginLeft: '20px'}} color="#2d3142"/>
+                                <p className="profileSelectionText">Subscription</p>
+                            </div>
+
+                            <div className="profileSelection" onClick={signoutUser}>
+                                <PiSignOutBold size={20} style={{marginLeft: '20px'}} color="#2d3142"/>
+                                <p className="profileSelectionText">Sign Out</p>
+                            </div>
                         </div> : <></>
                     }
                 </div> : 

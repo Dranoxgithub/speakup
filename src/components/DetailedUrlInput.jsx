@@ -21,6 +21,13 @@ const AVAILABLE_VOICES = [
     { name: 'Zeus', tags: ['british', 'male', 'middle-aged'] }
 ]
 
+const PODCAST_STYLES = [
+    { name: 'Brief', length: 5 },
+    { name: 'Daily', length: 10 },
+    { name: 'Long', length: 30 },
+    { name: 'Longer', length: 60 },
+]
+
 const DetailedUrlInput = (props) => {
     const userId = useAppSelector(getUserId)
     const userIdToken = useAppSelector(getUserIdToken)
@@ -34,8 +41,7 @@ const DetailedUrlInput = (props) => {
     const [hostName, setHostName] = useState()
     const [voiceId, setVoiceId] = useState()
     const [selectedVoice, setSelectedVoice] = useState('Alex')
-    const [introLength, setIntroLength] = useState()
-    const [paragraphLength, setParagraphLength] = useState()
+    const [totalLength, setTotalLength] = useState(5)
     const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
     const [currentCharIndex, setCurrentCharIndex] = useState(0);
     const timeoutRef = useRef(null);
@@ -194,8 +200,7 @@ const DetailedUrlInput = (props) => {
                         podcastTitle,
                         hostName,
                         selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                        introLength,
-                        paragraphLength)
+                        totalLength)
                     props.setErrorMessage(errorMessage)
                     if (!errorMessage) {
                         props.setInputContent('')
@@ -208,8 +213,7 @@ const DetailedUrlInput = (props) => {
                             podcastTitle: podcastTitle,
                             hostName: hostName,
                             voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                            introLength: introLength,
-                            paragraphLength: paragraphLength
+                            totalLength: totalLength
                         }
                     })
                 }
@@ -226,8 +230,7 @@ const DetailedUrlInput = (props) => {
                     podcastTitle,
                     hostName,
                     selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                    introLength,
-                    paragraphLength)
+                    totalLength)
                 props.setErrorMessage(errorMessage)
                 if (!errorMessage) {
                     props.setInputContent('')
@@ -240,8 +243,7 @@ const DetailedUrlInput = (props) => {
                         podcastTitle: podcastTitle,
                         hostName: hostName,
                         voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                        introLength: introLength,
-                        paragraphLength: paragraphLength
+                        totalLength: totalLength
                     }
                 })
             }
@@ -251,6 +253,15 @@ const DetailedUrlInput = (props) => {
     const isButtonDisabled = () => {
         if (loading) {
             return true
+        }
+
+        if (props.existsPendingContent) {
+            props.setErrorMessage(`There are still podcasts being generated. Please wait for their completion :)`)
+            return true
+        }
+
+        if (totalLength + props.totalUsedLength > props.totalAllowedLength) {
+            props.setErrorMessage(`The selected podcast length exceeds the total allowed length. Please adjust accordingly.`)
         }
 
         if (activeTab == 'url') {
@@ -396,6 +407,20 @@ const DetailedUrlInput = (props) => {
                     className="urlInput"
                 />
 
+                <div className="tabContainer" style={{marginBottom: '30px', marginTop: '10px'}}>
+                    {PODCAST_STYLES.map(item => (
+                        <button 
+                            className={totalLength === item.length ? 'activeTab' : ''} 
+                            key={item.name}
+                            onClick={() => {
+                                setTotalLength(item.length)
+                            }}
+                        >
+                            {item.name}
+                        </button>
+                    ))}
+                </div>
+
                 <div className="buttons-container">
                     <button 
                         className={!isButtonDisabled() ? 'navigateButton' : 'disabledNavigateButton'} 
@@ -434,10 +459,8 @@ const DetailedUrlInput = (props) => {
                     setSelectedVoice={setSelectedVoice}
                     voiceId={voiceId}
                     setVoiceId={setVoiceId}
-                    introLength={introLength}
-                    setIntroLength={setIntroLength}
-                    paragraphLength={paragraphLength}
-                    setParagraphLength={setParagraphLength}
+                    totalLength={totalLength}
+                    setTotalLength={setTotalLength}
                 /> : 
                 <></>}
 

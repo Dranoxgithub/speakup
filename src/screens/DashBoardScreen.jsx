@@ -12,6 +12,12 @@ import UserInfoDisplay from "../components/UserInfoDisplay"
 import { getAuth } from "@firebase/auth"
 import DetailedUrlInput from "../components/DetailedUrlInput"
 
+const SUBSCRIPTION_PLAN_TO_MINUTES = {
+    Starter: 20,
+    Creator: 120,
+    Professional: 720
+}
+
 const DashBoardScreen = () => {
     const location = useLocation()
     const userId = useAppSelector(getUserId)
@@ -28,6 +34,10 @@ const DashBoardScreen = () => {
     const [contentIdEmailSent, setContentIdEmailSent] = useState({})
 
     const [userVoiceId, setUserVoiceId] = useState()
+    const [showModal, setShowModal] = useState(false)
+    const [totalUsedLength, setTotalUsedLength] = useState()
+    const [totalAllowedLength, setTotalAllowedLength] = useState()
+    const [existPendingContent, setExistPendingContent] = useState(false)
 
     const populateAudioBlob = async (url) => {
         if (url) {
@@ -44,7 +54,12 @@ const DashBoardScreen = () => {
 
     const populateContentList = async (user) => {
         if (user.user_saved) {
+            setExistPendingContent(false)
+            let totalLength = 0
             const asyncOperations = user.user_saved.map(async (item, index) => {
+                if (item.status && item.status == 'pending') {
+                    setExistPendingContent(true)
+                }
                 const contentId = item.content_id
                 setContentIdEmailSent(prevDict => ({
                     ...prevDict,
@@ -80,6 +95,7 @@ const DashBoardScreen = () => {
                         if (content.result.audio) {
                             blobInfo = await populateAudioBlob(content.result.audio.url)
                             duration = content.result.audio.duration
+                            totalLength += duration
                         }
 
                         if (content.result.shownotes) {
@@ -101,6 +117,8 @@ const DashBoardScreen = () => {
                 }
             })
             const list = await Promise.all(asyncOperations)
+            setTotalUsedLength(Math.floor(totalLength/60))
+            console.log(`Setting total used length to ${Math.floor(totalLength/60)}`)
             return list.filter(item => item && item != null).reverse()
         }
         return []
@@ -122,6 +140,8 @@ const DashBoardScreen = () => {
             const user = doc.data()
             if (user) {
                 setUserVoiceId(user['clone_voice_id'])
+                const subscriptionPlan = user['subscription']
+                setTotalAllowedLength(SUBSCRIPTION_PLAN_TO_MINUTES[subscriptionPlan])
                 setContentList(await populateContentList(user))
             }
             setLoading(false)
@@ -145,8 +165,25 @@ const DashBoardScreen = () => {
                 navigate('/login', {replace: true})
             }
             setFetchingUser(false)
-        }, 500)
+        }, 1000)
     }, [])
+    
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            const modalContent = document.querySelector('.profileDetailBox');
+            if (modalContent && !modalContent.contains(event.target)) {
+                setShowModal(false)
+            }
+        };
+
+        if (showModal) {
+            window.addEventListener('click', handleOutsideClick);
+        }
+
+        return () => {
+            window.removeEventListener('click', handleOutsideClick);
+        };
+    }, [showModal]);
 
     const sendEmailNotification = async (contentId) => {
         const uuid = uuidv4()
@@ -171,7 +208,7 @@ const DashBoardScreen = () => {
             <div className="container">
                 <div className="headerContainer">
                     <h1>Dashboard</h1>
-                    <UserInfoDisplay />
+                    <UserInfoDisplay showModal={showModal} setShowModal={setShowModal} />
                 </div>
                 
                 <DetailedUrlInput 
@@ -180,11 +217,14 @@ const DashBoardScreen = () => {
                     onChange={onInputChanged} 
                     setErrorMessage={setErrorMessage} 
                     userVoiceId={userVoiceId}
+                    totalUsedLength={totalUsedLength}
+                    totalAllowedLength={totalAllowedLength}
+                    existPendingContent={existPendingContent}
                 />
                 
                 {errorMessage ? 
                     errorMessage.split('\n').map((item, index) => (
-                        <h4 key={index} className="errorMessage">{item}</h4>
+                        <h4 key={index} className="errorMessage" style={{color: '#EF8254'}}>{item}</h4>
                     )) :
                     <></>
                 }

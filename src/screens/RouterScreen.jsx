@@ -8,6 +8,7 @@ import DashBoardScreen from './DashBoardScreen';
 import { useAppDispatch } from '../redux/hooks';
 import { setUserEmail, setUserId, setUserProfilePic, setUserDisplayName, setUserIdToken } from '../redux/userSlice';
 import WebFont from 'webfontloader'
+import SubscriptionScreen from './SubscriptionScreen';
 
 const RouterScreen = () => {
   const dispatch = useAppDispatch()
@@ -40,6 +41,7 @@ const RouterScreen = () => {
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/dashboard" element={<DashBoardScreen />} />
         <Route path="/result" element={<ResultScreen />}/>
+        <Route path="/subscription" element={<SubscriptionScreen />} />
       </Routes>
     </BrowserRouter>
   );
