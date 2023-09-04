@@ -1,6 +1,6 @@
 import { useAppSelector } from "../redux/hooks";
 import { getUserId, getUserIdToken } from "../redux/userSlice";
-import { generatePodcast } from "../util/helperFunctions";
+import { generatePodcast, checkWordCount } from "../util/helperFunctions";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { MdTune, MdClose } from "react-icons/md";
@@ -30,7 +30,6 @@ const PODCAST_STYLES = [
 const DetailedUrlInput = (props) => {
   const userId = useAppSelector(getUserId);
   const userIdToken = useAppSelector(getUserIdToken);
-
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -116,6 +115,40 @@ const DetailedUrlInput = (props) => {
     }
   }, [voiceId]);
 
+  const wordCountCheck = async () => {
+    var passWordCountCheck = false;
+    if (activeTab === "url") {
+      const urls = extractUrls(props.inputContent);
+      console.log(`extracted following urls: ${urls}`);
+      if (urls && userId) {
+        const errorMessage = await checkWordCount(userIdToken, urls);
+        console.log(errorMessage);
+      }
+
+      console.log(props.inputContent);
+    } else {
+      const wordCount = props.inputContent.trim().split(/\s+/).length;
+      console.log("wordCount" + wordCount);
+      if (wordCount > 650) {
+        passWordCountCheck = true;
+      }
+    }
+    if (passWordCountCheck || userAckWordCount) {
+      // one time acknowledgement for word count
+      //   setUserAckWordCount(false);
+      console.log("calling onCreatePodcast in wordCountCheck");
+      onCreatePodcast();
+    } else {
+      setShowAckWordCountButton(true);
+    }
+  };
+
+  useEffect(() => {
+    if (userAckWordCount) {
+      wordCountCheck();
+    }
+  }, [userAckWordCount]);
+
   const handleClickOutside = (event) => {
     if (
       voiceSelectionDivRef.current &&
@@ -193,61 +226,50 @@ const DetailedUrlInput = (props) => {
     return matches.map((match) => match.trim());
   };
 
-    const wordCountCheck = () => {
-        var passWordCountCheck = false;
-        if (activeTab === "url") {
-        console.log(props.inputContent);
+  const onCreatePodcast = async () => {
+    if (activeTab === "url") {
+      const urls = extractUrls(props.inputContent);
+      console.log(`extracted following urls: ${urls}`);
+      if (urls) {
+        if (userId) {
+          const errorMessage = await generatePodcast(
+            userIdToken,
+            userId,
+            podcastLength,
+            urls,
+            null,
+            setLoading,
+            podcastTitle,
+            hostName,
+            selectedVoice === YOUR_OWN_VOICE
+              ? voiceId
+                ? voiceId
+                : props.userVoiceId
+              : selectedVoice,
+            introLength,
+            paragraphLength
+          );
+          props.setErrorMessage(errorMessage);
+          if (!errorMessage) {
+            props.setInputContent("");
+          }
         } else {
-        const wordCount = props.inputContent.trim().split(/\s+/).length;
-        console.log("wordCount" + wordCount);
-        if (wordCount > 650) {
-            passWordCountCheck = true;
-        }
-        }
-
-        if (passWordCountCheck || userAckWordCount) {
-            // one time acknowledgement for word count
-            setUserAckWordCount(false);
-            onCreatePodcast();
-            console.log("calling onCreatePodcast in wordCountCheck");
-        } else {
-            setShowAckWordCountButton(true);
-        }
-    };
-
-    const onCreatePodcast = async () => {
-        if (activeTab === 'url'){
-            const urls = extractUrls(props.inputContent)
-            console.log(`extracted following urls: ${urls}`)
-            if (urls) {
-                if (userId) {
-                    const errorMessage = await generatePodcast(
-                        userIdToken,
-                        userId,
-                        urls,
-                        null,
-                        setLoading,
-                        podcastTitle,
-                        hostName,
-                        selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                        totalLength)
-                    props.setErrorMessage(errorMessage)
-                    if (!errorMessage) {
-                        props.setInputContent('')
-                    }
-                } else {
-                    navigate('/login', {
-                        replace: true,
-                        state: {
-                            contentUrl: urls.join(','),
-                            podcastTitle: podcastTitle,
-                            hostName: hostName,
-                            voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                            totalLength: totalLength
-                        }
-                    })
-                }
-            }
+          navigate("/login", {
+            replace: true,
+            state: {
+              contentUrl: urls.join(","),
+              podcastTitle: podcastTitle,
+              hostName: hostName,
+              voiceId:
+                selectedVoice === YOUR_OWN_VOICE
+                  ? voiceId
+                    ? voiceId
+                    : props.userVoiceId
+                  : selectedVoice,
+              introLength: introLength,
+              paragraphLength: paragraphLength,
+            },
+          });
         }
         else {
             if (userId) {
