@@ -15,7 +15,8 @@ import DetailedUrlInput from "../components/DetailedUrlInput"
 const SUBSCRIPTION_PLAN_TO_MINUTES = {
     Starter: 20,
     Creator: 120,
-    Professional: 720
+    Professional: 720,
+    Other: 0
 }
 
 const DashBoardScreen = () => {
@@ -140,7 +141,7 @@ const DashBoardScreen = () => {
             const user = doc.data()
             if (user) {
                 setUserVoiceId(user['clone_voice_id'])
-                const subscriptionPlan = user['subscription']
+                const subscriptionPlan = user['subscription'] ?? 'Other'
                 setTotalAllowedLength(SUBSCRIPTION_PLAN_TO_MINUTES[subscriptionPlan])
                 setContentList(await populateContentList(user))
             }

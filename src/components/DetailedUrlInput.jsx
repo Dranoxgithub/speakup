@@ -21,10 +21,10 @@ const AVAILABLE_VOICES = [
 ];
 
 const PODCAST_STYLES = [
-    { name: 'Brief', length: 5 },
-    { name: 'Daily', length: 10 },
-    { name: 'Long', length: 30 },
-    { name: 'Longer', length: 60 },
+    { name: 'Brief (5 - 10 min)', length: 10, minLength: 0 },
+    { name: 'Medium (10 - 20 min)', length: 20, minLength: 10 },
+    { name: 'Long (20 - 30 min)', length: 30, minLength: 20 },
+    // { name: 'Longer', length: 60 },
 ]
 
 const DetailedUrlInput = (props) => {
@@ -40,7 +40,7 @@ const DetailedUrlInput = (props) => {
   const [hostName, setHostName] = useState()
   const [voiceId, setVoiceId] = useState()
   const [selectedVoice, setSelectedVoice] = useState('Alex')
-  const [totalLength, setTotalLength] = useState(5)
+  const [totalLength, setTotalLength] = useState(PODCAST_STYLES[0].length)
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const timeoutRef = useRef(null);
@@ -52,6 +52,11 @@ const DetailedUrlInput = (props) => {
   const [isVoicePreviewShown, setIsVoicePreviewShown] = useState(false);
   const [isCloneVoiceShown, setIsCloneVoiceShown] = useState(false);
   const [voiceLibrary, setVoiceLibrary] = useState(AVAILABLE_VOICES);
+
+  const modeSelectionDivRef = useRef(null)
+  const [isModeDropdownShown, setIsModeDropdownShown] = useState(false)
+
+  const [scriptOnly, setScriptOnly] = useState(false)
 
   const urlPlaceholders = [
     "Drop URLs to turn articles into podcasts instantly...",
@@ -122,6 +127,13 @@ const DetailedUrlInput = (props) => {
       !voiceSelectionDivRef.current.contains(event.target)
     ) {
       setIsVoicePreviewShown(false);
+    }
+
+    if (
+        modeSelectionDivRef.current &&
+        !modeSelectionDivRef.current.contains(event.target)
+    ) {
+        setIsModeDropdownShown(false);
     }
   };
 
@@ -221,16 +233,19 @@ const DetailedUrlInput = (props) => {
             console.log(`extracted following urls: ${urls}`)
             if (urls) {
                 if (userId) {
+                    const inputParams = {
+                        contentUrls: urls,
+                        podcastTitle: podcastTitle,
+                        hostName: hostName,
+                        voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
+                        totalLength: totalLength,
+                        scriptOnly: scriptOnly
+                    }
                     const errorMessage = await generatePodcast(
                         userIdToken,
                         userId,
-                        urls,
-                        null,
                         setLoading,
-                        podcastTitle,
-                        hostName,
-                        selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                        totalLength)
+                        inputParams)
                     props.setErrorMessage(errorMessage)
                     if (!errorMessage) {
                         props.setInputContent('')
@@ -243,7 +258,8 @@ const DetailedUrlInput = (props) => {
                             podcastTitle: podcastTitle,
                             hostName: hostName,
                             voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                            totalLength: totalLength
+                            totalLength: totalLength,
+                            scriptOnly: scriptOnly
                         }
                     })
                 }
@@ -251,16 +267,19 @@ const DetailedUrlInput = (props) => {
         }
         else {
             if (userId) {
+                const inputParams = {
+                    plainText: props.inputContent,
+                    podcastTitle: podcastTitle,
+                    hostName: hostName,
+                    voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
+                    totalLength: totalLength,
+                    scriptOnly: scriptOnly
+                }
                 const errorMessage = await generatePodcast(
                     userIdToken,
                     userId,
-                    null,
-                    props.inputContent,
                     setLoading,
-                    podcastTitle,
-                    hostName,
-                    selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                    totalLength)
+                    inputParams)
                 props.setErrorMessage(errorMessage)
                 if (!errorMessage) {
                     props.setInputContent('')
@@ -273,7 +292,8 @@ const DetailedUrlInput = (props) => {
                         podcastTitle: podcastTitle,
                         hostName: hostName,
                         voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                        totalLength: totalLength
+                        totalLength: totalLength,
+                        scriptOnly: scriptOnly
                     }
                 })
             }
@@ -377,7 +397,7 @@ const DetailedUrlInput = (props) => {
           </button>
         </div>
 
-        <div ref={voiceSelectionDivRef} style={{ width: "700px" }}>
+        <div style={{ width: "700px" }}>
           <div
             className="customizedInputBlock"
             style={{ marginBottom: "10px" }}
@@ -386,9 +406,10 @@ const DetailedUrlInput = (props) => {
               <h4>Voice: </h4>
               <div
                 className="customizedInput"
-                onClick={() =>
-                  setIsVoicePreviewShown((prevValue) => !prevValue)
-                }
+                onClick={(e) => {
+                    e.stopPropagation()
+                    setIsVoicePreviewShown((prevValue) => !prevValue)
+                }}
                 style={{ cursor: "pointer", marginLeft: "10px" }}
               >
                 {selectedVoice}
@@ -418,7 +439,7 @@ const DetailedUrlInput = (props) => {
           </div>
 
           {isVoicePreviewShown ? (
-            <div>
+            <div ref={voiceSelectionDivRef} style={{position: 'relative'}}>
               <div className="selectionDropDownContainer">
                 {voiceLibrary.map((item, index) => (
                   <div key={item.name}>
@@ -487,6 +508,65 @@ const DetailedUrlInput = (props) => {
           )}
         </div>
 
+        <div style={{ width: '700px' }}>
+            <div
+                className="customizedInputBlock"
+                style={{ marginBottom: "10px" }}
+            >
+                <div style={{ flexDirection: "row", display: "flex" }}>
+                    <h4>Podcast Mode: </h4>
+                    <div
+                        className="customizedInput"
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            setIsModeDropdownShown((prevValue) => !prevValue)
+                        }}
+                        style={{ cursor: "pointer", marginLeft: "10px" }}
+                    >
+                        {PODCAST_STYLES.filter(item => totalLength > item.minLength && totalLength <= item.length)[0].name}
+                    </div>
+                </div>
+            </div>
+
+            {isModeDropdownShown ? (
+            <div ref={modeSelectionDivRef} style={{position: 'relative'}}>
+              <div className="selectionDropDownContainer">
+                {PODCAST_STYLES.map((item, index) => (
+                  <div key={item.name}>
+                    <div
+                      className="selectionDropDownItem"
+                      onClick={() => {
+                        {
+                            setTotalLength(item.length)
+                            setIsModeDropdownShown(false)
+                        }
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <p>{item.name}</p>
+                      </div>
+                    </div>
+
+                    {index === voiceLibrary.length - 1 ? (
+                      <></>
+                    ) : (
+                      <div className="divider"></div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+
         <textarea
           placeholder={
             placeholders[currentPlaceholder]
@@ -498,18 +578,18 @@ const DetailedUrlInput = (props) => {
           className="urlInput"
         />
 
-        <div className="tabContainer" style={{marginBottom: '30px', marginTop: '10px'}}>
-            {PODCAST_STYLES.map(item => (
-                <button 
-                    className={totalLength === item.length ? 'activeTab' : ''} 
-                    key={item.name}
-                    onClick={() => {
-                        setTotalLength(item.length)
-                    }}
-                >
-                    {item.name}
-                </button>
-            ))}
+        <div style={{marginBottom: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '700px'}}>
+            <label>
+                <input 
+                    type="checkbox" 
+                    style={{marginRight: '10px'}} 
+                    onChange={() => setScriptOnly(prevValue => !prevValue)}
+                    checked={scriptOnly}
+                />
+                Generate Script Preview
+            </label>
+            
+            <p style={{margin: '0px'}}>Remaining Quota: {props.totalUsedLength} / {props.totalAllowedLength} min</p>
         </div>
 
         <div className="buttons-container">

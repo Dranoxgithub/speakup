@@ -42,7 +42,7 @@ const CustomizedInput = (props) => {
               step={5}
               marks
               min={5}
-              max={60}
+              max={30}
               color="warning"
           />
       </div>

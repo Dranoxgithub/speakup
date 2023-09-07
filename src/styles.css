@@ -451,7 +451,11 @@ a {
     border-style: solid;
     border-width: 1px;
     border-color: #ebebeb;
-    margin: 0px 20px 20px 20px;
+    margin: 0px 20px;
+    z-index: 10;
+    position: absolute;
+    width: 660px;
+    background-color: white;
 }
 
 .selectionDropDownItem {

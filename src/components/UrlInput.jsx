@@ -33,7 +33,14 @@ const UrlInput = (props) => {
     const onCreatePodcast = async () => {
         if (isValidUrl(url)) {
             if (userId) {
-                const errorMessage = await generatePodcast(userIdToken, userId, [url.trim()], null, setLoading)
+                const inputParams = {
+                    contentUrls: [url.trim()]
+                }
+                const errorMessage = await generatePodcast(
+                    userIdToken, 
+                    userId,
+                    setLoading,
+                    inputParams)
                 props.setErrorMessage(errorMessage)
                 props.setContentUrl(url)
             } else {

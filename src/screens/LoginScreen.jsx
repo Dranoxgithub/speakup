@@ -12,6 +12,7 @@ const LoginScreen = () => {
     const [voiceId, setVoiceId] = useState()
     const [totalLength, setTotalLength] = useState()
     const [contentId, setContentid] = useState()
+    const [scriptOnly, setScriptOnly] = useState()
 
     useEffect(() => {
         const populateContentFromQueryParams = (queryParams) => {
@@ -21,6 +22,7 @@ const LoginScreen = () => {
             queryParams.has('hostName') && setHostName(queryParams.get('hostName'))
             queryParams.has('voiceId') && setVoiceId(queryParams.get('voiceId'))
             queryParams.has('totalLength') && setTotalLength(queryParams.get('totalLength'))
+            queryParams.has(`scriptOnly`) && setScriptOnly(queryParams.get(`scriptOnly`))
         }
 
         const populateContentFromState = () => {
@@ -31,6 +33,7 @@ const LoginScreen = () => {
             setVoiceId(location.state.voiceId)
             setTotalLength(location.state.totalLength)
             setContentid(location.state.contentId)
+            setScriptOnly(location.state.scriptOnly)
         }
 
         const populateContent = async () => {
@@ -62,6 +65,7 @@ const LoginScreen = () => {
                 voiceId={voiceId}
                 totalLength={totalLength}
                 contentId={contentId}
+                scriptOnly={scriptOnly}
             />
         </div>
     )

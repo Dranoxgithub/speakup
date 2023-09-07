@@ -29,27 +29,33 @@ const GoogleAuth = (props) => {
             if (userDoc.isFreeTrialUsed) {
                 errorMessage = 'Sorry, your free trial has already been used up :( \n Please subscribe for membership!'
             } else if (props.contentUrl) {
+                const inputParams = {
+                    contentUrls: props.contentUrl.trim().split(','),
+                    podcastTitle: props.podcastTitle,
+                    hostName: props.hostName,
+                    voiceId: props.voiceId,
+                    totalLength: props.totalLength,
+                    scriptOnly: props.scriptOnly
+                }
                 errorMessage = await generatePodcast(
                     user.accessToken, 
                     user.uid, 
-                    props.contentUrl.trim().split(','), 
-                    null,
                     setLoading,
-                    props.podcastTitle,
-                    props.hostName,
-                    props.voiceId,
-                    props.totalLength)
+                    inputParams)
             } else if (props.plainTextInput) {
+                const inputParams = {
+                    plainText: props.plainText,
+                    podcastTitle: props.podcastTitle,
+                    hostName: props.hostName,
+                    voiceId: props.voiceId,
+                    totalLength: props.totalLength,
+                    scriptOnly: props.scriptOnly
+                }
                 errorMessage = await generatePodcast(
                     user.accessToken, 
                     user.uid, 
-                    null, 
-                    props.plainTextInput,
                     setLoading,
-                    props.podcastTitle,
-                    props.hostName,
-                    props.voiceId,
-                    props.totalLength)
+                    inputParams)
             }
     
             // userDoc.isFreeTrialUsed = true; // potential bugs: if the user podcast is not generated successfully, the user will still be marked as used free trial

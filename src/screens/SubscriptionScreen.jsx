@@ -79,7 +79,7 @@ const SubscriptionScreen = () => {
                     </div>
 
                     <div className="subscriptionPlanText">
-                        <h1>Current plan: {userSubscription}</h1>
+                        <h1>Current plan: {userSubscription ?? 'None'}</h1>
                     </div>
 
                     <div className="subscriptionContainer">

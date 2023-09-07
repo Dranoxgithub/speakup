@@ -2,6 +2,17 @@ import { fetchUrl } from "../ajax/ajaxUtils";
 
 export const AD_CONTENT = "This podcast is created with ListenUp AI.";
 
+const DEFAULT_PARAMS = {
+  podcastTitle: null,
+  hostName: null,
+  voiceId: "Valley Girl",
+  totalLength: null,
+  scriptOnly: false,
+  withMusic: true,
+  tone: 'narrative',
+  ad: AD_CONTENT
+}
+
 export const secondsToHHMMSS = (seconds) => {
   // credits - https://stackoverflow.com/a/37096512
   seconds = Number(seconds);
@@ -18,15 +29,8 @@ export const secondsToHHMMSS = (seconds) => {
 export const generatePodcast = async (
   idToken,
   userid,
-  podcastLength = "short_podcast_length",
-  contentUrls = null,
-  plainText = null,
   setLoading,
-  podcastTitle = null,
-  hostName = null,
-  voiceId = "Valley Girl",
-  totalLength = null,
-  ad = AD_CONTENT
+  inputParams
 ) => {
   setLoading(true);
   try {
@@ -36,18 +40,20 @@ export const generatePodcast = async (
     };
     const body = {
       user_id: userid,
-      host: hostName,
-      voice: voiceId,
-      total_length: totalLength,
-      podcast_title: podcastTitle,
-      ad: ad,
-      podcastLength: podcastLength,
+      host: inputParams.hostName ?? DEFAULT_PARAMS.hostName,
+      voice: inputParams.voiceId ?? DEFAULT_PARAMS.voiceId,
+      total_length: inputParams.totalLength ?? DEFAULT_PARAMS.totalLength,
+      podcast_title: inputParams.podcastTitle ?? DEFAULT_PARAMS.podcastTitle,
+      ad: inputParams.ad ?? DEFAULT_PARAMS.ad,
+      script_only: inputParams.scriptOnly ?? DEFAULT_PARAMS.scriptOnly,
+      with_music: inputParams.withMusic ?? DEFAULT_PARAMS.withMusic,
+      tone: inputParams.tone ?? DEFAULT_PARAMS.tone
     };
 
-    if (contentUrls != null) {
-      body.urls = contentUrls;
-    } else if (plainText != null) {
-      body.plain_text = plainText;
+    if (inputParams.contentUrls != null) {
+      body.urls = inputParams.contentUrls;
+    } else if (inputParams.plainText != null) {
+      body.plain_text = inputParams.plainText;
     }
 
     console.log(`body: ${JSON.stringify(body)}`);
