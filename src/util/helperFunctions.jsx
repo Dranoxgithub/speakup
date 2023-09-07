@@ -106,3 +106,31 @@ export const cloneVoice = async (idToken, userid) => {
     return error.message;
   }
 };
+
+export const checkWordCount = async (idToken, contentUrls) => {
+  try {
+    const headers = {
+      authorization: idToken ?? "",
+      "Content-Type": "application/json",
+    };
+    const body = {
+      urls: contentUrls,
+    };
+    const checkWordCountEndpoint =
+      "https://check-word-count-jcjaqcgmja-uc.a.run.app";
+    const requestOptions = {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(body),
+    };
+    const response = await fetchUrl(checkWordCountEndpoint, {}, requestOptions);
+    console.log(`response status: ${JSON.stringify(response.status)}`);
+    if (response.status != 200) {
+      return null;
+    } else {
+      return response.text();
+    }
+  } catch (error) {
+    return error.message;
+  }
+};

@@ -1,6 +1,6 @@
 import { useAppSelector } from "../redux/hooks";
 import { getUserId, getUserIdToken } from "../redux/userSlice";
-import { generatePodcast } from "../util/helperFunctions";
+import { generatePodcast, checkWordCount } from "../util/helperFunctions";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { MdTune, MdClose } from "react-icons/md";
@@ -30,7 +30,6 @@ const PODCAST_STYLES = [
 const DetailedUrlInput = (props) => {
   const userId = useAppSelector(getUserId);
   const userIdToken = useAppSelector(getUserIdToken);
-
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -95,13 +94,14 @@ const DetailedUrlInput = (props) => {
       return voice;
     });
 
-    Promise.all(asyncOperations).then((newVoiceLibrary) => {
+    Promise.all(asyncOperations).then(async (newVoiceLibrary) => {
       if (props.userVoiceId) {
         newVoiceLibrary = [
           ...newVoiceLibrary,
           {
             name: "Your Own Voice",
             tags: [],
+            audio: await getUserVoicePreviewAudio()
           },
         ];
       }
@@ -111,15 +111,71 @@ const DetailedUrlInput = (props) => {
 
   useEffect(() => {
     if (voiceId && !props.userVoiceId) {
-      setVoiceLibrary((prevVoiceLibrary) => [
-        ...prevVoiceLibrary,
-        {
-          name: "Your Own Voice",
-          tags: [],
-        },
-      ]);
+        getUserVoicePreviewAudio().then(audio => {
+            setVoiceLibrary((prevVoiceLibrary) => [
+                ...prevVoiceLibrary,
+                {
+                  name: "Your Own Voice",
+                  tags: [],
+                  audio: audio
+                },
+              ]);
+        })
     }
   }, [voiceId]);
+
+  const getUserVoicePreviewAudio = async () => {
+    const app = initializeFirebaseApp();
+    const storage = getStorage(app);
+    const userVoicePreviewUrl = `demo/voice_preview/${userId}`
+    let userVoicePreviewAudio
+    try {
+        const audioRef = ref(storage, userVoicePreviewUrl);
+        const blob = await getBlob(audioRef);
+        userVoicePreviewAudio = URL.createObjectURL(blob)
+        console.log(`got user voice preview audio ${userVoicePreviewUrl}`)
+    } catch {}
+
+    console.log(`returning user voice preview ${userVoicePreviewAudio}`)
+    return userVoicePreviewAudio
+  }
+
+  const wordCountCheck = async () => {
+      var passWordCountCheck = false;
+      if (totalLength <= 10) {
+          passWordCountCheck = true
+      }
+      if (activeTab === "url") {
+      const urls = extractUrls(props.inputContent);
+      console.log(`extracted following urls: ${urls}`);
+      if (urls && userId) {
+        const errorMessage = await checkWordCount(userIdToken, urls);
+        console.log(errorMessage);
+      }
+
+      console.log(props.inputContent);
+    } else {
+      const wordCount = props.inputContent.trim().split(/\s+/).length;
+      console.log("wordCount" + wordCount);
+      if (wordCount > 650) {
+        passWordCountCheck = true;
+      }
+    }
+    if (passWordCountCheck || userAckWordCount) {
+      // one time acknowledgement for word count
+      //   setUserAckWordCount(false);
+      console.log("calling onCreatePodcast in wordCountCheck");
+      onCreatePodcast();
+    } else {
+      setShowAckWordCountButton(true);
+    }
+  };
+
+  useEffect(() => {
+    if (userAckWordCount) {
+      wordCountCheck();
+    }
+  }, [userAckWordCount]);
 
   const handleClickOutside = (event) => {
     if (
@@ -205,28 +261,6 @@ const DetailedUrlInput = (props) => {
     return matches.map((match) => match.trim());
   };
 
-    const wordCountCheck = () => {
-        var passWordCountCheck = false;
-        if (activeTab === "url") {
-        console.log(props.inputContent);
-        } else {
-        const wordCount = props.inputContent.trim().split(/\s+/).length;
-        console.log("wordCount" + wordCount);
-        if (wordCount > 650) {
-            passWordCountCheck = true;
-        }
-        }
-
-        if (passWordCountCheck || userAckWordCount) {
-            // one time acknowledgement for word count
-            setUserAckWordCount(false);
-            onCreatePodcast();
-            console.log("calling onCreatePodcast in wordCountCheck");
-        } else {
-            setShowAckWordCountButton(true);
-        }
-    };
-
     const onCreatePodcast = async () => {
         if (activeTab === 'url'){
             const urls = extractUrls(props.inputContent)
@@ -298,6 +332,8 @@ const DetailedUrlInput = (props) => {
                 })
             }
         }
+
+        setUserAckWordCount(false);
     }
 
   const isButtonDisabled = () => {
@@ -643,9 +679,10 @@ const DetailedUrlInput = (props) => {
             </h4>
             <button
                 onClick={() => {
-                setUserAckWordCount(true);
-                setShowAckWordCountButton(false);
+                    setUserAckWordCount(true);
+                    setShowAckWordCountButton(false);
                 }}
+                className="confirmationButton"
             >
                 Yes
             </button>
