@@ -1,12 +1,17 @@
 import "bootstrap/dist/css/bootstrap.css";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId, getUserIdToken } from "../redux/userSlice";
-import { generatePodcast, checkWordCount, AD_CONTENT } from "../util/helperFunctions";
+import {
+  generatePodcast,
+  checkWordCount,
+  AD_CONTENT,
+} from "../util/helperFunctions";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { MdTune, MdClose } from "react-icons/md";
 import CustomizedInput, { YOUR_OWN_VOICE } from "./CustomizedInput";
 import Loading from "./Loading";
+import Popup from "../components/Popup";
 
 import CloneVoice from "./CloneVoice";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
@@ -31,6 +36,8 @@ const PODCAST_STYLES = [
 ];
 
 const DetailedUrlInput = (props) => {
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
   const [notification, setShowNotification] = useState(false);
 
   const showNotificationTemporarily = () => {
@@ -47,19 +54,18 @@ const DetailedUrlInput = (props) => {
   const [loading, setLoading] = useState(false);
   const [showCustomization, setShowCustomization] = useState(false);
 
-  const [podcastTitle, setPodcastTitle] = useState()
-  const [hostName, setHostName] = useState()
-  const [voiceId, setVoiceId] = useState()
-  const [selectedVoice, setSelectedVoice] = useState('Alex')
-  const [totalLength, setTotalLength] = useState(PODCAST_STYLES[0].length)
-  const [adContent, setAdContent] = useState(AD_CONTENT)
+  const [podcastTitle, setPodcastTitle] = useState();
+  const [hostName, setHostName] = useState();
+  const [voiceId, setVoiceId] = useState();
+  const [selectedVoice, setSelectedVoice] = useState("Alex");
+  const [totalLength, setTotalLength] = useState(PODCAST_STYLES[0].length);
+  const [adContent, setAdContent] = useState(AD_CONTENT);
 
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const timeoutRef = useRef(null);
   const [activeTab, setActiveTab] = useState("url"); // possible values: 'url', 'text'
   const [userAckWordCount, setUserAckWordCount] = useState(false);
-  const [showAckWordCountButton, setShowAckWordCountButton] = useState(false);
 
   const voiceSelectionDivRef = useRef(null);
   const [isVoicePreviewShown, setIsVoicePreviewShown] = useState(false);
@@ -71,7 +77,7 @@ const DetailedUrlInput = (props) => {
 
   const [scriptOnly, setScriptOnly] = useState(false);
 
-  const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false)
+  const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
 
   const urlPlaceholders = [
     "Drop URLs to turn articles into podcasts instantly...",
@@ -158,15 +164,15 @@ const DetailedUrlInput = (props) => {
 
   const wordCountCheck = async () => {
     if (totalLength + props.totalUsedLength > props.totalAllowedLength) {
-        setShowUpgradePlanAlert(true)
-        return
+      setShowUpgradePlanAlert(true);
+      return;
     }
 
-      var passWordCountCheck = false;
-      if (totalLength <= 10) {
-          passWordCountCheck = true
-      }
-      if (activeTab === "url") {
+    var passWordCountCheck = false;
+    if (totalLength <= 10) {
+      passWordCountCheck = true;
+    }
+    if (activeTab === "url") {
       const urls = extractUrls(props.inputContent);
       console.log(`extracted following urls: ${urls}`);
       if (urls && userId) {
@@ -184,15 +190,16 @@ const DetailedUrlInput = (props) => {
     }
     if (passWordCountCheck || userAckWordCount) {
       // one time acknowledgement for word count
-      //   setUserAckWordCount(false);
+      setUserAckWordCount(false);
       console.log("calling onCreatePodcast in wordCountCheck");
       onCreatePodcast();
     } else {
-      setShowAckWordCountButton(true);
+      setIsPopupOpen(true);
     }
   };
 
   useEffect(() => {
+    console.log("entering useEffect userAckWordCount");
     if (userAckWordCount) {
       wordCountCheck();
     }
@@ -259,7 +266,6 @@ const DetailedUrlInput = (props) => {
 
   const handleContentChange = (e) => {
     props.setInputContent(e.target.value);
-    setShowAckWordCountButton(false);
     props.onChange();
   };
 
@@ -390,9 +396,9 @@ const DetailedUrlInput = (props) => {
     // } else {
     //     props.setErrorMessage()
     // }
-    
-    if (activeTab == 'url') {
-        return !containsValidUrl(props.inputContent)
+
+    if (activeTab == "url") {
+      return !containsValidUrl(props.inputContent);
     } else {
       return props.inputContent == null || props.inputContent == "";
     }
@@ -452,6 +458,23 @@ const DetailedUrlInput = (props) => {
 
   return (
     <div className="inputContainer">
+      <Popup
+        isPopupOpen={isPopupOpen}
+        setIsPopupOpen={setIsPopupOpen}
+        popupTitle="Insufficient content provided"
+        popupBody={
+          "Attention: The content you provide does not meet your " +
+          totalLength +
+          "-minute podcast requirement, please either add more content or proceed with a shorter, lower-quality script."
+        }
+        cancelText="Add More Content"
+        confirmText="Proceed Anyway"
+        confirmAction={() => {
+          setUserAckWordCount(true);
+          setIsPopupOpen(false);
+        }}
+      ></Popup>
+
       {notification && (
         <div class="alert alert-success" role="alert">
           <h4 class="alert-heading">Job successfully submitted!</h4>
@@ -722,52 +745,38 @@ const DetailedUrlInput = (props) => {
         </div>
       </div>
 
-        {showCustomization ? 
-            <CustomizedInput 
-                userVoiceId={props.userVoiceId}
-                podcastTitle={podcastTitle}
-                setPodcastTitle={setPodcastTitle}
-                hostName={hostName}
-                setHostName={setHostName}
-                selectedVoice={selectedVoice}
-                setSelectedVoice={setSelectedVoice}
-                voiceId={voiceId}
-                setVoiceId={setVoiceId}
-                totalLength={totalLength}
-                setTotalLength={setTotalLength}
-                canEditAd={props.canEditAd}
-                userId={userId}
-                adContent={adContent}
-                setAdContent={setAdContent}
-            /> : 
-            <></>}
-
-      {showAckWordCountButton ? (
-        <div>
-          <h4 className="errorMessage">
-            Your provided content has less than 650 words. It won’t be enough
-            for generating a 20-minute podcast. Do you want to proceed?
-          </h4>
-          <button
-            onClick={() => {
-              setUserAckWordCount(true);
-              setShowAckWordCountButton(false);
-            }}
-            className="confirmationButton"
-          >
-            Yes
-          </button>
-        </div>
+      {showCustomization ? (
+        <CustomizedInput
+          userVoiceId={props.userVoiceId}
+          podcastTitle={podcastTitle}
+          setPodcastTitle={setPodcastTitle}
+          hostName={hostName}
+          setHostName={setHostName}
+          selectedVoice={selectedVoice}
+          setSelectedVoice={setSelectedVoice}
+          voiceId={voiceId}
+          setVoiceId={setVoiceId}
+          totalLength={totalLength}
+          setTotalLength={setTotalLength}
+          canEditAd={props.canEditAd}
+          userId={userId}
+          adContent={adContent}
+          setAdContent={setAdContent}
+        />
       ) : (
         <></>
       )}
 
       {loading ? <Loading /> : <></>}
 
-      {showUpgradePlanAlert ? 
-        <UpgradePlanAlert userId={userId} closeModal={() => setShowUpgradePlanAlert(false)}/> :
+      {showUpgradePlanAlert ? (
+        <UpgradePlanAlert
+          userId={userId}
+          closeModal={() => setShowUpgradePlanAlert(false)}
+        />
+      ) : (
         <></>
-      }
+      )}
     </div>
   );
 };
