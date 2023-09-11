@@ -1,6 +1,6 @@
 import { useAppSelector } from "../redux/hooks";
 import { getUserId, getUserIdToken } from "../redux/userSlice";
-import { generatePodcast, checkWordCount } from "../util/helperFunctions";
+import { generatePodcast, checkWordCount, AD_CONTENT } from "../util/helperFunctions";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { MdTune, MdClose } from "react-icons/md";
@@ -10,6 +10,7 @@ import CloneVoice from "./CloneVoice";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { getStorage, ref, getBlob } from "@firebase/storage";
 import { FaPlay, FaPause } from "react-icons/fa";
+import UpgradePlanAlert from "./UpgradePlanAlert";
 
 const AVAILABLE_VOICES = [
   { name: "Alex", tags: ["american", "male", "young"] },
@@ -40,6 +41,8 @@ const DetailedUrlInput = (props) => {
   const [voiceId, setVoiceId] = useState()
   const [selectedVoice, setSelectedVoice] = useState('Alex')
   const [totalLength, setTotalLength] = useState(PODCAST_STYLES[0].length)
+  const [adContent, setAdContent] = useState(AD_CONTENT)
+
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const timeoutRef = useRef(null);
@@ -56,6 +59,8 @@ const DetailedUrlInput = (props) => {
   const [isModeDropdownShown, setIsModeDropdownShown] = useState(false)
 
   const [scriptOnly, setScriptOnly] = useState(false)
+
+  const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false)
 
   const urlPlaceholders = [
     "Drop URLs to turn articles into podcasts instantly...",
@@ -141,6 +146,11 @@ const DetailedUrlInput = (props) => {
   }
 
   const wordCountCheck = async () => {
+    if (totalLength + props.totalUsedLength > props.totalAllowedLength) {
+        setShowUpgradePlanAlert(true)
+        return
+    }
+
       var passWordCountCheck = false;
       if (totalLength <= 10) {
           passWordCountCheck = true
@@ -341,14 +351,11 @@ const DetailedUrlInput = (props) => {
       return true;
     }
 
-    if (props.existsPendingContent) {
-        props.setErrorMessage(`There are still podcasts being generated. Please wait for their completion :)`)
-        return true
-    }
-
-    if (totalLength + props.totalUsedLength > props.totalAllowedLength) {
-        props.setErrorMessage(`The selected podcast length exceeds the total allowed length. Please adjust accordingly.`)
-    }    
+    // if (totalLength + props.totalUsedLength > props.totalAllowedLength) {
+    //     props.setErrorMessage(`The selected podcast length exceeds the total allowed length. Please adjust accordingly.`)
+    // } else {
+    //     props.setErrorMessage()
+    // }
     
     if (activeTab == 'url') {
         return !containsValidUrl(props.inputContent)
@@ -668,6 +675,10 @@ const DetailedUrlInput = (props) => {
                 setVoiceId={setVoiceId}
                 totalLength={totalLength}
                 setTotalLength={setTotalLength}
+                canEditAd={props.canEditAd}
+                userId={userId}
+                adContent={adContent}
+                setAdContent={setAdContent}
             /> : 
             <></>}
 
@@ -692,6 +703,11 @@ const DetailedUrlInput = (props) => {
         )}
 
       {loading ? <Loading /> : <></>}
+
+      {showUpgradePlanAlert ? 
+        <UpgradePlanAlert userId={userId} closeModal={() => setShowUpgradePlanAlert(false)}/> :
+        <></>
+      }
     </div>
     );
 }

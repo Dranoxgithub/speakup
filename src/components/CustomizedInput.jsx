@@ -1,9 +1,21 @@
+import { useState } from "react";
 import { AD_CONTENT } from "../util/helperFunctions"
 import { Slider } from '@mui/material'
+import UpgradePlanAlert from "./UpgradePlanAlert";
 
 export const YOUR_OWN_VOICE = "Your Own Voice";
 
 const CustomizedInput = (props) => {
+    const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false)
+
+    const handleAdEdit = (event) => {
+        if (!props.canEditAd) {
+            setShowUpgradePlanAlert(true)
+        } else {
+            event.stopPropagation()
+        }
+    }
+
   return (
     <div className="customizedInputContainer">
       <h2>Customize generation</h2>
@@ -50,14 +62,22 @@ const CustomizedInput = (props) => {
       <div className="customizedInputBlock">
         <h4>Ad: </h4>
         <input
-          type="text"
-          placeholder="Your ad to be inserted into the podcast..."
-          value={AD_CONTENT}
-          disabled={true}
-          className="customizedInput"
-          style={{ cursor: "not-allowed" }}
+            type="text"
+            placeholder="Your ad to be inserted into the podcast..."
+            value={props.adContent}
+            onChange={(e) => props.setAdContent(e.target.value)}
+            readOnly={!props.canEditAd}
+            className="customizedInput"
+            style={!props.canEditAd ? {cursor: 'pointer', backgroundColor: '#efefef', opacity: '80%'} : {}}
+            onClick={handleAdEdit}
         />
+        
       </div>
+
+      {showUpgradePlanAlert ? 
+        <UpgradePlanAlert userId={props.userId} closeModal={() => setShowUpgradePlanAlert(false)}/> :
+        <></>
+      }
     </div>
   );
 };

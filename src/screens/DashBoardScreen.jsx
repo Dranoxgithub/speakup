@@ -18,6 +18,8 @@ const SUBSCRIPTION_PLAN_TO_MINUTES = {
     Professional: 720,
 }
 
+const PREMIUM_SUBSCRIPTION_PLAN = ['Creator', 'Professional']
+
 const DashBoardScreen = () => {
     const location = useLocation()
     const userId = useAppSelector(getUserId)
@@ -37,7 +39,7 @@ const DashBoardScreen = () => {
     const [showModal, setShowModal] = useState(false)
     const [totalUsedLength, setTotalUsedLength] = useState()
     const [totalAllowedLength, setTotalAllowedLength] = useState()
-    const [existPendingContent, setExistPendingContent] = useState(false)
+    const [canEditAd, setCanEditAd] = useState()
 
     const populateAudioBlob = async (url) => {
         if (url) {
@@ -54,17 +56,17 @@ const DashBoardScreen = () => {
 
     const populateContentList = async (user) => {
         if (user.user_saved) {
-            setExistPendingContent(false)
             let totalLength = 0
             const asyncOperations = user.user_saved.map(async (item, index) => {
-                if (item.status && item.status == 'pending') {
-                    setExistPendingContent(true)
-                }
                 const contentId = item.content_id
                 setContentIdEmailSent(prevDict => ({
                     ...prevDict,
                     [contentId]: item.status && item.status == 'notified'
                 }))
+
+                if (item.length) {
+                    totalLength += item.length
+                }
                 
                 if (item.status && item.status == 'success' && contentIdEmailSent[contentId] == false) {
                     await sendEmailNotification(contentId)
@@ -95,7 +97,6 @@ const DashBoardScreen = () => {
                         if (content.result.audio) {
                             blobInfo = await populateAudioBlob(content.result.audio.url)
                             duration = content.result.audio.duration
-                            totalLength += duration
                         }
 
                         if (content.result.shownotes) {
@@ -141,6 +142,7 @@ const DashBoardScreen = () => {
             if (user) {
                 setUserVoiceId(user['clone_voice_id'])
                 const subscriptionPlan = user['subscription']
+                setCanEditAd(PREMIUM_SUBSCRIPTION_PLAN.includes(subscriptionPlan))
                 setTotalAllowedLength(SUBSCRIPTION_PLAN_TO_MINUTES[subscriptionPlan] ?? 0)
                 setContentList(await populateContentList(user))
             }
@@ -219,7 +221,7 @@ const DashBoardScreen = () => {
                     userVoiceId={userVoiceId}
                     totalUsedLength={totalUsedLength}
                     totalAllowedLength={totalAllowedLength}
-                    existPendingContent={existPendingContent}
+                    canEditAd={canEditAd}
                 />
                 
                 {errorMessage ? 
@@ -251,7 +253,6 @@ const DashBoardScreen = () => {
                     ))}
                 </div>
             </div>}
-
         </div>
     )
 }
