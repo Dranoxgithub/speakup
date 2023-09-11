@@ -1,3 +1,4 @@
+import "bootstrap/dist/css/bootstrap.css";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId, getUserIdToken } from "../redux/userSlice";
 import { generatePodcast, checkWordCount, AD_CONTENT } from "../util/helperFunctions";
@@ -6,6 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { MdTune, MdClose } from "react-icons/md";
 import CustomizedInput, { YOUR_OWN_VOICE } from "./CustomizedInput";
 import Loading from "./Loading";
+
 import CloneVoice from "./CloneVoice";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { getStorage, ref, getBlob } from "@firebase/storage";
@@ -22,13 +24,22 @@ const AVAILABLE_VOICES = [
 ];
 
 const PODCAST_STYLES = [
-    { name: 'Brief (5 - 10 min)', length: 10, minLength: 0 },
-    { name: 'Medium (10 - 20 min)', length: 20, minLength: 10 },
-    { name: 'Long (20 - 30 min)', length: 30, minLength: 20 },
-    // { name: 'Longer', length: 60 },
-]
+  { name: "Brief (5 - 10 min)", length: 10, minLength: 0 },
+  { name: "Medium (10 - 20 min)", length: 20, minLength: 10 },
+  { name: "Long (20 - 30 min)", length: 30, minLength: 20 },
+  // { name: 'Longer', length: 60 },
+];
 
 const DetailedUrlInput = (props) => {
+  const [notification, setShowNotification] = useState(false);
+
+  const showNotificationTemporarily = () => {
+    setShowNotification(true);
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 3000);
+  };
+
   const userId = useAppSelector(getUserId);
   const userIdToken = useAppSelector(getUserIdToken);
   const navigate = useNavigate();
@@ -46,7 +57,7 @@ const DetailedUrlInput = (props) => {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const timeoutRef = useRef(null);
-  const [activeTab, setActiveTab] = useState('url'); // possible values: 'url', 'text'
+  const [activeTab, setActiveTab] = useState("url"); // possible values: 'url', 'text'
   const [userAckWordCount, setUserAckWordCount] = useState(false);
   const [showAckWordCountButton, setShowAckWordCountButton] = useState(false);
 
@@ -55,10 +66,10 @@ const DetailedUrlInput = (props) => {
   const [isCloneVoiceShown, setIsCloneVoiceShown] = useState(false);
   const [voiceLibrary, setVoiceLibrary] = useState(AVAILABLE_VOICES);
 
-  const modeSelectionDivRef = useRef(null)
-  const [isModeDropdownShown, setIsModeDropdownShown] = useState(false)
+  const modeSelectionDivRef = useRef(null);
+  const [isModeDropdownShown, setIsModeDropdownShown] = useState(false);
 
-  const [scriptOnly, setScriptOnly] = useState(false)
+  const [scriptOnly, setScriptOnly] = useState(false);
 
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false)
 
@@ -106,7 +117,7 @@ const DetailedUrlInput = (props) => {
           {
             name: "Your Own Voice",
             tags: [],
-            audio: await getUserVoicePreviewAudio()
+            audio: await getUserVoicePreviewAudio(),
           },
         ];
       }
@@ -116,34 +127,34 @@ const DetailedUrlInput = (props) => {
 
   useEffect(() => {
     if (voiceId && !props.userVoiceId) {
-        getUserVoicePreviewAudio().then(audio => {
-            setVoiceLibrary((prevVoiceLibrary) => [
-                ...prevVoiceLibrary,
-                {
-                  name: "Your Own Voice",
-                  tags: [],
-                  audio: audio
-                },
-              ]);
-        })
+      getUserVoicePreviewAudio().then((audio) => {
+        setVoiceLibrary((prevVoiceLibrary) => [
+          ...prevVoiceLibrary,
+          {
+            name: "Your Own Voice",
+            tags: [],
+            audio: audio,
+          },
+        ]);
+      });
     }
   }, [voiceId]);
 
   const getUserVoicePreviewAudio = async () => {
     const app = initializeFirebaseApp();
     const storage = getStorage(app);
-    const userVoicePreviewUrl = `demo/voice_preview/${userId}`
-    let userVoicePreviewAudio
+    const userVoicePreviewUrl = `demo/voice_preview/${userId}`;
+    let userVoicePreviewAudio;
     try {
-        const audioRef = ref(storage, userVoicePreviewUrl);
-        const blob = await getBlob(audioRef);
-        userVoicePreviewAudio = URL.createObjectURL(blob)
-        console.log(`got user voice preview audio ${userVoicePreviewUrl}`)
+      const audioRef = ref(storage, userVoicePreviewUrl);
+      const blob = await getBlob(audioRef);
+      userVoicePreviewAudio = URL.createObjectURL(blob);
+      console.log(`got user voice preview audio ${userVoicePreviewUrl}`);
     } catch {}
 
-    console.log(`returning user voice preview ${userVoicePreviewAudio}`)
-    return userVoicePreviewAudio
-  }
+    console.log(`returning user voice preview ${userVoicePreviewAudio}`);
+    return userVoicePreviewAudio;
+  };
 
   const wordCountCheck = async () => {
     if (totalLength + props.totalUsedLength > props.totalAllowedLength) {
@@ -196,10 +207,10 @@ const DetailedUrlInput = (props) => {
     }
 
     if (
-        modeSelectionDivRef.current &&
-        !modeSelectionDivRef.current.contains(event.target)
+      modeSelectionDivRef.current &&
+      !modeSelectionDivRef.current.contains(event.target)
     ) {
-        setIsModeDropdownShown(false);
+      setIsModeDropdownShown(false);
     }
   };
 
@@ -248,7 +259,7 @@ const DetailedUrlInput = (props) => {
 
   const handleContentChange = (e) => {
     props.setInputContent(e.target.value);
-    setShowAckWordCountButton(false)
+    setShowAckWordCountButton(false);
     props.onChange();
   };
 
@@ -271,80 +282,103 @@ const DetailedUrlInput = (props) => {
     return matches.map((match) => match.trim());
   };
 
-    const onCreatePodcast = async () => {
-        if (activeTab === 'url'){
-            const urls = extractUrls(props.inputContent)
-            console.log(`extracted following urls: ${urls}`)
-            if (urls) {
-                if (userId) {
-                    const inputParams = {
-                        contentUrls: urls,
-                        podcastTitle: podcastTitle,
-                        hostName: hostName,
-                        voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                        totalLength: totalLength,
-                        scriptOnly: scriptOnly
-                    }
-                    const errorMessage = await generatePodcast(
-                        userIdToken,
-                        userId,
-                        setLoading,
-                        inputParams)
-                    props.setErrorMessage(errorMessage)
-                    if (!errorMessage) {
-                        props.setInputContent('')
-                    }
-                } else {
-                    navigate('/login', {
-                        replace: true,
-                        state: {
-                            contentUrl: urls.join(','),
-                            podcastTitle: podcastTitle,
-                            hostName: hostName,
-                            voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                            totalLength: totalLength,
-                            scriptOnly: scriptOnly
-                        }
-                    })
-                }
-            }
+  const onCreatePodcast = async () => {
+    if (activeTab === "url") {
+      const urls = extractUrls(props.inputContent);
+      console.log(`extracted following urls: ${urls}`);
+      if (urls) {
+        if (userId) {
+          const inputParams = {
+            contentUrls: urls,
+            podcastTitle: podcastTitle,
+            hostName: hostName,
+            voiceId:
+              selectedVoice === YOUR_OWN_VOICE
+                ? voiceId
+                  ? voiceId
+                  : props.userVoiceId
+                : selectedVoice,
+            totalLength: totalLength,
+            scriptOnly: scriptOnly,
+          };
+          const errorMessage = await generatePodcast(
+            userIdToken,
+            userId,
+            setLoading,
+            inputParams
+          );
+          props.setErrorMessage(errorMessage);
+          if (!errorMessage) {
+            showNotificationTemporarily();
+            props.setInputContent("");
+          }
+        } else {
+          navigate("/login", {
+            replace: true,
+            state: {
+              contentUrl: urls.join(","),
+              podcastTitle: podcastTitle,
+              hostName: hostName,
+              voiceId:
+                selectedVoice === YOUR_OWN_VOICE
+                  ? voiceId
+                    ? voiceId
+                    : props.userVoiceId
+                  : selectedVoice,
+              totalLength: totalLength,
+              scriptOnly: scriptOnly,
+            },
+          });
         }
-        else {
-            if (userId) {
-                const inputParams = {
-                    plainText: props.inputContent,
-                    podcastTitle: podcastTitle,
-                    hostName: hostName,
-                    voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                    totalLength: totalLength,
-                    scriptOnly: scriptOnly
-                }
-                const errorMessage = await generatePodcast(
-                    userIdToken,
-                    userId,
-                    setLoading,
-                    inputParams)
-                props.setErrorMessage(errorMessage)
-                if (!errorMessage) {
-                    props.setInputContent('')
-                }
-            } else {
-                navigate('/login', {
-                    replace: true,
-                    state: {
-                        plainTextInput: props.inputContent,
-                        podcastTitle: podcastTitle,
-                        hostName: hostName,
-                        voiceId: selectedVoice === YOUR_OWN_VOICE ? (voiceId ? voiceId : props.userVoiceId) : selectedVoice,
-                        totalLength: totalLength,
-                        scriptOnly: scriptOnly
-                    }
-                })
-            }
+      }
+    } else {
+      if (userId) {
+        const inputParams = {
+          plainText: props.inputContent,
+          podcastTitle: podcastTitle,
+          hostName: hostName,
+          voiceId:
+            selectedVoice === YOUR_OWN_VOICE
+              ? voiceId
+                ? voiceId
+                : props.userVoiceId
+              : selectedVoice,
+          totalLength: totalLength,
+          scriptOnly: scriptOnly,
+        };
+        const errorMessage = await generatePodcast(
+          userIdToken,
+          userId,
+          setLoading,
+          inputParams
+        );
+        props.setErrorMessage(errorMessage);
+        if (!errorMessage) {
+          showNotificationTemporarily();
+          props.setInputContent("");
         }
-
-        setUserAckWordCount(false);
+      } else {
+        navigate("/login", {
+          replace: true,
+          state: {
+            plainTextInput: props.inputContent,
+            podcastTitle: podcastTitle,
+            hostName: hostName,
+            voiceId:
+              selectedVoice === YOUR_OWN_VOICE
+                ? voiceId
+                  ? voiceId
+                  : props.userVoiceId
+                : selectedVoice,
+            totalLength: totalLength,
+            scriptOnly: scriptOnly,
+          },
+        });
+      }
     }
+
+    setUserAckWordCount(false);
+  };
 
   const isButtonDisabled = () => {
     if (loading) {
@@ -360,7 +394,7 @@ const DetailedUrlInput = (props) => {
     if (activeTab == 'url') {
         return !containsValidUrl(props.inputContent)
     } else {
-        return props.inputContent == null || props.inputContent == ''
+      return props.inputContent == null || props.inputContent == "";
     }
   };
 
@@ -418,6 +452,12 @@ const DetailedUrlInput = (props) => {
 
   return (
     <div className="inputContainer">
+      {notification && (
+        <div class="alert alert-success" role="alert">
+          <h4 class="alert-heading">Job successfully submitted!</h4>
+          <p>You need to wait for another minute before submitting new jobs.</p>
+        </div>
+      )}
       <div className="content">
         <div className="tabContainer">
           <button
@@ -450,8 +490,8 @@ const DetailedUrlInput = (props) => {
               <div
                 className="customizedInput"
                 onClick={(e) => {
-                    e.stopPropagation()
-                    setIsVoicePreviewShown((prevValue) => !prevValue)
+                  e.stopPropagation();
+                  setIsVoicePreviewShown((prevValue) => !prevValue);
                 }}
                 style={{ cursor: "pointer", marginLeft: "10px" }}
               >
@@ -482,7 +522,7 @@ const DetailedUrlInput = (props) => {
           </div>
 
           {isVoicePreviewShown ? (
-            <div ref={voiceSelectionDivRef} style={{position: 'relative'}}>
+            <div ref={voiceSelectionDivRef} style={{ position: "relative" }}>
               <div className="selectionDropDownContainer">
                 {voiceLibrary.map((item, index) => (
                   <div key={item.name}>
@@ -551,28 +591,33 @@ const DetailedUrlInput = (props) => {
           )}
         </div>
 
-        <div style={{ width: '700px' }}>
-            <div
-                className="customizedInputBlock"
-                style={{ marginBottom: "10px" }}
-            >
-                <div style={{ flexDirection: "row", display: "flex" }}>
-                    <h4>Podcast Mode: </h4>
-                    <div
-                        className="customizedInput"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            setIsModeDropdownShown((prevValue) => !prevValue)
-                        }}
-                        style={{ cursor: "pointer", marginLeft: "10px" }}
-                    >
-                        {PODCAST_STYLES.filter(item => totalLength > item.minLength && totalLength <= item.length)[0].name}
-                    </div>
-                </div>
+        <div style={{ width: "700px" }}>
+          <div
+            className="customizedInputBlock"
+            style={{ marginBottom: "10px" }}
+          >
+            <div style={{ flexDirection: "row", display: "flex" }}>
+              <h4>Podcast Mode: </h4>
+              <div
+                className="customizedInput"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsModeDropdownShown((prevValue) => !prevValue);
+                }}
+                style={{ cursor: "pointer", marginLeft: "10px" }}
+              >
+                {
+                  PODCAST_STYLES.filter(
+                    (item) =>
+                      totalLength > item.minLength && totalLength <= item.length
+                  )[0].name
+                }
+              </div>
             </div>
+          </div>
 
-            {isModeDropdownShown ? (
-            <div ref={modeSelectionDivRef} style={{position: 'relative'}}>
+          {isModeDropdownShown ? (
+            <div ref={modeSelectionDivRef} style={{ position: "relative" }}>
               <div className="selectionDropDownContainer">
                 {PODCAST_STYLES.map((item, index) => (
                   <div key={item.name}>
@@ -580,8 +625,8 @@ const DetailedUrlInput = (props) => {
                       className="selectionDropDownItem"
                       onClick={() => {
                         {
-                            setTotalLength(item.length)
-                            setIsModeDropdownShown(false)
+                          setTotalLength(item.length);
+                          setIsModeDropdownShown(false);
                         }
                       }}
                     >
@@ -621,46 +666,61 @@ const DetailedUrlInput = (props) => {
           className="urlInput"
         />
 
-        <div style={{marginBottom: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '700px'}}>
-            <label>
-                <input 
-                    type="checkbox" 
-                    style={{marginRight: '10px'}} 
-                    onChange={() => setScriptOnly(prevValue => !prevValue)}
-                    checked={scriptOnly}
-                />
-                Generate Script Preview
-            </label>
-            
-            <p style={{margin: '0px'}}>Remaining Quota: {props.totalUsedLength} / {props.totalAllowedLength} min</p>
+        <div
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "700px",
+          }}
+        >
+          <label>
+            <input
+              type="checkbox"
+              style={{ marginRight: "10px" }}
+              onChange={() => setScriptOnly((prevValue) => !prevValue)}
+              checked={scriptOnly}
+            />
+            Generate Script Preview
+          </label>
+
+          <p style={{ margin: "0px" }}>
+            Remaining Quota: {props.totalUsedLength} /{" "}
+            {props.totalAllowedLength} min
+          </p>
         </div>
 
         <div className="buttons-container">
-            <button 
-                className={!isButtonDisabled() ? 'navigateButton' : 'disabledNavigateButton'} 
-                onClick={wordCountCheck}
-                disabled={isButtonDisabled()}
-            >
-                <p className="buttonText">Generate podcast</p>
-            </button>
-            <div className="customizeSettingButton">
-            {!showCustomization ? 
-                <MdTune 
-                    size={36} 
-                    color="#9b9b9b" 
-                    style={{ alignSelf: 'center', cursor: 'pointer'}} 
-                    onClick={() => setShowCustomization(true)}
-                />: 
-                <MdClose 
-                    size={36} 
-                    color="#9b9b9b" 
-                    style={{ alignSelf: 'center', cursor: 'pointer'}} 
-                    onClick={() => setShowCustomization(false)}
-                />
+          <button
+            className={
+              !isButtonDisabled() ? "navigateButton" : "disabledNavigateButton"
             }
-            </div>
+            onClick={wordCountCheck}
+            disabled={isButtonDisabled()}
+          >
+            <p className="buttonText">Generate podcast</p>
+          </button>
+          <div className="customizeSettingButton">
+            {!showCustomization ? (
+              <MdTune
+                size={36}
+                color="#9b9b9b"
+                style={{ alignSelf: "center", cursor: "pointer" }}
+                onClick={() => setShowCustomization(true)}
+              />
+            ) : (
+              <MdClose
+                size={36}
+                color="#9b9b9b"
+                style={{ alignSelf: "center", cursor: "pointer" }}
+                onClick={() => setShowCustomization(false)}
+              />
+            )}
+          </div>
         </div>
-    </div>
+      </div>
 
         {showCustomization ? 
             <CustomizedInput 
@@ -682,25 +742,25 @@ const DetailedUrlInput = (props) => {
             /> : 
             <></>}
 
-        {showAckWordCountButton ? (
-            <div>
-            <h4 className="errorMessage">
-                Your provided content has less than 650 words. It won’t be enough
-                for generating a 20-minute podcast. Do you want to proceed?
-            </h4>
-            <button
-                onClick={() => {
-                    setUserAckWordCount(true);
-                    setShowAckWordCountButton(false);
-                }}
-                className="confirmationButton"
-            >
-                Yes
-            </button>
-            </div>
-        ) : (
-            <></>
-        )}
+      {showAckWordCountButton ? (
+        <div>
+          <h4 className="errorMessage">
+            Your provided content has less than 650 words. It won’t be enough
+            for generating a 20-minute podcast. Do you want to proceed?
+          </h4>
+          <button
+            onClick={() => {
+              setUserAckWordCount(true);
+              setShowAckWordCountButton(false);
+            }}
+            className="confirmationButton"
+          >
+            Yes
+          </button>
+        </div>
+      ) : (
+        <></>
+      )}
 
       {loading ? <Loading /> : <></>}
 
@@ -709,7 +769,7 @@ const DetailedUrlInput = (props) => {
         <></>
       }
     </div>
-    );
-}
+  );
+};
 
 export default DetailedUrlInput;
