@@ -1,543 +1,556 @@
 .container {
-    background-color: #fff;
-    color: #2d3142;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+  background-color: #fff;
+  color: #2d3142;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .centeredContainer {
-    background-color: #fff;
-    color: #2d3142;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    height: 100%
+  background-color: #fff;
+  color: #2d3142;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
 }
 
 .resultContainer {
-    background-color: #fff;
-    color: #2d3142;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
+  background-color: #fff;
+  color: #2d3142;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
 }
 
 .title {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    font-family: 'Gloock';
-    max-width: 60%;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-family: "Gloock";
+  max-width: 60%;
 }
 
 .subtitle {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    font-family: 'Gloock';
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-family: "Gloock";
 }
 
 .contentText {
-    line-height: 2rem;
-    font-size: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 2rem;
+  font-size: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .buttonText {
-    font-family: 'Gloock';
-    font-size: 18px;
+  font-family: "Gloock";
+  font-size: 18px;
+  margin: 18px 0px;
 }
 
 .largeButtonText {
-    font-family: 'Gloock';
-    font-size: 24px;
+  font-family: "Gloock";
+  font-size: 24px;
 }
 
 .content {
-    margin-bottom: 1rem;
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column; /* Changed from row to column */
-    align-items: center; /* To center align children vertically */
-    width: 100%;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column; /* Changed from row to column */
+  align-items: center; /* To center align children vertically */
+  width: 100%;
 }
 
-.inputContainer{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Center horizontally */
-    align-items: center;     /* Center vertically */
-    font-family: 'Gloock';
+.inputContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  font-family: "Gloock";
 }
 
 .backNavigator {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    font-family: 'Gloock';
-    font-size: 10px;
-    cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-family: "Gloock";
+  font-size: 10px;
+  cursor: pointer;
 }
 
 .urlInput {
-    padding: 1rem;
-    border-radius: 10px;
-    border-color: #e8e8e8;
-    margin-bottom: 1rem; 
-    font-family: 'Gloock';
-    background-color: #FFFFFF;
-    font-size: 18px;
-    color: #2d3142;
-    outline: 0;
-    width: 100%; 
-    max-width: 700px; 
-    min-height: 300px; 
-    resize: vertical; 
+  padding: 1rem;
+  border-radius: 10px;
+  border-color: #e8e8e8;
+  margin-bottom: 1rem;
+  font-family: "Gloock";
+  background-color: #ffffff;
+  font-size: 18px;
+  color: #2d3142;
+  outline: 0;
+  width: 100%;
+  max-width: 700px;
+  min-height: 300px;
+  resize: vertical;
 }
 
-
 .urlInput::placeholder {
-    font-family: 'Gloock';
-    color: #9b9b9b;
-    font-size: 18px;
+  font-family: "Gloock";
+  color: #9b9b9b;
+  font-size: 18px;
 }
 
 .urlInput:focus {
-    box-shadow: 0 0 5px 2px #EF8254; /* This adds the orange glow */
+  box-shadow: 0 0 5px 2px #ef8254; /* This adds the orange glow */
 }
 
 .tabContainer {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
 }
 
 .tabContainer button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    background-color: #ebebeb;
-    margin: 0 0.5rem;
-    transition: background-color 0.3s;
-    font-size: 18px;
-    font-weight: 500;
-    font-family: "Gloock";
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  background-color: #ebebeb;
+  margin: 0 0.5rem;
+  transition: background-color 0.3s;
+  font-size: 18px;
+  font-weight: 500;
+  font-family: "Gloock";
 }
 
 .tabContainer button.activeTab {
-    background-color: #EF8254;
-    color: #fff;
+  background-color: #ef8254;
+  color: #fff;
 }
-
 
 .customizedInputContainer {
-    border-style: solid;
-    border-width: 2px;
-    border-color: #ebebeb;
-    border-radius: 10px;
-    font-family: 'Gloock';
-    font-size: 16px;
-    padding: 10px 0px;
-    width: 70%;
-    max-width: 700px;
-    min-width: 350px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #ebebeb;
+  border-radius: 10px;
+  font-family: "Gloock";
+  font-size: 16px;
+  padding: 10px 0px;
+  width: 70%;
+  max-width: 700px;
+  min-width: 350px;
 }
 
-
 .customizedInputBlock {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin: 5px 20px;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 5px 20px;
+  align-items: center;
 }
 
 .customizedInput {
-    padding: 15px 10px;
-    border-radius: 10px;
-    margin-left: 50px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: #ebebeb;
-    font-size: 16px;
-    font-family: 'Gloock';
-    color: #2d3142;
-    outline: 0;
-    width: 300px;
-    box-sizing: border-box;
-    align-self: center;
-    text-align: start;
+  padding: 15px 10px;
+  border-radius: 10px;
+  margin-left: 50px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #ebebeb;
+  font-size: 16px;
+  font-family: "Gloock";
+  color: #2d3142;
+  outline: 0;
+  width: 300px;
+  box-sizing: border-box;
+  align-self: center;
+  text-align: start;
 }
 
 .disabledNavigateButton {
-    /* Add styles to make the button appear as desired */
-    padding-left: 1rem;
-    padding-right: 1rem;
-    border-radius: 10px;
-    border: none;
-    background-color: #ebebeb;
-    color: #757575;
-    cursor: not-allowed;
+  /* Add styles to make the button appear as desired */
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 10px;
+  border: none;
+  background-color: #ebebeb;
+  color: #757575;
+  cursor: not-allowed;
 }
 
 .navigateButton {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    border-radius: 10px;
-    border: none;
-    background-color: #EF8254;
-    color: #fff;
-    cursor: pointer;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 10px;
+  border: none;
+  background-color: #ef8254;
+  color: #fff;
+  cursor: pointer;
 }
 
 .largeButton {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    border-radius: 10px;
-    border: none;
-    background-color: #EF8254;
-    color: #fff;
-    cursor: pointer;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-radius: 10px;
+  border: none;
+  background-color: #ef8254;
+  color: #fff;
+  cursor: pointer;
 }
 
 .noDisplay {
-    display: none
+  display: none;
 }
 
 .loginButton {
-    padding: 1rem 1.5rem;
-    border-radius: 10px;
-    border: none;
-    background-color: #EF8254;
-    color: #fff;
-    font-size: 18px;
-    cursor: pointer;
-    font-family: 'Gloock';
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  background-color: #ef8254;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  font-family: "Gloock";
 }
 
 .result {
-    margin-top: 2rem;
+  margin-top: 2rem;
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .fileList {
-    list-style: none;
-    padding-left: 0;
+  list-style: none;
+  padding-left: 0;
 }
 
 .fileText {
-    font-size: 16px;
-    margin: 5px;
-    max-width: 80%;
-    text-align: initial;
+  font-size: 16px;
+  margin: 5px;
+  max-width: 80%;
+  text-align: initial;
 }
 
 .fileTextContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .subsectionContainerFlexStart {
-    margin-top: 1rem;
-    text-align: initial;
-    margin-left: 5%;
-    margin-right: 5%;
-    justify-content: flex-start;
+  margin-top: 1rem;
+  text-align: initial;
+  margin-left: 5%;
+  margin-right: 5%;
+  justify-content: flex-start;
 }
 
 .subsectionContainer {
-    margin-top: 1rem;
-    justify-content: center;
+  margin-top: 1rem;
+  justify-content: center;
 }
 
 .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
 }
 
 .loading-spinner {
-    border: 4px solid rgba(0, 0, 0, 0.3);
-    border-top: 4px solid #EF8254; /* You can change the color here */
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
+  border: 4px solid rgba(0, 0, 0, 0.3);
+  border-top: 4px solid #ef8254; /* You can change the color here */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
 }
 
 .errorMessage {
-    padding-left: 2rem;
-    padding-right: 2rem;
-    margin: 5px;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  margin: 5px;
 }
 
-
 .previewBoxesContainer {
-    display: flex;
-    flex-flow: wrap;
-    justify-content: center;
-    margin-top: 20px;
+  display: flex;
+  flex-flow: wrap;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .previewContainer {
-    border-width: 2px;
-    border-color: #ebebeb;
-    height: 250px;
-    width: 400px;
-    border-style: solid;
-    border-radius: 20px;
-    margin: 20px;    
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 20px;
-    font-family: 'Gloock';
-    padding-left: 20px;
-    padding-right: 20px;
+  border-width: 2px;
+  border-color: #ebebeb;
+  height: 250px;
+  width: 400px;
+  border-style: solid;
+  border-radius: 20px;
+  margin: 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 20px;
+  font-family: "Gloock";
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .previewContainer:hover {
-    background-color: #ebebeb;
+  background-color: #ebebeb;
 }
 
 .generatingText {
-    margin-bottom: 0px;
+  margin-bottom: 0px;
 }
 
 .audioPlayer {
-    margin-top: -60px
+  margin-top: -60px;
 }
 
 .profilePic {
-    height: 40px;
-    width: 40px;
-    border-radius: 40px;
+  height: 40px;
+  width: 40px;
+  border-radius: 40px;
 }
 
 .profilePicContainer {
-    display: flex;
-    justify-content: flex-end;
-    align-self: center;
+  display: flex;
+  justify-content: flex-end;
+  align-self: center;
 }
 
 .profileDetailBox {
-    background-color: #fff;
-    font-family: 'Gloock';
-    border-radius: 10px;
-    position: absolute;
-    z-index: 10;
-    margin-top: 55px;
-    border-style: solid;
-    border-color: #ebebeb;
-    border-width: 0.5px;
-    text-align: start;
-    max-width: 250px;
+  background-color: #fff;
+  font-family: "Gloock";
+  border-radius: 10px;
+  position: absolute;
+  z-index: 10;
+  margin-top: 55px;
+  border-style: solid;
+  border-color: #ebebeb;
+  border-width: 0.5px;
+  text-align: start;
+  max-width: 250px;
 }
 
 .userName {
-    margin: 20px;
-    color: #2d3142;
-    font-size: 16px;
+  margin: 20px;
+  color: #2d3142;
+  font-size: 16px;
 }
 
 .profileSelection {
-    color: #2d3142;
-    font-family: 'Gloock';
-    cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
+  color: #2d3142;
+  font-family: "Gloock";
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .profileSelection:hover {
-    background-color: #ebebeb;
+  background-color: #ebebeb;
 }
 
 .profileSelectionText {
-    margin: 15px 10px;
-    color: #2d3142;
-    font-size: 16px;
+  margin: 15px 10px;
+  color: #2d3142;
+  font-size: 16px;
 }
 
 .headerContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 90%;
-    margin-top: 20px;
-    font-family: 'Gloock';
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90%;
+  margin-top: 20px;
+  font-family: "Gloock";
+  align-items: center;
 }
 
 .shownotesTextNew {
-    font-size: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin-top: 0px;
+  font-size: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin-top: 0px;
 }
 
 .customizeSettingButton {
-    border-radius: 10px;
-    border: none;
-    color: #757575;
-    width: 50px;
-    display: flex;
-    justify-content: center;
-    position: absolute;
-    margin-left: 250px;
+  border-radius: 10px;
+  border: none;
+  color: #757575;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  margin-left: 250px;
 }
 
 .buttons-container {
-    display: flex;
-    justify-content: center; 
-    align-items: center;
-    gap: 1rem; /* Space between buttons */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem; /* Space between buttons */
 }
 
 .fileUploadContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 0px 20px 20px 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0px 20px 20px 20px;
 }
 .fileSelectButton {
-    padding: 10px 10px;
-    border-radius: 10px;
-    border: none;
-    background-color: #ebebeb;
-    color: #000;
-    cursor: pointer;
-    font-family: 'Gloock';
-    font-size: 16px;
+  padding: 10px 10px;
+  border-radius: 10px;
+  border: none;
+  background-color: #ebebeb;
+  color: #000;
+  cursor: pointer;
+  font-family: "Gloock";
+  font-size: 16px;
 }
 .fileUploadButton {
-    padding: 10px 10px;
-    border-radius: 10px;
-    border: none;
-    background-color: #ef8254;
-    color: #fff;
-    cursor: pointer;
-    font-family: 'Gloock';
-    font-size: 16px;
+  padding: 10px 10px;
+  border-radius: 10px;
+  border: none;
+  background-color: #ef8254;
+  color: #fff;
+  cursor: pointer;
+  font-family: "Gloock";
+  font-size: 16px;
 }
 .disabledFileUploadButton {
-    padding: 10px 10px;
-    border-radius: 10px;
-    border: none;
-    background-color: #ebebeb;
-    color: #757575;
-    cursor: not-allowed;
-    font-family: 'Gloock';
-    font-size: 16px;
+  padding: 10px 10px;
+  border-radius: 10px;
+  border: none;
+  background-color: #ebebeb;
+  color: #757575;
+  cursor: not-allowed;
+  font-family: "Gloock";
+  font-size: 16px;
 }
 
 .selectionDropDownContainer {
-    border-radius: 10px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: #ebebeb;
-    margin: 0px 20px;
-    z-index: 10;
-    position: absolute;
-    width: 660px;
-    background-color: white;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #ebebeb;
+  margin: 0px 20px;
+  z-index: 10;
+  position: absolute;
+  width: 660px;
+  background-color: white;
 }
 
 .selectionDropDownItem {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0px 20px;  
-    cursor: pointer; 
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 20px;
+  cursor: pointer;
 }
 
 .tagText {
-    background-color: #edc1adad;
-    margin: 0px 5px;
-    border-radius: 15px;
-    padding: 5px 10px;
-    font-weight: 100;
-    text-align: center;
+  background-color: #edc1adad;
+  margin: 0px 5px;
+  border-radius: 15px;
+  padding: 5px 10px;
+  font-weight: 100;
+  text-align: center;
 }
 
 .divider {
-    border-style: solid;
-    border-width: 0.5px;
-    border-color: #ebebeb;
+  border-style: solid;
+  border-width: 0.5px;
+  border-color: #ebebeb;
 }
 
 .subscriptionContainer {
-    width: 100%;
-    margin-top: 5%;
-    margin-bottom: 3%;
+  width: 100%;
+  margin-top: 5%;
+  margin-bottom: 3%;
 }
 
 .subscriptionPlanText {
-    font-family: 'Gloock';
-    font-size: 14px;
-    margin-top: 5%;
+  font-family: "Gloock";
+  font-size: 14px;
+  margin-top: 5%;
 }
 
 .confirmationButton {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    background-color: #ebebeb;
-    margin: 5px;
-    transition: background-color 0.3s;
-    font-size: 18px;
-    font-weight: 500;
-    font-family: "Gloock";
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  background-color: #ebebeb;
+  margin: 5px;
+  transition: background-color 0.3s;
+  font-size: 18px;
+  font-weight: 500;
+  font-family: "Gloock";
 }
 
 .alertBoxContainer {
-    width: 1000px;
-    border-style: solid;
-    border-color: #ebebeb;
-    border-radius: 20px;
-    position: fixed;
-    z-index: 10;
-    background-color: #fff;
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Center the modal in the middle */
+  width: 1000px;
+  border-style: solid;
+  border-color: #ebebeb;
+  border-radius: 20px;
+  position: fixed;
+  z-index: 10;
+  background-color: #fff;
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Center the modal in the middle */
 }
-
 
 /* Background Overlay Styles */
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent grey background */
-    z-index: 9; /* Lower z-index than the modal, but higher than other content */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent grey background */
+  z-index: 9; /* Lower z-index than the modal, but higher than other content */
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
+/* To be compatible with bootstrap */
+.selectionDropDownItem p {
+  margin: 16px 0px;
+}
+
+.customizedInputField {
+  font-size: 16px;
+  margin: 16px 0px;
+}
+
+.customizedInputContainer h2 {
+  font-size: 24px;
+}
+
+.previewContainer h2 {
+  font-size: 24px;
+}

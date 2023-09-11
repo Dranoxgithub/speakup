@@ -1,4 +1,5 @@
 import "bootstrap/dist/css/bootstrap.css";
+import "../styles.css";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId, getUserIdToken } from "../redux/userSlice";
 import {
@@ -509,7 +510,7 @@ const DetailedUrlInput = (props) => {
             style={{ marginBottom: "10px" }}
           >
             <div style={{ flexDirection: "row", display: "flex" }}>
-              <h4>Voice: </h4>
+              <h4 className="customizedInputField">Voice: </h4>
               <div
                 className="customizedInput"
                 onClick={(e) => {
@@ -620,7 +621,7 @@ const DetailedUrlInput = (props) => {
             style={{ marginBottom: "10px" }}
           >
             <div style={{ flexDirection: "row", display: "flex" }}>
-              <h4>Podcast Mode: </h4>
+              <h4 className="customizedInputField">Podcast Mode: </h4>
               <div
                 className="customizedInput"
                 onClick={(e) => {
