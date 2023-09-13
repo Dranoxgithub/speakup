@@ -207,9 +207,9 @@ const DashBoardScreen = () => {
     return (
         <div>
             {fetchingUser ? <></> : 
-            <div className="container">
+            <div className="resultContainer">
                 <div className="headerContainer">
-                    <h1>Dashboard</h1>
+                    <h1 style={{margin: '0px'}}>Dashboard</h1>
                     <UserInfoDisplay showModal={showModal} setShowModal={setShowModal} />
                 </div>
                 

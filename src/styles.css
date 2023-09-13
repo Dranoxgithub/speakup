@@ -301,10 +301,8 @@ a {
   justify-content: space-between;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 20px;
   font-family: "Gloock";
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 20px;
 }
 
 .previewContainer:hover {

@@ -21,7 +21,7 @@ const PodcastResultPreview = (props) => {
 
     return (
         <div className='previewContainer' onClick={navigateToResult}>
-            <h2>{props.title}</h2>
+            <h2 style={{margin: '0px'}}>{props.title}</h2>
             {props.audioUrl ? 
                 <video controls name="podcast" className="audioPlayer">
                     <source src={props.audioUrl} type='audio/mp3' />

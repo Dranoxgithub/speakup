@@ -70,11 +70,11 @@ const SubscriptionScreen = () => {
     return (
         <div>
             {fetchingUser ? <></> : 
-                <div className="container">
+                <div className="resultContainer">
                     <div className="headerContainer">
                         <div className="backNavigator" onClick={goBackToDashboard} >
                             <AiOutlineArrowLeft size={25} style={{marginRight: 10}}/>
-                            <h1>Dashboard</h1>
+                            <h2 style={{margin: '0px'}}>Dashboard</h2>
                         </div>
                         <UserInfoDisplay showModal={showModal} setShowModal={setShowModal} />
                     </div>

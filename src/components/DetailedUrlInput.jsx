@@ -1,5 +1,3 @@
-import "bootstrap/dist/css/bootstrap.css";
-import "../styles.css";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId, getUserIdToken } from "../redux/userSlice";
 import {
