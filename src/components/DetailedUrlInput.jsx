@@ -11,27 +11,25 @@ import { MdTune, MdClose } from "react-icons/md";
 import CustomizedInput, { YOUR_OWN_VOICE } from "./CustomizedInput";
 import Loading from "./Loading";
 import Popup from "../components/Popup";
-
-import CloneVoice from "./CloneVoice";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { getStorage, ref, getBlob } from "@firebase/storage";
-import { FaPlay, FaPause } from "react-icons/fa";
 import UpgradePlanAlert from "./UpgradePlanAlert";
+import GenerateAudioSettings from "./GenerateAudioSettings";
 
 const AVAILABLE_VOICES = [
-  { name: "Alex", tags: ["american", "male", "young"] },
-  { name: "Bruce", tags: ["american", "male", "middle-aged"] },
-  { name: "Joanne", tags: ["american", "female", "young"] },
-  { name: "Valley Girl", tags: ["american", "female", "young"] },
-  { name: "Victoria", tags: ["british", "female", "middle-aged"] },
-  { name: "Zeus", tags: ["british", "male", "middle-aged"] },
+    { name: "Alex", tags: ["american", "male", "young"] },
+    { name: "Bruce", tags: ["american", "male", "middle-aged"] },
+    { name: "Joanne", tags: ["american", "female", "young"] },
+    { name: "Valley Girl", tags: ["american", "female", "young"] },
+    { name: "Victoria", tags: ["british", "female", "middle-aged"] },
+    { name: "Zeus", tags: ["british", "male", "middle-aged"] },
 ];
 
-const PODCAST_STYLES = [
-  { name: "Brief (5 - 10 min)", length: 10, minLength: 0 },
-  { name: "Medium (10 - 20 min)", length: 20, minLength: 10 },
-  { name: "Long (20 - 30 min)", length: 30, minLength: 20 },
-  // { name: 'Longer', length: 60 },
+export const PODCAST_STYLES = [
+    { name: "Brief (5 - 10 min)", length: 10, minLength: 0 },
+    { name: "Medium (10 - 20 min)", length: 20, minLength: 10 },
+    { name: "Long (20 - 30 min)", length: 30, minLength: 20 },
+    // { name: 'Longer', length: 60 },
 ];
 
 const DetailedUrlInput = (props) => {
@@ -66,17 +64,10 @@ const DetailedUrlInput = (props) => {
   const [activeTab, setActiveTab] = useState("url"); // possible values: 'url', 'text'
   const [userAckWordCount, setUserAckWordCount] = useState(false);
 
-  const voiceSelectionDivRef = useRef(null);
-  const [isVoicePreviewShown, setIsVoicePreviewShown] = useState(false);
-  const [isCloneVoiceShown, setIsCloneVoiceShown] = useState(false);
-  const [voiceLibrary, setVoiceLibrary] = useState(AVAILABLE_VOICES);
-
-  const modeSelectionDivRef = useRef(null);
-  const [isModeDropdownShown, setIsModeDropdownShown] = useState(false);
-
   const [scriptOnly, setScriptOnly] = useState(false);
 
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
+  const [voiceLibrary, setVoiceLibrary] = useState(AVAILABLE_VOICES);
 
   const urlPlaceholders = [
     "Drop URLs to turn articles into podcasts instantly...",
@@ -203,32 +194,6 @@ const DetailedUrlInput = (props) => {
       wordCountCheck();
     }
   }, [userAckWordCount]);
-
-  const handleClickOutside = (event) => {
-    if (
-      voiceSelectionDivRef.current &&
-      !voiceSelectionDivRef.current.contains(event.target)
-    ) {
-      setIsVoicePreviewShown(false);
-    }
-
-    if (
-      modeSelectionDivRef.current &&
-      !modeSelectionDivRef.current.contains(event.target)
-    ) {
-      setIsModeDropdownShown(false);
-    }
-  };
-
-  useEffect(() => {
-    // Add event listener when the component mounts
-    document.addEventListener("click", handleClickOutside);
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
 
   useEffect(() => {
     setCurrentPlaceholder(0);
@@ -403,58 +368,7 @@ const DetailedUrlInput = (props) => {
     }
   };
 
-  const stopAllOtherMusic = (voiceName) => {
-    voiceLibrary.map((item) => {
-      if (item.name !== voiceName) {
-        item.isPlaying = false;
-        if (item.audioElement) {
-          item.audioElement.pause();
-          item.audioElement = undefined;
-        }
-      }
-    });
-  };
-
-  const toggleAudio = (event, voiceName) => {
-    event.stopPropagation();
-    stopAllOtherMusic(voiceName);
-    const selectedVoice = voiceLibrary.filter(
-      (item) => item.name == voiceName
-    )[0];
-    if (selectedVoice.audio) {
-      const audioElement = selectedVoice.audioElement
-        ? selectedVoice.audioElement
-        : new Audio(selectedVoice.audio);
-
-      if (selectedVoice.isPlaying) {
-        audioElement.pause();
-      } else {
-        audioElement.play();
-      }
-
-      const newVoiceLibrary = voiceLibrary.map((item) =>
-        item.name == voiceName
-          ? { ...item, isPlaying: !item.isPlaying, audioElement: audioElement }
-          : item
-      );
-      setVoiceLibrary(newVoiceLibrary);
-
-      audioElement.addEventListener("ended", () => {
-        selectedVoice.isPlaying = false;
-        const newVoiceLibrary = voiceLibrary.map((item) =>
-          item.name == voiceName ? selectedVoice : item
-        );
-        setVoiceLibrary(newVoiceLibrary);
-      });
-    }
-  };
-
-  const handleVoiceSelection = (voiceName) => {
-    stopAllOtherMusic();
-    setSelectedVoice(voiceName);
-    setIsVoicePreviewShown(false);
-  };
-
+  
   return (
     <div className="inputContainer">
       <Popup
@@ -502,181 +416,6 @@ const DetailedUrlInput = (props) => {
           </button>
         </div>
 
-        <div style={{ width: "700px" }}>
-          <div
-            className="customizedInputBlock"
-            style={{ marginBottom: "10px" }}
-          >
-            <div style={{ flexDirection: "row", display: "flex" }}>
-              <h4 className="customizedInputField">Voice: </h4>
-              <div
-                className="customizedInput"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsVoicePreviewShown((prevValue) => !prevValue);
-                }}
-                style={{ cursor: "pointer", marginLeft: "10px" }}
-              >
-                {selectedVoice}
-              </div>
-            </div>
-
-            <div>
-              <button
-                className={
-                  isCloneVoiceShown
-                    ? "disabledFileUploadButton"
-                    : "fileUploadButton"
-                }
-                style={{
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                  marginLeft: "20px",
-                  cursor: "pointer",
-                  paddingTop: "15px",
-                  paddingBottom: "15px",
-                }}
-                onClick={() => setIsCloneVoiceShown((prevValue) => !prevValue)}
-              >
-                {isCloneVoiceShown ? "Back" : "Clone Your Voice"}
-              </button>
-            </div>
-          </div>
-
-          {isVoicePreviewShown ? (
-            <div ref={voiceSelectionDivRef} style={{ position: "relative" }}>
-              <div className="selectionDropDownContainer">
-                {voiceLibrary.map((item, index) => (
-                  <div key={item.name}>
-                    <div
-                      className="selectionDropDownItem"
-                      onClick={() => handleVoiceSelection(item.name)}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        {item.audio &&
-                          (item.isPlaying ? (
-                            <FaPause
-                              onClick={(e) => toggleAudio(e, item.name)}
-                              style={{ marginRight: "10px" }}
-                            />
-                          ) : (
-                            <FaPlay
-                              onClick={(e) => toggleAudio(e, item.name)}
-                              style={{ marginRight: "10px" }}
-                            />
-                          ))}
-                        <p>{item.name}</p>
-                      </div>
-
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        {item.tags.map((tag) => (
-                          <p key={tag} className="tagText">
-                            {tag}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-
-                    {index === voiceLibrary.length - 1 ? (
-                      <></>
-                    ) : (
-                      <div className="divider"></div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <></>
-          )}
-
-          {isCloneVoiceShown && (
-            <CloneVoice
-              setVoice={(voiceId) => {
-                setVoiceId(voiceId);
-                setSelectedVoice(YOUR_OWN_VOICE);
-                setIsVoicePreviewShown(false);
-              }}
-            />
-          )}
-        </div>
-
-        <div style={{ width: "700px" }}>
-          <div
-            className="customizedInputBlock"
-            style={{ marginBottom: "10px" }}
-          >
-            <div style={{ flexDirection: "row", display: "flex" }}>
-              <h4 className="customizedInputField">Podcast Mode: </h4>
-              <div
-                className="customizedInput"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsModeDropdownShown((prevValue) => !prevValue);
-                }}
-                style={{ cursor: "pointer", marginLeft: "10px" }}
-              >
-                {
-                  PODCAST_STYLES.filter(
-                    (item) =>
-                      totalLength > item.minLength && totalLength <= item.length
-                  )[0].name
-                }
-              </div>
-            </div>
-          </div>
-
-          {isModeDropdownShown ? (
-            <div ref={modeSelectionDivRef} style={{ position: "relative" }}>
-              <div className="selectionDropDownContainer">
-                {PODCAST_STYLES.map((item, index) => (
-                  <div key={item.name}>
-                    <div
-                      className="selectionDropDownItem"
-                      onClick={() => {
-                        {
-                          setTotalLength(item.length);
-                          setIsModeDropdownShown(false);
-                        }
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                        }}
-                      >
-                        <p>{item.name}</p>
-                      </div>
-                    </div>
-
-                    {index === voiceLibrary.length - 1 ? (
-                      <></>
-                    ) : (
-                      <div className="divider"></div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <></>
-          )}
-        </div>
-
         <textarea
           placeholder={
             placeholders[currentPlaceholder]
@@ -713,6 +452,16 @@ const DetailedUrlInput = (props) => {
             {props.totalAllowedLength} min
           </p>
         </div>
+
+        <GenerateAudioSettings 
+            selectedVoice={selectedVoice}
+            setSelectedVoice={setSelectedVoice}
+            voiceLibrary={voiceLibrary}
+            setVoiceLibrary={setVoiceLibrary}
+            setVoiceId={setVoiceId}
+            totalLength={totalLength}
+            setTotalLength={setTotalLength}
+        />
 
         <div className="buttons-container">
           <button
