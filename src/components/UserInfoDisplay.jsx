@@ -21,7 +21,7 @@ const UserInfoDisplay = (props) => {
         const app = initializeFirebaseApp()
         const auth = getAuth(app)
         await signOut(auth)
-        window.location.replace('https://creator.getlistenup.com/')
+        window.location.replace('https://startspeakup.com/')
     }
 
     const navigateToSubscriptionPage = () => {

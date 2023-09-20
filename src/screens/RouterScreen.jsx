@@ -38,6 +38,7 @@ const RouterScreen = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<DashBoardScreen />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/dashboard" element={<DashBoardScreen />} />
         <Route path="/result" element={<ResultScreen />}/>
