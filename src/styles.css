@@ -552,3 +552,11 @@ a {
 .previewContainer h2 {
   font-size: 24px;
 }
+
+.previewBoxesContainer1 {
+  display: flex;
+  flex-flow: wrap;
+  justify-content: center;
+  margin-top: 20px;
+  color: red;
+}
