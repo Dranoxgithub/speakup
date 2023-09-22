@@ -3,8 +3,6 @@ import { AD_CONTENT } from "../util/helperFunctions";
 import { Slider } from "@mui/material";
 import UpgradePlanAlert from "./UpgradePlanAlert";
 
-export const YOUR_OWN_VOICE = "Your Own Voice";
-
 const CustomizedInput = (props) => {
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
 
@@ -85,13 +83,11 @@ const CustomizedInput = (props) => {
         />
       </div>
 
-      {showUpgradePlanAlert ? (
+      {showUpgradePlanAlert && (
         <UpgradePlanAlert
           userId={props.userId}
           closeModal={() => setShowUpgradePlanAlert(false)}
         />
-      ) : (
-        <></>
       )}
     </div>
   );

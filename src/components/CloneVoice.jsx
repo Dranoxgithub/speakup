@@ -66,7 +66,7 @@ const CloneVoice = (props) => {
     <div>
       <div className="fileUploadContainer">
         <label htmlFor="filePicker" className="fileSelectButton">
-          Choose Files
+          <p className="plainText">Choose Files</p>
         </label>
         <input id="filePicker" type="file" accept=".mp3" multiple onChange={handleFileChange} key={inputKey} style={{visibility: 'hidden'}} />
         <button 
@@ -74,7 +74,7 @@ const CloneVoice = (props) => {
           className={files.length == 0 ? "disabledFileUploadButton": "fileUploadButton"}
           disabled={files.length == 0}
         >
-          {uploading ? "Uploading..." : "Upload Files"}
+          <p className="plainText">{uploading ? "Uploading..." : "Upload Files"}</p>
         </button>
       </div>
       {uploading ? <Loading /> : <></>}

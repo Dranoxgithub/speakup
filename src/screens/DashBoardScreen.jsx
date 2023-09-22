@@ -207,11 +207,18 @@ const DashBoardScreen = () => {
     return (
         <div>
             {fetchingUser ? <></> : 
-            <div className="resultContainer">
+            <div className="dashboardContainer">
                 <div className="headerContainer">
-                    <h1 style={{margin: '0px'}}>Dashboard</h1>
+                    <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        <h1 className="dashboardHeaderText">Dashboard</h1>
+                        <div className='betaTag'>
+                            <p className='plainText'>BETA</p>
+                        </div>
+                    </div>
                     <UserInfoDisplay showModal={showModal} setShowModal={setShowModal} />
                 </div>
+
+                <div className="headerDivider"></div>
                 
                 <DetailedUrlInput 
                     inputContent={inputContent} 
@@ -226,7 +233,7 @@ const DashBoardScreen = () => {
                 
                 {errorMessage ? 
                     errorMessage.split('\n').map((item, index) => (
-                        <h4 key={index} className="errorMessage" style={{color: '#EF8254'}}>{item}</h4>
+                        <h4 key={index} className="errorMessage" style={{color: '#734DF6'}}>{item}</h4>
                     )) :
                     <></>
                 }
@@ -236,21 +243,24 @@ const DashBoardScreen = () => {
                     <></>
                 }
 
-                <div className="previewBoxesContainer">
-                    {contentList.map(item => (
-                        <PodcastResultPreview 
-                            key={item.contentId}
-                            title={item.title}
-                            script={item.script}
-                            blob={item.blob}
-                            audioUrl={item.audioUrl}
-                            duration={item.duration}
-                            shownotes={item.shownotes}
-                            created={item.created}
-                            urls={item.urls}
-                            status={item.status}
-                        />
-                    ))}
+                <div style={{width: '90%'}}>
+                    <p className="subsectionHeaderText">History</p>
+                    <div className="previewBoxesContainer">
+                        {contentList.map(item => (
+                            <PodcastResultPreview 
+                                key={item.contentId}
+                                title={item.title}
+                                script={item.script}
+                                blob={item.blob}
+                                audioUrl={item.audioUrl}
+                                duration={item.duration}
+                                shownotes={item.shownotes}
+                                created={item.created}
+                                urls={item.urls}
+                                status={item.status}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>}
         </div>

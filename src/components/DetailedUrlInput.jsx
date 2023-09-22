@@ -7,14 +7,14 @@ import {
 } from "../util/helperFunctions";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import { MdTune, MdClose } from "react-icons/md";
-import CustomizedInput, { YOUR_OWN_VOICE } from "./CustomizedInput";
+import { YOUR_OWN_VOICE } from "./VoiceSettings";
 import Loading from "./Loading";
 import Popup from "../components/Popup";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { getStorage, ref, getBlob } from "@firebase/storage";
 import UpgradePlanAlert from "./UpgradePlanAlert";
 import GenerateAudioSettings from "./GenerateAudioSettings";
+import CreateFromTextHelper from "./CreateFromTextHelper";
 
 const AVAILABLE_VOICES = [
     { name: "Alex", tags: ["american", "male", "young"] },
@@ -49,13 +49,12 @@ const DetailedUrlInput = (props) => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  const [showCustomization, setShowCustomization] = useState(false);
 
   const [podcastTitle, setPodcastTitle] = useState();
   const [hostName, setHostName] = useState();
   const [voiceId, setVoiceId] = useState();
-  const [selectedVoice, setSelectedVoice] = useState("Alex");
-  const [totalLength, setTotalLength] = useState(PODCAST_STYLES[0].length);
+  const [selectedVoice, setSelectedVoice] = useState();
+  const [totalLength, setTotalLength] = useState();
   const [adContent, setAdContent] = useState(AD_CONTENT);
 
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
@@ -68,6 +67,7 @@ const DetailedUrlInput = (props) => {
 
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
   const [voiceLibrary, setVoiceLibrary] = useState(AVAILABLE_VOICES);
+  const [showCreateFromTextHelper, setShowCreateFromTextHelper] = useState(true)
 
   const urlPlaceholders = [
     "Drop URLs to turn articles into podcasts instantly...",
@@ -355,12 +355,6 @@ const DetailedUrlInput = (props) => {
       return true;
     }
 
-    // if (totalLength + props.totalUsedLength > props.totalAllowedLength) {
-    //     props.setErrorMessage(`The selected podcast length exceeds the total allowed length. Please adjust accordingly.`)
-    // } else {
-    //     props.setErrorMessage()
-    // }
-
     if (activeTab == "url") {
       return !containsValidUrl(props.inputContent);
     } else {
@@ -403,18 +397,25 @@ const DetailedUrlInput = (props) => {
               props.setInputContent("");
             }}
           >
-            Create from URLs
+            <p className="plainText">Create from URLs</p>
           </button>
           <button
             className={activeTab === "text" ? "activeTab" : ""}
             onClick={() => {
               setActiveTab("text");
+              setShowCreateFromTextHelper(true)
               props.setInputContent("");
             }}
           >
-            Create from text
+            <p className="plainText">Create from text</p>
           </button>
         </div>
+
+        { activeTab === 'text' && showCreateFromTextHelper && 
+          <CreateFromTextHelper 
+            setShowCreateFromTextHelper={setShowCreateFromTextHelper}
+          /> 
+        }
 
         <textarea
           placeholder={
@@ -430,25 +431,22 @@ const DetailedUrlInput = (props) => {
         <div
           style={{
             marginBottom: "20px",
+            paddingLeft: '20px',
+            paddingRight: '20px',
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            width: "700px",
+            width: '900px'
           }}
         >
-          <label>
-            <input
-              type="checkbox"
-              style={{ marginRight: "10px" }}
-              onChange={() => setScriptOnly((prevValue) => !prevValue)}
-              checked={scriptOnly}
-            />
-            Generate Script Preview
-          </label>
+          <p className="greyBoldText">
+            Estimated duration: {totalLength} min
+          </p>
+        
 
-          <p style={{ margin: "0px" }}>
-            Remaining Quota: {props.totalUsedLength} /{" "}
+          <p className="greyBoldText">
+            Remaining quota: {props.totalUsedLength} /{" "}
             {props.totalAllowedLength} min
           </p>
         </div>
@@ -461,59 +459,26 @@ const DetailedUrlInput = (props) => {
             setVoiceId={setVoiceId}
             totalLength={totalLength}
             setTotalLength={setTotalLength}
+            scriptOnly={scriptOnly}
+            setScriptOnly={setScriptOnly}
+            adContent={adContent}
+            setAdContent={setAdContent}
+            podcastTitle={podcastTitle}
+            setPodcastTitle={setPodcastTitle}
+            hostName={hostName}
+            setHostName={setHostName}
         />
 
-        <div className="buttons-container">
-          <button
-            className={
-              !isButtonDisabled() ? "navigateButton" : "disabledNavigateButton"
-            }
-            onClick={wordCountCheck}
-            disabled={isButtonDisabled()}
-          >
-            <p className="buttonText">Generate podcast</p>
-          </button>
-          <div className="customizeSettingButton">
-            {!showCustomization ? (
-              <MdTune
-                size={36}
-                color="#9b9b9b"
-                style={{ alignSelf: "center", cursor: "pointer" }}
-                onClick={() => setShowCustomization(true)}
-              />
-            ) : (
-              <MdClose
-                size={36}
-                color="#9b9b9b"
-                style={{ alignSelf: "center", cursor: "pointer" }}
-                onClick={() => setShowCustomization(false)}
-              />
-            )}
-          </div>
-        </div>
+        <button
+          className={
+            !isButtonDisabled() ? "navigateButton" : "disabledNavigateButton"
+          }
+          onClick={wordCountCheck}
+          disabled={isButtonDisabled()}
+        >
+          <p className="plainText">Generate</p>
+        </button>
       </div>
-
-      {showCustomization ? (
-        <CustomizedInput
-          userVoiceId={props.userVoiceId}
-          podcastTitle={podcastTitle}
-          setPodcastTitle={setPodcastTitle}
-          hostName={hostName}
-          setHostName={setHostName}
-          selectedVoice={selectedVoice}
-          setSelectedVoice={setSelectedVoice}
-          voiceId={voiceId}
-          setVoiceId={setVoiceId}
-          totalLength={totalLength}
-          setTotalLength={setTotalLength}
-          canEditAd={props.canEditAd}
-          userId={userId}
-          adContent={adContent}
-          setAdContent={setAdContent}
-        />
-      ) : (
-        <></>
-      )}
 
       {loading ? <Loading /> : <></>}
 
