@@ -14,7 +14,7 @@ import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { getStorage, ref, getBlob } from "@firebase/storage";
 import UpgradePlanAlert from "./UpgradePlanAlert";
 import GenerateAudioSettings from "./GenerateAudioSettings";
-import CreateFromTextHelper from "./CreateFromTextHelper";
+import CreateInfoHelper from "./CreateInfoHelper";
 
 const AVAILABLE_VOICES = [
     { name: "Alex", tags: ["american", "male", "young"] },
@@ -31,6 +31,42 @@ export const PODCAST_STYLES = [
     { name: "Long (20 - 30 min)", length: 30, minLength: 20 },
     // { name: 'Longer', length: 60 },
 ];
+
+const TEXT_DOS1 = [
+  'Offline content',
+  'PDF/Books',
+  'Paywall content',
+]
+
+const TEXT_DOS2 = [
+  'Forum threads',
+  'Social feeds',
+  'Online docs'
+]
+
+const TEXT_DONTS = [
+  'Content too short',
+  'Avoid ads',
+  'Website code'
+]
+
+const URL_DOS1 = [
+  'Newsletters',
+  'Blogs',
+  'News articles'
+]
+
+const URL_DOS2 = [
+  'Substack',
+  'Medium',
+  'YouTube'
+]
+
+const URL_DONTS = [
+  'Paywall content',
+  'Sign in required',
+  'Content too short'
+]
 
 const DetailedUrlInput = (props) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -68,6 +104,7 @@ const DetailedUrlInput = (props) => {
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
   const [voiceLibrary, setVoiceLibrary] = useState(AVAILABLE_VOICES);
   const [showCreateFromTextHelper, setShowCreateFromTextHelper] = useState(true)
+  const [showCreateFromUrlHelper, setShowCreateFromUrlHelper] = useState(true)
 
   const urlPlaceholders = [
     "Drop URLs to turn articles into podcasts instantly...",
@@ -394,6 +431,7 @@ const DetailedUrlInput = (props) => {
             className={activeTab === "url" ? "activeTab" : ""}
             onClick={() => {
               setActiveTab("url");
+              setShowCreateFromUrlHelper(true)
               props.setInputContent("");
             }}
           >
@@ -412,9 +450,25 @@ const DetailedUrlInput = (props) => {
         </div>
 
         { activeTab === 'text' && showCreateFromTextHelper && 
-          <CreateFromTextHelper 
-            setShowCreateFromTextHelper={setShowCreateFromTextHelper}
-          /> 
+          <CreateInfoHelper 
+            setShowHelper={setShowCreateFromTextHelper}
+            column1={TEXT_DOS1}
+            column2={TEXT_DOS2}
+            column3={TEXT_DONTS}
+          >
+            <p className='helperText'><span style={{fontWeight: '700'}}>PASTE</span> up to 6000 words. For best result, exclude ads, codes, legal disclaimers, and any irrelevant content.</p> 
+          </CreateInfoHelper>
+        }
+
+        { activeTab === 'url' && showCreateFromUrlHelper && 
+          <CreateInfoHelper 
+          setShowHelper={setShowCreateFromUrlHelper}
+            column1={URL_DOS1}
+            column2={URL_DOS2}
+            column3={URL_DONTS}
+          >
+            <p className='helperText'>Optimized for newsletters, blogs, and articles. Auto-extract <span style={{fontWeight: '700'}}>up to 25 URLs; each URL becomes a podcast paragraph.</span></p> 
+          </CreateInfoHelper>
         }
 
         <textarea
@@ -441,13 +495,12 @@ const DetailedUrlInput = (props) => {
           }}
         >
           <p className="greyBoldText">
-            Estimated duration: {totalLength} min
+            Estimated duration: {totalLength ?? 0} min
           </p>
         
 
           <p className="greyBoldText">
-            Remaining quota: {props.totalUsedLength} /{" "}
-            {props.totalAllowedLength} min
+            Remaining quota: {props.totalAllowedLength && props.totalUsedLength ? props.totalAllowedLength - props.totalUsedLength : 0} min
           </p>
         </div>
 
