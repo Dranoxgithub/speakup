@@ -2,14 +2,19 @@ import SubscriptionTable from "./SubscriptionTable"
 import { AiOutlineClose } from "react-icons/ai"
 
 const UpgradePlanAlert = (props) => {
+    const closeModal = (e) => {
+        e.stopPropagation()
+        props.closeModal()
+    }
+
     return (
         <div>
-            <div className="overlay" onClick={props.closeModal}></div>
+            <div className="overlay" onClick={(e) => closeModal(e)}></div>
             <div className="alertBoxContainer">
                 <AiOutlineClose 
                     style={{position: 'absolute', top: '20px', right: '20px', cursor: 'pointer'}} 
                     color="#757575"
-                    onClick={props.closeModal}
+                    onClick={(e) => closeModal(e)}
                 />
                 <h2 style={{marginTop: '3%'}}>Upgrade your plan</h2>
 

@@ -16,7 +16,7 @@ const RouterScreen = () => {
   useEffect(() => {
       WebFont.load({
           google: {
-              families: ["Gloock"],
+              families: ['Poppins:400,500,700'],
           },
       })
   }, [])
