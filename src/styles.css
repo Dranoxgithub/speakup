@@ -517,7 +517,7 @@ a {
 }
 
 .selectionDropDownContainer {
-  border-radius: 10px;
+  border-radius: 20px;
   border-style: solid;
   border-width: 1px;
   border-color: #ebebeb;
@@ -534,6 +534,13 @@ a {
   justify-content: space-between;
   padding: 0px 20px;
   cursor: pointer;
+  padding: 15px 40px;
+  border-bottom: 0.5px solid #ebebeb;
+  border-radius: 20px;
+}
+
+.selectionDropDownItem:hover {
+  box-shadow: 0 0 1px 1px #cabcff; /* This adds the orange glow */
 }
 
 .tagText {
@@ -674,9 +681,6 @@ a {
 }
 
 /* To be compatible with bootstrap */
-.selectionDropDownItem p {
-  margin: 16px 0px;
-}
 
 .customizedInputField {
   font-size: 16px;

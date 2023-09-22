@@ -58,22 +58,16 @@ const LengthSettings = (props) => {
                                     setIsModeDropdownShown(false);
                                 }}
                             >
-                            <div
-                                style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                alignItems: "center",
-                                }}
-                            >
-                                <p>{item.name}</p>
+                                <div
+                                    style={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    }}
+                                >
+                                    <p className="plainText">{item.name}</p>
+                                </div>
                             </div>
-                            </div>
-
-                            {index === PODCAST_STYLES.length - 1 ? (
-                            <></>
-                            ) : (
-                            <div className="divider"></div>
-                            )}
                         </div>
                         ))}
                     </div>
