@@ -37,14 +37,12 @@ const PodcastEditScreen = () => {
     const scriptString =
       intro + "<br>" + bodyParas.join("<br><br>") + "<br>" + outro;
     await updateDocument("contents", contentId, {
-      content: {
-        result: {
-          script: {
-            intro: intro,
-            paragraphs: [bodyParasString],
-            outro: outro,
-            best_summary: scriptString,
-          },
+      result: {
+        script: {
+          intro: intro,
+          paragraphs: [bodyParasString],
+          outro: outro,
+          best_summary: scriptString,
         },
       },
     });
@@ -97,9 +95,6 @@ const PodcastEditScreen = () => {
         setTitle(content.original_content.title);
         if (content.result) {
           if (content.result.script.intro) {
-            console.log(
-              "annchn getting intro-----" + content.result.script.intro
-            );
             setIntro(content.result.script.intro);
           }
           if (content.result.script.outro) {
