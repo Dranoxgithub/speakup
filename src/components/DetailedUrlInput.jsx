@@ -190,8 +190,10 @@ const DetailedUrlInput = (props) => {
   };
 
   const wordCountCheck = async () => {
+    setLoading(true)
     if (totalLength + props.totalUsedLength > props.totalAllowedLength) {
       setShowUpgradePlanAlert(true);
+      setLoading(false)
       return;
     }
 
@@ -221,6 +223,7 @@ const DetailedUrlInput = (props) => {
       console.log("calling onCreatePodcast in wordCountCheck");
       onCreatePodcast();
     } else {
+      setLoading(false)
       setIsPopupOpen(true);
     }
   };
