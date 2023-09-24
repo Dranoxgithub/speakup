@@ -500,7 +500,7 @@ const DetailedUrlInput = (props) => {
         
 
           <p className="greyBoldText">
-            Remaining quota: {props.totalAllowedLength && props.totalUsedLength ? props.totalAllowedLength - props.totalUsedLength : 0} min
+            Remaining quota: {props.totalAllowedLength && props.totalUsedLength ? Math.max(0, props.totalAllowedLength - props.totalUsedLength) : 0} min
           </p>
         </div>
 
@@ -533,16 +533,13 @@ const DetailedUrlInput = (props) => {
         </button>
       </div>
 
-      {loading ? <Loading /> : <></>}
+      {loading && <Loading />}
 
-      {showUpgradePlanAlert ? (
+      {showUpgradePlanAlert &&
         <UpgradePlanAlert
           userId={userId}
           closeModal={() => setShowUpgradePlanAlert(false)}
-        />
-      ) : (
-        <></>
-      )}
+        />}
     </div>
   );
 };

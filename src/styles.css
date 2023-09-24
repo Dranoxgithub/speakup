@@ -197,6 +197,10 @@
   color: #828282;
 }
 
+.customizedInput:hover {
+  box-shadow: 0 0 1px 1px #cabcff; /* This adds the orange glow */
+}
+
 .dashboardCustomizedInput {
   padding: 15px 40px;
   border-radius: 20px;
@@ -353,9 +357,9 @@ a {
 }
 
 .previewBoxesContainer {
-  display: flex;
-  flex-flow: wrap;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Adjust the width as needed */
+  gap: 10px; /* Add some gap for spacing between items */
   margin-top: 20px;
 }
 
@@ -363,7 +367,6 @@ a {
   border-width: 2px;
   border-color: #ebebeb;
   height: 250px;
-  width: 400px;
   border-style: solid;
   border-radius: 20px;
   margin: 10px 20px 10px 0px;
@@ -482,14 +485,14 @@ a {
   padding: 10px 0px;
 }
 .fileSelectButton {
-  padding: 15px 20px;
+  padding: 10px 20px;
   border-radius: 20px;
   border: none;
   background-color: #ebebeb;
   color: #000;
 }
 .addVoiceButton {
-  padding: 15px 20px;
+  padding: 10px 20px;
   border-radius: 20px;
   border: none;
   background-color: #ebebeb;
@@ -500,7 +503,7 @@ a {
   /* transform: translateX(-100%); Pull the element back by 100% of its own width */
 }
 .fileUploadButton {
-  padding: 15px 20px;
+  padding: 10px 20px;
   border-radius: 20px;
   border: none;
   background-color: #734df6;
@@ -508,7 +511,7 @@ a {
   cursor: pointer;
 }
 .disabledFileUploadButton {
-  padding: 15px 20px;
+  padding: 10px 20px;
   border-radius: 20px;
   border: none;
   background-color: #ebebeb;
@@ -573,19 +576,6 @@ a {
   font-family: "Poppins";
   font-size: 14px;
   margin-top: 5%;
-}
-
-.confirmationButton {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  background-color: #ebebeb;
-  margin: 5px;
-  transition: background-color 0.3s;
-  font-size: 18px;
-  font-weight: 500;
-  font-family: "Poppins";
 }
 
 .alertBoxContainer {
