@@ -1,6 +1,6 @@
 import { fetchUrl } from "../ajax/ajaxUtils";
 
-export const AD_CONTENT = "This podcast is created with ListenUp AI.";
+export const AD_CONTENT = "This podcast is created with SpeakUp AI.";
 
 const DEFAULT_PARAMS = {
   podcastTitle: null,

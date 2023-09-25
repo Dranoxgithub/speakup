@@ -7,6 +7,12 @@ const ScriptSettings = (props) => {
     const scriptSettingsDivRef = useRef(null);
 
     const handleClickOutside = (event) => {
+        if (event.target.id == 'scriptSettingsText' ||
+            event.target.id == 'scriptSettingsDown' ||
+            event.target.closest('#scriptSettingsDown')) {
+            return;
+        }
+
         if (
             scriptSettingsDivRef.current &&
             !scriptSettingsDivRef.current.contains(event.target)
@@ -42,10 +48,10 @@ const ScriptSettings = (props) => {
                         setIsScriptSettingsShown(prevValue => !prevValue)
                     }}
                 >
-                    <p className="plainText">
+                    <p className="plainText" id='scriptSettingsText'>
                         Script Settings
                     </p>
-                    { isScriptSettingsShown ? <BsChevronUp size={20} /> : <BsChevronDown size={20} />}
+                    { isScriptSettingsShown ? <BsChevronUp size={20} /> : <BsChevronDown size={20} id='scriptSettingsDown' />}
                 </div> : 
                 <div ref={scriptSettingsDivRef} className="customizedInputContainer">
                     <div

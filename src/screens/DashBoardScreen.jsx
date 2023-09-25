@@ -1,21 +1,20 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import {
-  initializeFirebaseApp,
-  getDocument,
-  updateDocument,
-} from "../util/firebaseUtils";
-import PodcastResultPreview from "../components/PodcastResultPreview";
-import { getStorage, ref, getBlob } from "firebase/storage";
-import Loading from "../components/Loading";
-import { useAppSelector } from "../redux/hooks";
-import { getUserId, getUserEmail } from "../redux/userSlice";
-import { v4 as uuidv4 } from "uuid";
-import { onSnapshot, getFirestore, doc } from "firebase/firestore";
-import UserInfoDisplay from "../components/UserInfoDisplay";
-import { getAuth } from "@firebase/auth";
-import DetailedUrlInput from "../components/DetailedUrlInput";
+import { useLocation, useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { initializeFirebaseApp, getDocument, updateDocument } from "../util/firebaseUtils"
+import PodcastResultPreview from "../components/PodcastResultPreview"
+import { getStorage, ref, getBlob } from "firebase/storage"
+import Loading from "../components/Loading"
+import { useAppSelector } from "../redux/hooks"
+import { getUserId, getUserEmail } from "../redux/userSlice"
+import { v4 as uuidv4 } from 'uuid';
+import { onSnapshot, getFirestore, doc } from "firebase/firestore"
+import UserInfoDisplay from "../components/UserInfoDisplay"
+import { getAuth } from "@firebase/auth"
+import DetailedUrlInput from "../components/DetailedUrlInput"
 import PodcastEditPreview from "../components/PodcastEditPreview";
+import { BiTimeFive } from 'react-icons/bi'
+import UpgradePlanAlert from "../components/UpgradePlanAlert"
+import { Skeleton } from "@mui/material"
 
 const SUBSCRIPTION_PLAN_TO_MINUTES = {
   Starter: 20,
@@ -41,11 +40,13 @@ const DashBoardScreen = () => {
   const [draftList, setDraftList] = useState([]);
   const [contentIdEmailSent, setContentIdEmailSent] = useState({});
 
-  const [userVoiceId, setUserVoiceId] = useState();
-  const [showModal, setShowModal] = useState(false);
-  const [totalUsedLength, setTotalUsedLength] = useState();
-  const [totalAllowedLength, setTotalAllowedLength] = useState();
-  const [canEditAd, setCanEditAd] = useState();
+    const [userVoiceId, setUserVoiceId] = useState()
+    const [showModal, setShowModal] = useState(false)
+    const [totalUsedLength, setTotalUsedLength] = useState()
+    const [totalAllowedLength, setTotalAllowedLength] = useState()
+    const [canEditAd, setCanEditAd] = useState()
+
+    const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false)
 
   const populateAudioBlob = async (url) => {
     if (url) {
@@ -67,8 +68,10 @@ const DashBoardScreen = () => {
 
         const content = await getDocument("contents", contentId);
         if (
-          content.status === "script_pending" ||
-          content.status === "script_success"
+            content &&
+            content.status &&
+            (content.status === "script_pending" ||
+            content.status === "script_success")
         ) {
           const title = content.original_content.title;
           let script;
@@ -251,81 +254,91 @@ const DashBoardScreen = () => {
     setErrorMessage();
   };
 
-  return (
-    <div>
-      {fetchingUser ? (
-        <></>
-      ) : (
-        <div className="dashboardContainer">
-          <div className="headerContainer">
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <h1 className="dashboardHeaderText">Dashboard</h1>
-              <div className="betaTag">
-                <p className="plainText">BETA</p>
-              </div>
-            </div>
-            <UserInfoDisplay
-              showModal={showModal}
-              setShowModal={setShowModal}
-            />
-          </div>
+    return (
+        <div>
+            {fetchingUser ? <></> : 
+            <div className="dashboardContainer">
+                <div className="headerContainer">
+                    <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        <h1 className="dashboardHeaderText">Dashboard</h1>
+                        <div className='betaTag'>
+                            <p className='plainText'>BETA</p>
+                        </div>
+                    </div>
+                    <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', margin:'0px 10px'}}>
+                            <BiTimeFive size={24}/>
+                            <h1 className="dashboardHeaderText" style={{fontSize: '24px', margin: '0px 10px'}}>{Math.max(0, totalAllowedLength - totalUsedLength)} min</h1>
 
-          <div className="headerDivider"></div>
+                            {totalAllowedLength - totalUsedLength <= 5 && 
+                                <button
+                                    className="fileUploadButton"
+                                    style={{margin:'0px 10px'}}
+                                    onClick={() => setShowUpgradePlanAlert(true)}
+                                >
+                                    <p className="plainText">Add more time</p>
+                                </button>
+                            }
+                        </div>
 
-          <DetailedUrlInput
-            inputContent={inputContent}
-            setInputContent={setInputContent}
-            onChange={onInputChanged}
-            setErrorMessage={setErrorMessage}
-            userVoiceId={userVoiceId}
-            totalUsedLength={totalUsedLength}
-            totalAllowedLength={totalAllowedLength}
-            canEditAd={canEditAd}
-          />
+                        <UserInfoDisplay showModal={showModal} setShowModal={setShowModal}/>
+                    </div>
+                </div>
 
-          {errorMessage ? (
-            errorMessage.split("\n").map((item, index) => (
-              <h4
-                key={index}
-                className="errorMessage"
-                style={{ color: "#734DF6" }}
-              >
-                {item}
-              </h4>
-            ))
-          ) : (
-            <></>
-          )}
-
-          {loading ? <Loading /> : <></>}
-
-          <div style={{ width: "90%" }}>
-            <p className="subsectionHeaderText">History</p>
-            <div className="previewBoxesContainer">
-              {contentList.map((item) => (
-                <PodcastResultPreview
-                  key={item.contentId}
-                  title={item.title}
-                  script={item.script}
-                  blob={item.blob}
-                  audioUrl={item.audioUrl}
-                  duration={item.duration}
-                  shownotes={item.shownotes}
-                  created={item.created}
-                  urls={item.urls}
-                  status={item.status}
+                <div className="headerDivider"></div>
+                
+                <DetailedUrlInput 
+                    inputContent={inputContent} 
+                    setInputContent={setInputContent} 
+                    onChange={onInputChanged} 
+                    setErrorMessage={setErrorMessage} 
+                    userVoiceId={userVoiceId}
+                    totalUsedLength={totalUsedLength}
+                    totalAllowedLength={totalAllowedLength}
+                    canEditAd={canEditAd}
                 />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+                
+                {errorMessage && 
+                    errorMessage.split('\n').map((item, index) => (
+                        <h4 key={index} className="errorMessage" style={{color: '#734DF6'}}>{item}</h4>
+                    ))}
+
+                <div style={{width: '90%'}}>
+                    <p className="subsectionHeaderText">History</p>
+                    {loading ?
+                        <div className="previewBoxesContainer">
+                            {
+                                contentList.map(() => (
+                                    <Skeleton variant="rectangular" height={250} className='previewContainer' />
+                                ))
+                            }
+                        </div> :
+                        <div className="previewBoxesContainer">
+                            {contentList.map(item => (
+                                <PodcastResultPreview 
+                                    key={item.contentId}
+                                    title={item.title}
+                                    script={item.script}
+                                    blob={item.blob}
+                                    audioUrl={item.audioUrl}
+                                    duration={item.duration}
+                                    shownotes={item.shownotes}
+                                    created={item.created}
+                                    urls={item.urls}
+                                    status={item.status}
+                                />
+                            ))}
+                        </div>
+                    }
+                </div>
+            </div>}
+
+            {showUpgradePlanAlert &&
+                <UpgradePlanAlert
+                    userId={userId}
+                    closeModal={() => setShowUpgradePlanAlert(false)}
+                />
+            }
     </div>
   );
 };

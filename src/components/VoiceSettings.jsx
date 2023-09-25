@@ -12,6 +12,12 @@ const VoiceSettings = (props) => {
     const voiceSelectionDivRef = useRef(null);
 
     const handleClickOutside = (event) => {
+        if (event.target.id == 'voiceSettingsText' ||
+            event.target.id == 'voiceSettingsDown' ||
+            event.target.closest('#voiceSettingsDown')) {
+            return;
+        }
+        
         if (
             voiceSelectionDivRef.current &&
             !voiceSelectionDivRef.current.contains(event.target)
@@ -91,8 +97,8 @@ const VoiceSettings = (props) => {
                         setIsVoicePreviewShown((prevValue) => !prevValue);
                     }}
                 >
-                    <p className="plainText">{props.selectedVoice ? props.selectedVoice : 'Choose voice'}</p>
-                    { isVoicePreviewShown ? <BsChevronUp size={20} /> : <BsChevronDown size={20} />}
+                    <p className="plainText" id='voiceSettingsText'>{props.selectedVoice ? props.selectedVoice : 'Choose voice'}</p>
+                    { isVoicePreviewShown ? <BsChevronUp size={20} /> : <BsChevronDown size={20} id='voiceSettingsDown' />}
                 </div>
 
                 <button
@@ -105,60 +111,56 @@ const VoiceSettings = (props) => {
 
             { isVoicePreviewShown && (
                 <div style={{ position: "relative" }}>
-                <div className="selectionDropDownContainer">
-                    {props.voiceLibrary.map((item, index) => (
-                    <div key={item.name}>
-                        <div
-                            className="selectionDropDownItem"
-                            onClick={() => handleVoiceSelection(item.name)}
-                        >
+                    <div className="selectionDropDownContainer">
+                        {props.voiceLibrary.map((item, index) => (
+                        <div key={item.name}>
                             <div
-                                style={{
+                                className="selectionDropDownItem"
+                                onClick={() => handleVoiceSelection(item.name)}
+                            >
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    {item.audio &&
+                                    (item.isPlaying ? (
+                                        <FaPause
+                                            size={18}
+                                            onClick={(e) => toggleAudio(e, item.name)}
+                                            style={{ marginRight: "10px" }}
+                                        />
+                                    ) : (
+                                        <FaPlay
+                                            size={18}
+                                            onClick={(e) => toggleAudio(e, item.name)}
+                                            style={{ marginRight: "10px" }}
+                                        />
+                                    ))}
+                                    <p className="plainText">{item.name}</p>
+                                </div>
+
+                                <div
+                                    style={{
                                     display: "flex",
                                     flexDirection: "row",
                                     alignItems: "center",
-                                }}
-                            >
-                                {item.audio &&
-                                (item.isPlaying ? (
-                                    <FaPause
-                                    onClick={(e) => toggleAudio(e, item.name)}
-                                    style={{ marginRight: "10px" }}
-                                    />
-                                ) : (
-                                    <FaPlay
-                                    onClick={(e) => toggleAudio(e, item.name)}
-                                    style={{ marginRight: "10px" }}
-                                    />
-                                ))}
-                                <p>{item.name}</p>
-                            </div>
-
-                            <div
-                                style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                alignItems: "center",
-                                }}
-                            >
-                                {item.tags.map((tag) => (
-                                    <div key={tag} className="tagText">
-                                        <p style={{margin: '0px', fontFamily: 'Poppins'}}>
-                                            {tag}
-                                        </p>
-                                    </div>
-                                ))}
+                                    }}
+                                >
+                                    {item.tags.map((tag) => (
+                                        <div key={tag} className="tagText">
+                                            <p style={{margin: '0px', fontFamily: 'Poppins'}}>
+                                                {tag}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
-
-                        {index === props.voiceLibrary.length - 1 ? (
-                        <></>
-                        ) : (
-                        <div className="divider"></div>
-                        )}
+                        ))}
                     </div>
-                    ))}
-                </div>
                 </div>
             )}
 
