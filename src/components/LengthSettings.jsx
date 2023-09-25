@@ -7,6 +7,12 @@ const LengthSettings = (props) => {
     const modeSelectionDivRef = useRef(null);
 
     const handleClickOutside = (event) => {
+        if (event.target.id == 'lengthSettingsText' ||
+            event.target.id == 'lengthSettingsDown' ||
+            event.target.closest('#lengthSettingsDown')) {
+            return;
+        }        
+
         if (
             modeSelectionDivRef.current &&
             !modeSelectionDivRef.current.contains(event.target)
@@ -33,7 +39,7 @@ const LengthSettings = (props) => {
                     setIsModeDropdownShown((prevValue) => !prevValue);
                 }}
             >
-                <p className="plainText">
+                <p className="plainText" id='lengthSettingsText'>
                     {
                         props.totalLength ? 
                             PODCAST_STYLES.filter(
@@ -43,7 +49,7 @@ const LengthSettings = (props) => {
                             'Choose length'
                     }
                 </p>
-                { isModeDropdownShown ? <BsChevronUp size={20} /> : <BsChevronDown size={20} />}
+                { isModeDropdownShown ? <BsChevronUp size={20} /> : <BsChevronDown size={20} id='lengthSettingsDown' />}
             </div>
 
             { isModeDropdownShown && (

@@ -12,6 +12,12 @@ const VoiceSettings = (props) => {
     const voiceSelectionDivRef = useRef(null);
 
     const handleClickOutside = (event) => {
+        if (event.target.id == 'voiceSettingsText' ||
+            event.target.id == 'voiceSettingsDown' ||
+            event.target.closest('#voiceSettingsDown')) {
+            return;
+        }
+        
         if (
             voiceSelectionDivRef.current &&
             !voiceSelectionDivRef.current.contains(event.target)
@@ -91,8 +97,8 @@ const VoiceSettings = (props) => {
                         setIsVoicePreviewShown((prevValue) => !prevValue);
                     }}
                 >
-                    <p className="plainText">{props.selectedVoice ? props.selectedVoice : 'Choose voice'}</p>
-                    { isVoicePreviewShown ? <BsChevronUp size={20} /> : <BsChevronDown size={20} />}
+                    <p className="plainText" id='voiceSettingsText'>{props.selectedVoice ? props.selectedVoice : 'Choose voice'}</p>
+                    { isVoicePreviewShown ? <BsChevronUp size={20} /> : <BsChevronDown size={20} id='voiceSettingsDown' />}
                 </div>
 
                 <button
