@@ -524,6 +524,7 @@ const DetailedUrlInput = (props) => {
             hostName={hostName}
             setHostName={setHostName}
             userId={userId}
+            canEditAd={props.canEditAd}
         />
 
         <button

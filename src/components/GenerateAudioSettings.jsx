@@ -31,6 +31,7 @@ const GenerateAudioSettings = (props) => {
                 hostName={props.hostName}
                 setHostName={props.setHostName}
                 setShowUpgradePlanAlert={setShowUpgradePlanAlert}
+                canEditAd={props.canEditAd}
             />
 
             {showUpgradePlanAlert && (
