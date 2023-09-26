@@ -26,9 +26,9 @@ const AVAILABLE_VOICES = [
 ];
 
 export const PODCAST_STYLES = [
-    { name: "Brief (5 - 10 min)", length: 10, minLength: 0 },
-    { name: "Medium (10 - 20 min)", length: 20, minLength: 10 },
-    { name: "Long (20 - 30 min)", length: 30, minLength: 20 },
+    { name: "Brief (5 - 10 min)", length: 5, maxLength: 10 },
+    { name: "Medium (10 - 20 min)", length: 10, maxLength: 20 },
+    { name: "Long (20 - 30 min)", length: 20, maxLength: 30 },
     // { name: 'Longer', length: 60 },
 ];
 
@@ -523,6 +523,7 @@ const DetailedUrlInput = (props) => {
             setPodcastTitle={setPodcastTitle}
             hostName={hostName}
             setHostName={setHostName}
+            userId={userId}
         />
 
         <button
