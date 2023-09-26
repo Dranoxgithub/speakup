@@ -117,7 +117,7 @@ const DetailedUrlInput = (props) => {
   ];
   const textPlaceholders = [
     "Not able to parse the URL? Try pasting the text here...",
-    "Pefect for pasting text from PDFs, Word docs, Google Drive, etc...",
+    "Perfect for pasting text from PDFs, Word docs, Google Drive, etc...",
     "Be creative with what can be turned into a podcast...",
     "Paste in discussion from reddits, hackernews, product hunt etc...",
     "Paste in Twitter threads, group chats, etc...",
