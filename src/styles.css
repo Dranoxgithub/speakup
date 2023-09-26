@@ -621,6 +621,7 @@ a {
 }
 
 .dashboardHeaderText {
+  font-family: 'Poppins';
   margin: 0px;
   font-weight: 700;
   font-size: 42px;
@@ -628,6 +629,7 @@ a {
 }
 
 .subsectionHeaderText {
+  font-family: 'Poppins';
   margin: 0px;
   font-weight: 700;
   font-size: 38px;
@@ -636,18 +638,21 @@ a {
 }
 
 .plainText {
+  font-family: 'Poppins';
   margin: 0px;
   font-size: 18px;
   font-weight: 700;
 }
 
 .helperText {
+  font-family: 'Poppins';
   margin: 0px;
   font-size: 16px;
   font-weight: 500;
 }
 
 .scriptSettingsText {
+  font-family: 'Poppins';
   font-size: 16px;
   font-weight: 400;
   color: #4d4d4d;
@@ -655,6 +660,7 @@ a {
 }
 
 .greyBoldText {
+  font-family: 'Poppins';
   margin: 0px;
   color: #777777;
   font-size: 16px;
