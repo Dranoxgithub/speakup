@@ -16,7 +16,7 @@ export async function createUserDocument(uid: string) {
       // console.log(`Creating a new user document for uid ${uid}.`);
       await setDoc(docRef, { 
         id: uid, 
-        isFreeTrialUsed: false 
+        quota: 10
       });
       return true;
     }
