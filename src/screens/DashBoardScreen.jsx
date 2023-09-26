@@ -19,7 +19,7 @@ import { Skeleton } from "@mui/material"
 const SUBSCRIPTION_PLAN_TO_MINUTES = {
   Starter: 20,
   Creator: 120,
-  Professional: 720,
+  Professional: 600,
 };
 
 const PREMIUM_SUBSCRIPTION_PLAN = ["Creator", "Professional"];
@@ -63,7 +63,7 @@ const DashBoardScreen = () => {
 
   const populateDraftList = async (user) => {
     if (user.user_saved) {
-      const asyncOperations = user.user_saved.map(async (item, index) => {
+      const asyncOperations = user.user_saved.map(async (item) => {
         const contentId = item.content_id;
 
         const content = await getDocument("contents", contentId);
@@ -106,7 +106,7 @@ const DashBoardScreen = () => {
         }));
 
         if (item.length) {
-          totalLength += item.length;
+          totalLength += (+item.length);
         }
 
         if (
@@ -190,9 +190,7 @@ const DashBoardScreen = () => {
         setUserVoiceId(user["clone_voice_id"]);
         const subscriptionPlan = user["subscription"];
         setCanEditAd(PREMIUM_SUBSCRIPTION_PLAN.includes(subscriptionPlan));
-        setTotalAllowedLength(
-          SUBSCRIPTION_PLAN_TO_MINUTES[subscriptionPlan] ?? 0
-        );
+        setTotalAllowedLength(user['quota'] ? +user['quota'] : 0);
         setContentList(await populateContentList(user));
         setDraftList(await populateDraftList(user));
       }

@@ -44,7 +44,7 @@ const LengthSettings = (props) => {
                         props.totalLength ? 
                             PODCAST_STYLES.filter(
                                 (item) =>
-                                props.totalLength > item.minLength && props.totalLength <= item.length
+                                props.totalLength >= item.length && props.totalLength < item.maxLength
                             )[0].name :
                             'Choose length'
                     }
@@ -55,7 +55,7 @@ const LengthSettings = (props) => {
             { isModeDropdownShown && (
                 <div style={{ position: "relative" }}>
                     <div className="selectionDropDownContainer">
-                        {PODCAST_STYLES.map((item, index) => (
+                        {PODCAST_STYLES.map((item) => (
                         <div key={item.name}>
                             <div
                                 className="selectionDropDownItem"
