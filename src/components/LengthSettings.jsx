@@ -61,7 +61,7 @@ const LengthSettings = (props) => {
                                 className="selectionDropDownItem"
                                 onClick={() => {
                                     props.setTotalMinLength(item.minLength)
-                                    props.setTotalMaxLength(item.maxLength);
+                                    props.setTotalMaxLength(item.maxLength)
                                     setIsModeDropdownShown(false);
                                 }}
                             >

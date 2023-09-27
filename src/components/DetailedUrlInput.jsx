@@ -171,7 +171,7 @@ const DetailedUrlInput = (props) => {
           
           return voice
         })
-        
+
         setVoiceLibrary(existYourOwnVoice ? 
           newVoiceLibrary : 
           [
@@ -366,7 +366,7 @@ const DetailedUrlInput = (props) => {
                 ? voiceId
                 : props.userVoiceId
               : selectedVoice,
-          totalMinLength: totalMinLength,
+          totalLength: totalMinLength,
           scriptOnly: scriptOnly,
         };
         const errorMessage = await generatePodcast(
@@ -393,7 +393,7 @@ const DetailedUrlInput = (props) => {
                   ? voiceId
                   : props.userVoiceId
                 : selectedVoice,
-            totalMinLength: totalMinLength,
+            totalLength: totalMinLength,
             scriptOnly: scriptOnly,
           },
         });
