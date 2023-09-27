@@ -164,9 +164,6 @@ const DashBoardScreen = () => {
       });
       const list = await Promise.all(asyncOperations);
       setTotalUsedLength(Math.floor(totalLength / 60));
-      console.log(
-        `Setting total used length to ${Math.floor(totalLength / 60)}`
-      );
       return list.filter((item) => item && item != null).reverse();
     }
     return [];

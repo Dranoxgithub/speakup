@@ -103,7 +103,10 @@ const VoiceSettings = (props) => {
 
                 <button
                     className="addVoiceButton"
-                    onClick={() => setIsCloneVoiceShown((prevValue) => !prevValue)}
+                    onClick={() => {
+                        setIsCloneVoiceShown((prevValue) => !prevValue)
+                        setIsVoicePreviewShown(false)
+                    }}
                 >
                     <p className="plainText">{isCloneVoiceShown ? "Back" : "+ Add Voice"}</p>
                 </button>

@@ -160,16 +160,28 @@ const DetailedUrlInput = (props) => {
   }, []);
 
   useEffect(() => {
-    if (voiceId && !props.userVoiceId) {
+    if (voiceId) {
       getUserVoicePreviewAudio().then((audio) => {
-        setVoiceLibrary((prevVoiceLibrary) => [
-          ...prevVoiceLibrary,
-          {
-            name: "Your Own Voice",
-            tags: [],
-            audio: audio,
-          },
-        ]);
+        let existYourOwnVoice = false
+        const newVoiceLibrary = voiceLibrary.map(voice => {
+          if (voice.name == "Your Own Voice") {
+            existYourOwnVoice = true
+            voice.audio = audio
+          }
+          
+          return voice
+        })
+        
+        setVoiceLibrary(existYourOwnVoice ? 
+          newVoiceLibrary : 
+          [
+            ...newVoiceLibrary, 
+              {
+                name: "Your Own Voice",
+                tags: [],
+                audio: audio,
+              }
+          ]);
       });
     }
   }, [voiceId]);

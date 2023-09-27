@@ -14,6 +14,7 @@ const GenerateAudioSettings = (props) => {
                 setVoiceLibrary={props.setVoiceLibrary}
                 selectedVoice={props.selectedVoice}
                 setSelectedVoice={props.setSelectedVoice}
+                setVoiceId={props.setVoiceId}
             />
 
             <LengthSettings 
