@@ -17,8 +17,10 @@ const GenerateAudioSettings = (props) => {
             />
 
             <LengthSettings 
-                totalLength={props.totalLength}
-                setTotalLength={props.setTotalLength}
+                totalMinLength={props.totalMinLength}
+                setTotalMinLength={props.setTotalMinLength}
+                totalMaxLength={props.totalMaxLength}
+                setTotalMaxLength={props.setTotalMaxLength}
             />
 
             <ScriptSettings 

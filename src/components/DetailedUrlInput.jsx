@@ -26,9 +26,9 @@ const AVAILABLE_VOICES = [
 ];
 
 export const PODCAST_STYLES = [
-    { name: "Brief (5 - 10 min)", length: 5, maxLength: 10 },
-    { name: "Medium (10 - 20 min)", length: 10, maxLength: 20 },
-    { name: "Long (20 - 30 min)", length: 20, maxLength: 30 },
+    { name: "Brief (5 - 10 min)", minLength: 5, maxLength: 10 },
+    { name: "Medium (10 - 20 min)", minLength: 10, maxLength: 20 },
+    { name: "Long (20 - 30 min)", minLength: 20, maxLength: 30 },
     // { name: 'Longer', length: 60 },
 ];
 
@@ -90,7 +90,8 @@ const DetailedUrlInput = (props) => {
   const [hostName, setHostName] = useState();
   const [voiceId, setVoiceId] = useState();
   const [selectedVoice, setSelectedVoice] = useState();
-  const [totalLength, setTotalLength] = useState();
+  const [totalMinLength, setTotalMinLength] = useState();
+  const [totalMaxLength, setTotalMaxLength] = useState();
   const [adContent, setAdContent] = useState(AD_CONTENT);
 
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
@@ -191,14 +192,14 @@ const DetailedUrlInput = (props) => {
 
   const wordCountCheck = async () => {
     setLoading(true)
-    if (totalLength + props.totalUsedLength > props.totalAllowedLength) {
+    if (totalMinLength + props.totalUsedLength > props.totalAllowedLength) {
       setShowUpgradePlanAlert(true);
       setLoading(false)
       return;
     }
 
     var passWordCountCheck = false;
-    if (totalLength <= 10) {
+    if (totalMinLength < 10) {
       passWordCountCheck = true;
     }
     if (activeTab === "url") {
@@ -308,7 +309,7 @@ const DetailedUrlInput = (props) => {
                   ? voiceId
                   : props.userVoiceId
                 : selectedVoice,
-            totalLength: totalLength,
+            totalLength: totalMaxLength,
             scriptOnly: scriptOnly,
           };
           const errorMessage = await generatePodcast(
@@ -335,7 +336,7 @@ const DetailedUrlInput = (props) => {
                     ? voiceId
                     : props.userVoiceId
                   : selectedVoice,
-              totalLength: totalLength,
+              totalLength: totalMaxLength,
               scriptOnly: scriptOnly,
             },
           });
@@ -353,7 +354,7 @@ const DetailedUrlInput = (props) => {
                 ? voiceId
                 : props.userVoiceId
               : selectedVoice,
-          totalLength: totalLength,
+          totalMinLength: totalMinLength,
           scriptOnly: scriptOnly,
         };
         const errorMessage = await generatePodcast(
@@ -380,7 +381,7 @@ const DetailedUrlInput = (props) => {
                   ? voiceId
                   : props.userVoiceId
                 : selectedVoice,
-            totalLength: totalLength,
+            totalMinLength: totalMinLength,
             scriptOnly: scriptOnly,
           },
         });
@@ -411,7 +412,7 @@ const DetailedUrlInput = (props) => {
         popupTitle="Insufficient content provided"
         popupBody={
           "Attention: The content you provide does not meet your " +
-          totalLength +
+          totalMinLength +
           "-minute podcast requirement, please either add more content or proceed with a shorter, lower-quality script."
         }
         cancelText="Add More Content"
@@ -492,16 +493,11 @@ const DetailedUrlInput = (props) => {
             paddingRight: '20px',
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
             alignItems: "center",
             width: '900px'
           }}
         >
-          <p className="greyBoldText">
-            Estimated duration: {totalLength ?? 0} min
-          </p>
-        
-
           <p className="greyBoldText">
             Remaining quota: {props.totalAllowedLength && props.totalUsedLength ? Math.max(0, props.totalAllowedLength - props.totalUsedLength) : 0} min
           </p>
@@ -513,8 +509,10 @@ const DetailedUrlInput = (props) => {
             voiceLibrary={voiceLibrary}
             setVoiceLibrary={setVoiceLibrary}
             setVoiceId={setVoiceId}
-            totalLength={totalLength}
-            setTotalLength={setTotalLength}
+            totalMinLength={totalMinLength}
+            setTotalMinLength={setTotalMinLength}
+            totalMaxLength={totalMaxLength}
+            setTotalMaxLength={setTotalMaxLength}
             scriptOnly={scriptOnly}
             setScriptOnly={setScriptOnly}
             adContent={adContent}

@@ -41,10 +41,10 @@ const LengthSettings = (props) => {
             >
                 <p className="plainText" id='lengthSettingsText'>
                     {
-                        props.totalLength ? 
+                        props.totalMinLength ? 
                             PODCAST_STYLES.filter(
                                 (item) =>
-                                props.totalLength >= item.length && props.totalLength < item.maxLength
+                                props.totalMinLength == item.minLength
                             )[0].name :
                             'Choose length'
                     }
@@ -60,7 +60,8 @@ const LengthSettings = (props) => {
                             <div
                                 className="selectionDropDownItem"
                                 onClick={() => {
-                                    props.setTotalLength(item.length);
+                                    props.setTotalMinLength(item.minLength)
+                                    props.setTotalMaxLength(item.maxLength);
                                     setIsModeDropdownShown(false);
                                 }}
                             >
