@@ -33,7 +33,7 @@ const DashBoardScreen = () => {
 
   const [errorMessage, setErrorMessage] = useState();
   const [inputContent, setInputContent] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [fetchingUser, setFetchingUser] = useState(true);
 
   const [contentList, setContentList] = useState([]);
