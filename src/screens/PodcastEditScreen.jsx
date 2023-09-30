@@ -56,6 +56,12 @@ const PodcastEditScreen = () => {
     setBodyParas(currentBody);
   };
 
+  const handleInsertBelow = (event) => {
+    const currentBody = [...bodyParas];
+    currentBody.splice(event.target.name + 1, 0, "");
+    setBodyParas(currentBody);
+  };
+
   const savePodcastEdit = async () => {
     const bodyParasString = bodyParas.join("\n\n");
     const scriptString =
@@ -79,16 +85,14 @@ const PodcastEditScreen = () => {
       intro: intro,
       paragraphs: bodyParas, // check this
       outro: outro,
-      doc_ref: contentId,
-      //   podcastTitle: podcastTitle,
-      //   hostName: hostName,
+      doc_id: contentId,
       //   voiceId:
       //     selectedVoice === YOUR_OWN_VOICE
       //       ? voiceId
       //         ? voiceId
       //         : props.userVoiceId
       //       : selectedVoice,
-      //   totalLength: totalLength,
+      with_music: false, // to change
     };
     const errorMessage = await callAudioOnlyEndpoint(
       userIdToken,
@@ -263,6 +267,7 @@ const PodcastEditScreen = () => {
                       className="urlInput"
                     />
                     <CloseButton onClick={handleTextareaDelete} />
+                    <button onClick={handleInsertBelow}>+</button>
                   </>
                 ))}
 

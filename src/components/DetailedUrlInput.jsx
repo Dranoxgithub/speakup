@@ -291,6 +291,13 @@ const DetailedUrlInput = (props) => {
   };
 
   const onCreatePodcast = async () => {
+    const voiceId =
+      selectedVoice === YOUR_OWN_VOICE
+        ? voiceId
+          ? voiceId
+          : props.userVoiceId
+        : selectedVoice;
+
     if (activeTab === "url") {
       const urls = extractUrls(props.inputContent);
       console.log(`extracted following urls: ${urls}`);
@@ -300,12 +307,7 @@ const DetailedUrlInput = (props) => {
             contentUrls: urls,
             podcastTitle: podcastTitle,
             hostName: hostName,
-            voiceId:
-              selectedVoice === YOUR_OWN_VOICE
-                ? voiceId
-                  ? voiceId
-                  : props.userVoiceId
-                : selectedVoice,
+            voiceId: voiceId,
             totalLength: totalMaxLength,
             scriptOnly: scriptOnly,
           };
@@ -327,12 +329,7 @@ const DetailedUrlInput = (props) => {
               contentUrl: urls.join(","),
               podcastTitle: podcastTitle,
               hostName: hostName,
-              voiceId:
-                selectedVoice === YOUR_OWN_VOICE
-                  ? voiceId
-                    ? voiceId
-                    : props.userVoiceId
-                  : selectedVoice,
+              voiceId: voiceId,
               totalLength: totalMaxLength,
               scriptOnly: scriptOnly,
             },
@@ -345,12 +342,7 @@ const DetailedUrlInput = (props) => {
           plainText: props.inputContent,
           podcastTitle: podcastTitle,
           hostName: hostName,
-          voiceId:
-            selectedVoice === YOUR_OWN_VOICE
-              ? voiceId
-                ? voiceId
-                : props.userVoiceId
-              : selectedVoice,
+          voiceId: voiceId,
           totalLength: totalMinLength,
           scriptOnly: scriptOnly,
         };
@@ -372,12 +364,7 @@ const DetailedUrlInput = (props) => {
             plainTextInput: props.inputContent,
             podcastTitle: podcastTitle,
             hostName: hostName,
-            voiceId:
-              selectedVoice === YOUR_OWN_VOICE
-                ? voiceId
-                  ? voiceId
-                  : props.userVoiceId
-                : selectedVoice,
+            voiceId: voiceId,
             totalLength: totalMinLength,
             scriptOnly: scriptOnly,
           },

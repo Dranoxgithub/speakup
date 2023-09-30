@@ -89,14 +89,9 @@ export const callAudioOnlyEndpoint = async (idToken, inputParams) => {
       intro: inputParams.intro,
       outro: inputParams.outro,
       paragraphs: inputParams.paragraphs,
-      user_id: inputParams.userid,
-      host: inputParams.hostName ?? DEFAULT_PARAMS.hostName,
       voice: inputParams.voiceId ?? DEFAULT_PARAMS.voiceId,
-      total_length: inputParams.totalLength ?? DEFAULT_PARAMS.totalLength,
-      podcast_title: inputParams.podcastTitle ?? DEFAULT_PARAMS.podcastTitle,
-      ad: inputParams.ad ?? DEFAULT_PARAMS.ad,
+      doc_id: inputParams.doc_id,
       with_music: inputParams.withMusic ?? DEFAULT_PARAMS.withMusic,
-      tone: inputParams.tone ?? DEFAULT_PARAMS.tone,
     };
 
     console.log(`body: ${JSON.stringify(body)}`);

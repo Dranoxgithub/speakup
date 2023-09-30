@@ -35,11 +35,6 @@ const DashBoardScreen = () => {
 
   const navigate = useNavigate();
 
-  //   const [notification, setShowNotification] = useState(false);
-  //   if (location.state && location.state.notification) {
-  //     setShowNotification(true);
-  //   } //   console.log("annchn------" + location.state);
-
   const [errorMessage, setErrorMessage] = useState();
   const [inputContent, setInputContent] = useState("");
   const [loading, setLoading] = useState(false);
