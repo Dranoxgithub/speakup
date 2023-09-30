@@ -1,20 +1,24 @@
-import { useLocation, useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
-import { initializeFirebaseApp, getDocument, updateDocument } from "../util/firebaseUtils"
-import PodcastResultPreview from "../components/PodcastResultPreview"
-import { getStorage, ref, getBlob } from "firebase/storage"
-import Loading from "../components/Loading"
-import { useAppSelector } from "../redux/hooks"
-import { getUserId, getUserEmail } from "../redux/userSlice"
-import { v4 as uuidv4 } from 'uuid';
-import { onSnapshot, getFirestore, doc } from "firebase/firestore"
-import UserInfoDisplay from "../components/UserInfoDisplay"
-import { getAuth } from "@firebase/auth"
-import DetailedUrlInput from "../components/DetailedUrlInput"
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+  initializeFirebaseApp,
+  getDocument,
+  updateDocument,
+} from "../util/firebaseUtils";
+import PodcastResultPreview from "../components/PodcastResultPreview";
+import { getStorage, ref, getBlob } from "firebase/storage";
+import Loading from "../components/Loading";
+import { useAppSelector } from "../redux/hooks";
+import { getUserId, getUserEmail } from "../redux/userSlice";
+import { v4 as uuidv4 } from "uuid";
+import { onSnapshot, getFirestore, doc } from "firebase/firestore";
+import UserInfoDisplay from "../components/UserInfoDisplay";
+import { getAuth } from "@firebase/auth";
+import DetailedUrlInput from "../components/DetailedUrlInput";
 import PodcastEditPreview from "../components/PodcastEditPreview";
-import { BiTimeFive } from 'react-icons/bi'
-import UpgradePlanAlert from "../components/UpgradePlanAlert"
-import { Skeleton } from "@mui/material"
+import { BiTimeFive } from "react-icons/bi";
+import UpgradePlanAlert from "../components/UpgradePlanAlert";
+import { Skeleton } from "@mui/material";
 
 const SUBSCRIPTION_PLAN_TO_MINUTES = {
   Starter: 20,
@@ -31,6 +35,11 @@ const DashBoardScreen = () => {
 
   const navigate = useNavigate();
 
+  //   const [notification, setShowNotification] = useState(false);
+  //   if (location.state && location.state.notification) {
+  //     setShowNotification(true);
+  //   } //   console.log("annchn------" + location.state);
+
   const [errorMessage, setErrorMessage] = useState();
   const [inputContent, setInputContent] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,13 +49,13 @@ const DashBoardScreen = () => {
   const [draftList, setDraftList] = useState([]);
   const [contentIdEmailSent, setContentIdEmailSent] = useState({});
 
-    const [userVoiceId, setUserVoiceId] = useState()
-    const [showModal, setShowModal] = useState(false)
-    const [totalUsedLength, setTotalUsedLength] = useState()
-    const [totalAllowedLength, setTotalAllowedLength] = useState()
-    const [canEditAd, setCanEditAd] = useState()
+  const [userVoiceId, setUserVoiceId] = useState();
+  const [showModal, setShowModal] = useState(false);
+  const [totalUsedLength, setTotalUsedLength] = useState();
+  const [totalAllowedLength, setTotalAllowedLength] = useState();
+  const [canEditAd, setCanEditAd] = useState();
 
-    const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false)
+  const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
 
   const populateAudioBlob = async (url) => {
     if (url) {
@@ -68,9 +77,9 @@ const DashBoardScreen = () => {
 
         const content = await getDocument("contents", contentId);
         if (
-            content &&
-            content.status &&
-            (content.status === "script_pending" ||
+          content &&
+          content.status &&
+          (content.status === "script_pending" ||
             content.status === "script_success")
         ) {
           const title = content.original_content.title;
@@ -106,7 +115,7 @@ const DashBoardScreen = () => {
         }));
 
         if (item.length) {
-          totalLength += (+item.length);
+          totalLength += +item.length;
         }
 
         if (
@@ -187,7 +196,7 @@ const DashBoardScreen = () => {
         setUserVoiceId(user["clone_voice_id"]);
         const subscriptionPlan = user["subscription"];
         setCanEditAd(PREMIUM_SUBSCRIPTION_PLAN.includes(subscriptionPlan));
-        setTotalAllowedLength(user['quota'] ? +user['quota'] : 0);
+        setTotalAllowedLength(user["quota"] ? +user["quota"] : 0);
         setContentList(await populateContentList(user));
         setDraftList(await populateDraftList(user));
       }
@@ -249,91 +258,133 @@ const DashBoardScreen = () => {
     setErrorMessage();
   };
 
-    return (
-        <div>
-            {fetchingUser ? <></> : 
-            <div className="dashboardContainer">
-                <div className="headerContainer">
-                    <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                        <h1 className="dashboardHeaderText">Dashboard</h1>
-                        <div className='betaTag'>
-                            <p className='plainText'>BETA</p>
-                        </div>
-                    </div>
-                    <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                        <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', margin:'0px 10px'}}>
-                            <BiTimeFive size={24}/>
-                            <h1 className="dashboardHeaderText" style={{fontSize: '24px', margin: '0px 10px'}}>{Math.max(0, totalAllowedLength - totalUsedLength)} min</h1>
+  return (
+    <div>
+      {fetchingUser ? (
+        <></>
+      ) : (
+        <div className="dashboardContainer">
+          <div className="headerContainer">
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <h1 className="dashboardHeaderText">Dashboard</h1>
+              <div className="betaTag">
+                <p className="plainText">BETA</p>
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  margin: "0px 10px",
+                }}
+              >
+                <BiTimeFive size={24} />
+                <h1
+                  className="dashboardHeaderText"
+                  style={{ fontSize: "24px", margin: "0px 10px" }}
+                >
+                  {Math.max(0, totalAllowedLength - totalUsedLength)} min
+                </h1>
 
-                            {totalAllowedLength - totalUsedLength <= 5 && 
-                                <button
-                                    className="fileUploadButton"
-                                    style={{margin:'0px 10px'}}
-                                    onClick={() => setShowUpgradePlanAlert(true)}
-                                >
-                                    <p className="plainText">Add more time</p>
-                                </button>
-                            }
-                        </div>
+                {totalAllowedLength - totalUsedLength <= 5 && (
+                  <button
+                    className="fileUploadButton"
+                    style={{ margin: "0px 10px" }}
+                    onClick={() => setShowUpgradePlanAlert(true)}
+                  >
+                    <p className="plainText">Add more time</p>
+                  </button>
+                )}
+              </div>
 
-                        <UserInfoDisplay showModal={showModal} setShowModal={setShowModal}/>
-                    </div>
-                </div>
+              <UserInfoDisplay
+                showModal={showModal}
+                setShowModal={setShowModal}
+              />
+            </div>
+          </div>
 
-                <div className="headerDivider"></div>
-                
-                <DetailedUrlInput 
-                    inputContent={inputContent} 
-                    setInputContent={setInputContent} 
-                    onChange={onInputChanged} 
-                    setErrorMessage={setErrorMessage} 
-                    userVoiceId={userVoiceId}
-                    totalUsedLength={totalUsedLength}
-                    totalAllowedLength={totalAllowedLength}
-                    canEditAd={canEditAd}
-                />
-                
-                {errorMessage && 
-                    errorMessage.split('\n').map((item, index) => (
-                        <h4 key={index} className="errorMessage" style={{color: '#734DF6'}}>{item}</h4>
-                    ))}
+          <div className="headerDivider"></div>
 
-                <div style={{width: '90%'}}>
-                    <p className="subsectionHeaderText">History</p>
-                    {loading ?
-                        <div className="previewBoxesContainer">
-                            {
-                                contentList.map(() => (
-                                    <Skeleton variant="rectangular" height={250} className='previewContainer' />
-                                ))
-                            }
-                        </div> :
-                        <div className="previewBoxesContainer">
-                            {contentList.map(item => (
-                                <PodcastResultPreview 
-                                    key={item.contentId}
-                                    title={item.title}
-                                    script={item.script}
-                                    blob={item.blob}
-                                    audioUrl={item.audioUrl}
-                                    duration={item.duration}
-                                    shownotes={item.shownotes}
-                                    created={item.created}
-                                    urls={item.urls}
-                                    status={item.status}
-                                />
-                            ))}
-                        </div>
-                    }
-                </div>
-            </div>}
-
-            {showUpgradePlanAlert &&
-                <UpgradePlanAlert
-                    userId={userId}
-                    closeModal={() => setShowUpgradePlanAlert(false)}
-                />
+          <DetailedUrlInput
+            inputContent={inputContent}
+            setInputContent={setInputContent}
+            showNotification={
+              location.state && location.state.notification ? true : false
             }
+            onChange={onInputChanged}
+            setErrorMessage={setErrorMessage}
+            userVoiceId={userVoiceId}
+            totalUsedLength={totalUsedLength}
+            totalAllowedLength={totalAllowedLength}
+            canEditAd={canEditAd}
+          />
+
+          {errorMessage &&
+            errorMessage.split("\n").map((item, index) => (
+              <h4
+                key={index}
+                className="errorMessage"
+                style={{ color: "#734DF6" }}
+              >
+                {item}
+              </h4>
+            ))}
+
+          <div style={{ width: "90%" }}>
+            <p className="subsectionHeaderText">History</p>
+            {loading ? (
+              <div className="previewBoxesContainer">
+                {contentList.map(() => (
+                  <Skeleton
+                    variant="rectangular"
+                    height={250}
+                    className="previewContainer"
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="previewBoxesContainer">
+                {contentList.map((item) => (
+                  <PodcastResultPreview
+                    key={item.contentId}
+                    title={item.title}
+                    script={item.script}
+                    blob={item.blob}
+                    audioUrl={item.audioUrl}
+                    duration={item.duration}
+                    shownotes={item.shownotes}
+                    created={item.created}
+                    urls={item.urls}
+                    status={item.status}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showUpgradePlanAlert && (
+        <UpgradePlanAlert
+          userId={userId}
+          closeModal={() => setShowUpgradePlanAlert(false)}
+        />
+      )}
     </div>
   );
 };

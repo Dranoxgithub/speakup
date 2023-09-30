@@ -17,56 +17,32 @@ import GenerateAudioSettings from "./GenerateAudioSettings";
 import CreateInfoHelper from "./CreateInfoHelper";
 
 const AVAILABLE_VOICES = [
-    { name: "Alex", tags: ["american", "male", "young"] },
-    { name: "Bruce", tags: ["american", "male", "middle-aged"] },
-    { name: "Joanne", tags: ["american", "female", "young"] },
-    { name: "Valley Girl", tags: ["american", "female", "young"] },
-    { name: "Victoria", tags: ["british", "female", "middle-aged"] },
-    { name: "Zeus", tags: ["british", "male", "middle-aged"] },
+  { name: "Alex", tags: ["american", "male", "young"] },
+  { name: "Bruce", tags: ["american", "male", "middle-aged"] },
+  { name: "Joanne", tags: ["american", "female", "young"] },
+  { name: "Valley Girl", tags: ["american", "female", "young"] },
+  { name: "Victoria", tags: ["british", "female", "middle-aged"] },
+  { name: "Zeus", tags: ["british", "male", "middle-aged"] },
 ];
 
 export const PODCAST_STYLES = [
-    { name: "Brief (5 - 10 min)", minLength: 5, maxLength: 10 },
-    { name: "Medium (10 - 20 min)", minLength: 10, maxLength: 20 },
-    { name: "Long (20 - 30 min)", minLength: 20, maxLength: 30 },
-    // { name: 'Longer', length: 60 },
+  { name: "Brief (5 - 10 min)", minLength: 5, maxLength: 10 },
+  { name: "Medium (10 - 20 min)", minLength: 10, maxLength: 20 },
+  { name: "Long (20 - 30 min)", minLength: 20, maxLength: 30 },
+  // { name: 'Longer', length: 60 },
 ];
 
-const TEXT_DOS1 = [
-  'Offline content',
-  'PDF/Books',
-  'Paywall content',
-]
+const TEXT_DOS1 = ["Offline content", "PDF/Books", "Paywall content"];
 
-const TEXT_DOS2 = [
-  'Forum threads',
-  'Social feeds',
-  'Online docs'
-]
+const TEXT_DOS2 = ["Forum threads", "Social feeds", "Online docs"];
 
-const TEXT_DONTS = [
-  'Content too short',
-  'Avoid ads',
-  'Website code'
-]
+const TEXT_DONTS = ["Content too short", "Avoid ads", "Website code"];
 
-const URL_DOS1 = [
-  'Newsletters',
-  'Blogs',
-  'News articles'
-]
+const URL_DOS1 = ["Newsletters", "Blogs", "News articles"];
 
-const URL_DOS2 = [
-  'Substack',
-  'Medium',
-  'YouTube'
-]
+const URL_DOS2 = ["Substack", "Medium", "YouTube"];
 
-const URL_DONTS = [
-  'Paywall content',
-  'Sign in required',
-  'Content too short'
-]
+const URL_DONTS = ["Paywall content", "Sign in required", "Content too short"];
 
 const DetailedUrlInput = (props) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -79,6 +55,12 @@ const DetailedUrlInput = (props) => {
       setShowNotification(false);
     }, 3000);
   };
+
+  useEffect(() => {
+    if (props.showNotification) {
+      showNotificationTemporarily();
+    }
+  }, []);
 
   const userId = useAppSelector(getUserId);
   const userIdToken = useAppSelector(getUserIdToken);
@@ -104,8 +86,9 @@ const DetailedUrlInput = (props) => {
 
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
   const [voiceLibrary, setVoiceLibrary] = useState(AVAILABLE_VOICES);
-  const [showCreateFromTextHelper, setShowCreateFromTextHelper] = useState(true)
-  const [showCreateFromUrlHelper, setShowCreateFromUrlHelper] = useState(true)
+  const [showCreateFromTextHelper, setShowCreateFromTextHelper] =
+    useState(true);
+  const [showCreateFromUrlHelper, setShowCreateFromUrlHelper] = useState(true);
 
   const urlPlaceholders = [
     "Drop URLs to turn articles into podcasts instantly...",
@@ -162,26 +145,28 @@ const DetailedUrlInput = (props) => {
   useEffect(() => {
     if (voiceId) {
       getUserVoicePreviewAudio().then((audio) => {
-        let existYourOwnVoice = false
-        const newVoiceLibrary = voiceLibrary.map(voice => {
+        let existYourOwnVoice = false;
+        const newVoiceLibrary = voiceLibrary.map((voice) => {
           if (voice.name == "Your Own Voice") {
-            existYourOwnVoice = true
-            voice.audio = audio
+            existYourOwnVoice = true;
+            voice.audio = audio;
           }
-          
-          return voice
-        })
 
-        setVoiceLibrary(existYourOwnVoice ? 
-          newVoiceLibrary : 
-          [
-            ...newVoiceLibrary, 
-              {
-                name: "Your Own Voice",
-                tags: [],
-                audio: audio,
-              }
-          ]);
+          return voice;
+        });
+
+        setVoiceLibrary(
+          existYourOwnVoice
+            ? newVoiceLibrary
+            : [
+                ...newVoiceLibrary,
+                {
+                  name: "Your Own Voice",
+                  tags: [],
+                  audio: audio,
+                },
+              ]
+        );
       });
     }
   }, [voiceId]);
@@ -203,10 +188,10 @@ const DetailedUrlInput = (props) => {
   };
 
   const wordCountCheck = async () => {
-    setLoading(true)
+    setLoading(true);
     if (totalMinLength + props.totalUsedLength > props.totalAllowedLength) {
       setShowUpgradePlanAlert(true);
-      setLoading(false)
+      setLoading(false);
       return;
     }
 
@@ -236,7 +221,7 @@ const DetailedUrlInput = (props) => {
       console.log("calling onCreatePodcast in wordCountCheck");
       onCreatePodcast();
     } else {
-      setLoading(false)
+      setLoading(false);
       setIsPopupOpen(true);
     }
   };
@@ -415,7 +400,6 @@ const DetailedUrlInput = (props) => {
     }
   };
 
-  
   return (
     <div className="inputContainer">
       <Popup
@@ -447,7 +431,7 @@ const DetailedUrlInput = (props) => {
             className={activeTab === "url" ? "activeTab" : ""}
             onClick={() => {
               setActiveTab("url");
-              setShowCreateFromUrlHelper(true)
+              setShowCreateFromUrlHelper(true);
               props.setInputContent("");
             }}
           >
@@ -457,7 +441,7 @@ const DetailedUrlInput = (props) => {
             className={activeTab === "text" ? "activeTab" : ""}
             onClick={() => {
               setActiveTab("text");
-              setShowCreateFromTextHelper(true)
+              setShowCreateFromTextHelper(true);
               props.setInputContent("");
             }}
           >
@@ -465,27 +449,36 @@ const DetailedUrlInput = (props) => {
           </button>
         </div>
 
-        { activeTab === 'text' && showCreateFromTextHelper && 
-          <CreateInfoHelper 
+        {activeTab === "text" && showCreateFromTextHelper && (
+          <CreateInfoHelper
             setShowHelper={setShowCreateFromTextHelper}
             column1={TEXT_DOS1}
             column2={TEXT_DOS2}
             column3={TEXT_DONTS}
           >
-            <p className='helperText'><span style={{fontWeight: '700'}}>PASTE</span> up to 6000 words. For best result, exclude ads, codes, legal disclaimers, and any irrelevant content.</p> 
+            <p className="helperText">
+              <span style={{ fontWeight: "700" }}>PASTE</span> up to 6000 words.
+              For best result, exclude ads, codes, legal disclaimers, and any
+              irrelevant content.
+            </p>
           </CreateInfoHelper>
-        }
+        )}
 
-        { activeTab === 'url' && showCreateFromUrlHelper && 
-          <CreateInfoHelper 
-          setShowHelper={setShowCreateFromUrlHelper}
+        {activeTab === "url" && showCreateFromUrlHelper && (
+          <CreateInfoHelper
+            setShowHelper={setShowCreateFromUrlHelper}
             column1={URL_DOS1}
             column2={URL_DOS2}
             column3={URL_DONTS}
           >
-            <p className='helperText'>Optimized for newsletters, blogs, and articles. Auto-extract <span style={{fontWeight: '700'}}>up to 25 URLs; each URL becomes a podcast paragraph.</span></p> 
+            <p className="helperText">
+              Optimized for newsletters, blogs, and articles. Auto-extract{" "}
+              <span style={{ fontWeight: "700" }}>
+                up to 25 URLs; each URL becomes a podcast paragraph.
+              </span>
+            </p>
           </CreateInfoHelper>
-        }
+        )}
 
         <textarea
           placeholder={
@@ -501,40 +494,44 @@ const DetailedUrlInput = (props) => {
         <div
           style={{
             marginBottom: "20px",
-            paddingLeft: '20px',
-            paddingRight: '20px',
+            paddingLeft: "20px",
+            paddingRight: "20px",
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end",
             alignItems: "center",
-            width: '900px'
+            width: "900px",
           }}
         >
           <p className="greyBoldText">
-            Remaining quota: {props.totalAllowedLength && props.totalUsedLength ? Math.max(0, props.totalAllowedLength - props.totalUsedLength) : 0} min
+            Remaining quota:{" "}
+            {props.totalAllowedLength && props.totalUsedLength
+              ? Math.max(0, props.totalAllowedLength - props.totalUsedLength)
+              : 0}{" "}
+            min
           </p>
         </div>
 
-        <GenerateAudioSettings 
-            selectedVoice={selectedVoice}
-            setSelectedVoice={setSelectedVoice}
-            voiceLibrary={voiceLibrary}
-            setVoiceLibrary={setVoiceLibrary}
-            setVoiceId={setVoiceId}
-            totalMinLength={totalMinLength}
-            setTotalMinLength={setTotalMinLength}
-            totalMaxLength={totalMaxLength}
-            setTotalMaxLength={setTotalMaxLength}
-            scriptOnly={scriptOnly}
-            setScriptOnly={setScriptOnly}
-            adContent={adContent}
-            setAdContent={setAdContent}
-            podcastTitle={podcastTitle}
-            setPodcastTitle={setPodcastTitle}
-            hostName={hostName}
-            setHostName={setHostName}
-            userId={userId}
-            canEditAd={props.canEditAd}
+        <GenerateAudioSettings
+          selectedVoice={selectedVoice}
+          setSelectedVoice={setSelectedVoice}
+          voiceLibrary={voiceLibrary}
+          setVoiceLibrary={setVoiceLibrary}
+          setVoiceId={setVoiceId}
+          totalMinLength={totalMinLength}
+          setTotalMinLength={setTotalMinLength}
+          totalMaxLength={totalMaxLength}
+          setTotalMaxLength={setTotalMaxLength}
+          scriptOnly={scriptOnly}
+          setScriptOnly={setScriptOnly}
+          adContent={adContent}
+          setAdContent={setAdContent}
+          podcastTitle={podcastTitle}
+          setPodcastTitle={setPodcastTitle}
+          hostName={hostName}
+          setHostName={setHostName}
+          userId={userId}
+          canEditAd={props.canEditAd}
         />
 
         <button
@@ -550,11 +547,12 @@ const DetailedUrlInput = (props) => {
 
       {loading && <Loading />}
 
-      {showUpgradePlanAlert &&
+      {showUpgradePlanAlert && (
         <UpgradePlanAlert
           userId={userId}
           closeModal={() => setShowUpgradePlanAlert(false)}
-        />}
+        />
+      )}
     </div>
   );
 };

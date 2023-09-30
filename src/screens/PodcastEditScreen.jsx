@@ -2,25 +2,43 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getDocument, initializeFirebaseApp } from "../util/firebaseUtils";
 import { useAppSelector } from "../redux/hooks";
-import { getUserId } from "../redux/userSlice";
+import { getUserId, getUserIdToken } from "../redux/userSlice";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { getAuth } from "@firebase/auth";
 import UserInfoDisplay from "../components/UserInfoDisplay";
 import { updateDocument } from "../util/firebaseUtils";
 import { onSnapshot, getFirestore, doc } from "firebase/firestore";
+import CloseButton from "react-bootstrap/CloseButton";
+import { callAudioOnlyEndpoint } from "../util/helperFunctions";
 
 const PodcastEditScreen = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
+  const userIdToken = useAppSelector(getUserIdToken);
   const userId = useAppSelector(getUserId);
   const [contentId, setContentId] = useState();
-  const [title, setTitle] = useState();
+  const [estimatedDuration, setEstimatedDuration] = useState(0);
   const [intro, setIntro] = useState();
   const [outro, setOutro] = useState();
   const [bodyParas, setBodyParas] = useState([]);
   const [error, setError] = useState();
   const [fetchingUser, setFetchingUser] = useState(true);
+
+  useEffect(() => {
+    const getWordCount = (text) => {
+      if (text === undefined) {
+        return 0;
+      } else {
+        return text.trim().split(/\s+/).length;
+      }
+    };
+    const wordCount =
+      getWordCount(intro) +
+      getWordCount(bodyParas.join("\n\n")) +
+      getWordCount(outro);
+    setEstimatedDuration(wordCount / 150);
+  }, [intro, outro, bodyParas]);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -29,6 +47,12 @@ const PodcastEditScreen = () => {
   const handleTextareaChange = (event) => {
     const currentBody = [...bodyParas];
     currentBody[event.target.name] = event.target.value;
+    setBodyParas(currentBody);
+  };
+
+  const handleTextareaDelete = (event) => {
+    const currentBody = [...bodyParas];
+    currentBody.splice(event.target.name, 1);
     setBodyParas(currentBody);
   };
 
@@ -46,6 +70,44 @@ const PodcastEditScreen = () => {
         },
       },
     });
+  };
+
+  const generateAudioOnly = async () => {
+    savePodcastEdit();
+
+    const inputParams = {
+      intro: intro,
+      paragraphs: bodyParas, // check this
+      outro: outro,
+      doc_ref: contentId,
+      //   podcastTitle: podcastTitle,
+      //   hostName: hostName,
+      //   voiceId:
+      //     selectedVoice === YOUR_OWN_VOICE
+      //       ? voiceId
+      //         ? voiceId
+      //         : props.userVoiceId
+      //       : selectedVoice,
+      //   totalLength: totalLength,
+    };
+    const errorMessage = await callAudioOnlyEndpoint(
+      userIdToken,
+      userId,
+      inputParams
+    );
+
+    if (!errorMessage) {
+      navigate("/dashboard", {
+        replace: true,
+        state: {
+          notification: true,
+        },
+      });
+    } else {
+      navigate("/dashboard", {
+        state: { errorMessage: errorMessage },
+      });
+    }
   };
 
   useEffect(() => {
@@ -92,7 +154,6 @@ const PodcastEditScreen = () => {
     const processSnapshot = async (doc) => {
       const content = doc.data();
       if (content) {
-        setTitle(content.original_content.title);
         if (content.result) {
           if (content.result.script.intro) {
             setIntro(content.result.script.intro);
@@ -112,7 +173,6 @@ const PodcastEditScreen = () => {
     const populateContentFromQueryParams = async (contentId) => {
       console.log("getting from database with snapshot" + contentId);
 
-      //   const content = await getDocument("contents", contentId);
       const app = initializeFirebaseApp();
       const db = getFirestore(app);
       onSnapshot(doc(db, "contents", contentId), async (doc) => {
@@ -146,7 +206,7 @@ const PodcastEditScreen = () => {
   }, [location, userId]);
 
   const goBackToDashboard = () => {
-    navigate("/Dashboard", { replace: true });
+    navigate("/dashboard", { replace: true });
   };
 
   return (
@@ -175,36 +235,69 @@ const PodcastEditScreen = () => {
               <h2 className="title">Edit </h2>
               <div className="contentRow"></div>
 
-              {intro && (
-                <textarea
-                  value={intro}
-                  onChange={(e) => {
-                    setIntro(e.target.value);
-                  }}
-                  className="urlInput"
-                />
+              {intro !== null && (
+                <>
+                  <textarea
+                    value={intro}
+                    onChange={(e) => {
+                      setIntro(e.target.value);
+                    }}
+                    className="urlInput"
+                  />
+                  <CloseButton
+                    onClick={(e) => {
+                      setIntro(null);
+                    }}
+                  />
+                </>
               )}
 
               {bodyParas &&
                 bodyParas.map((item, index) => (
-                  <textarea
-                    value={item}
-                    key={index}
-                    name={index}
-                    onChange={handleTextareaChange}
-                    className="urlInput"
-                  />
+                  <>
+                    <textarea
+                      value={item}
+                      key={index}
+                      name={index}
+                      onChange={handleTextareaChange}
+                      className="urlInput"
+                    />
+                    <CloseButton onClick={handleTextareaDelete} />
+                  </>
                 ))}
 
-              {outro && (
-                <textarea
-                  value={outro}
-                  onChange={(e) => {
-                    setOutro(e.target.value);
-                  }}
-                  className="urlInput"
-                />
+              {outro !== null && (
+                <>
+                  <textarea
+                    value={outro}
+                    onChange={(e) => {
+                      setOutro(e.target.value);
+                    }}
+                    className="urlInput"
+                  />
+                  <CloseButton
+                    onClick={(e) => {
+                      setOutro(null);
+                    }}
+                  />
+                </>
               )}
+              <div
+                style={{
+                  marginBottom: "20px",
+                  paddingLeft: "20px",
+                  paddingRight: "20px",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "900px",
+                }}
+              >
+                <p className="greyBoldText">
+                  Estimated duration: {estimatedDuration} min
+                </p>
+              </div>
 
               <div className="tabContainer">
                 <button
@@ -215,7 +308,7 @@ const PodcastEditScreen = () => {
                 </button>
                 <button
                   className="navigateButton activeTab"
-                  // onClick={generateAudio}
+                  onClick={generateAudioOnly}
                 >
                   <p className="buttonText">Generate podcast</p>
                 </button>

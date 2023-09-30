@@ -9,9 +9,9 @@ const DEFAULT_PARAMS = {
   totalLength: null,
   scriptOnly: false,
   withMusic: true,
-  tone: 'narrative',
-  ad: AD_CONTENT
-}
+  tone: "narrative",
+  ad: AD_CONTENT,
+};
 
 export const secondsToHHMMSS = (seconds) => {
   // credits - https://stackoverflow.com/a/37096512
@@ -47,7 +47,7 @@ export const generatePodcast = async (
       ad: inputParams.ad ?? DEFAULT_PARAMS.ad,
       script_only: inputParams.scriptOnly ?? DEFAULT_PARAMS.scriptOnly,
       with_music: inputParams.withMusic ?? DEFAULT_PARAMS.withMusic,
-      tone: inputParams.tone ?? DEFAULT_PARAMS.tone
+      tone: inputParams.tone ?? DEFAULT_PARAMS.tone,
     };
 
     if (inputParams.contentUrls != null) {
@@ -75,6 +75,48 @@ export const generatePodcast = async (
     }
   } catch (error) {
     setLoading(false);
+    return error.message;
+  }
+};
+
+export const callAudioOnlyEndpoint = async (idToken, inputParams) => {
+  try {
+    const headers = {
+      authorization: idToken ?? "",
+      "Content-Type": "application/json",
+    };
+    const body = {
+      intro: inputParams.intro,
+      outro: inputParams.outro,
+      paragraphs: inputParams.paragraphs,
+      user_id: inputParams.userid,
+      host: inputParams.hostName ?? DEFAULT_PARAMS.hostName,
+      voice: inputParams.voiceId ?? DEFAULT_PARAMS.voiceId,
+      total_length: inputParams.totalLength ?? DEFAULT_PARAMS.totalLength,
+      podcast_title: inputParams.podcastTitle ?? DEFAULT_PARAMS.podcastTitle,
+      ad: inputParams.ad ?? DEFAULT_PARAMS.ad,
+      with_music: inputParams.withMusic ?? DEFAULT_PARAMS.withMusic,
+      tone: inputParams.tone ?? DEFAULT_PARAMS.tone,
+    };
+
+    console.log(`body: ${JSON.stringify(body)}`);
+
+    const saveEndpoint =
+      "https://generate-audio-endpoint-jcjaqcgmja-uc.a.run.app";
+    const requestOptions = {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(body),
+    };
+    const response = await fetchUrl(saveEndpoint, {}, requestOptions);
+    if (response.status !== 200) {
+      console.log("callAudioOnlyEndpoint 200");
+      return await response.text();
+    } else {
+      return undefined;
+    }
+  } catch (error) {
+    console.log("callAudioOnlyEndpoint " + error.message);
     return error.message;
   }
 };
