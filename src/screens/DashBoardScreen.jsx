@@ -20,6 +20,7 @@ import { BiTimeFive } from "react-icons/bi";
 import UpgradePlanAlert from "../components/UpgradePlanAlert";
 import { Skeleton } from "@mui/material";
 import pLimit from 'p-limit'
+import Footer from '../components/Footer'
 
 const PREMIUM_SUBSCRIPTION_PLAN = ["Creator", "Professional"];
 
@@ -395,7 +396,7 @@ const DashBoardScreen = () => {
             )}
           </div>
 
-          <div style={{ width: "90%" }}>
+          <div style={{ width: "90%", marginBottom: '20px' }}>
             <p className="subsectionHeaderText">History</p>
             {loading ? (
               <div className="previewBoxesContainer">
@@ -426,7 +427,8 @@ const DashBoardScreen = () => {
               </div>
             )}
           </div>
-
+          
+          <Footer />
         </div>
       )}
 
@@ -436,6 +438,7 @@ const DashBoardScreen = () => {
           closeModal={() => setShowUpgradePlanAlert(false)}
         />
       )}
+
     </div>
   );
 };

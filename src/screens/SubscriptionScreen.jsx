@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { AiOutlineArrowLeft } from 'react-icons/ai'
 import { getFirestore, onSnapshot, doc } from "firebase/firestore"
 import SubscriptionTable from "../components/SubscriptionTable"
+import Footer from "../components/Footer"
 
 const SubscriptionScreen = () => {
     const navigate = useNavigate()
@@ -16,18 +17,37 @@ const SubscriptionScreen = () => {
     const [userSubscription, setUserSubscription] = useState()
 
     useEffect(() => {
-        setTimeout(() => {
-            const app = initializeFirebaseApp()
-            const auth = getAuth(app)
-            if (!auth.currentUser) {
-                navigate('/login', {replace: true})
+        const checkLoginStatus = () => {
+          const app = initializeFirebaseApp();
+          const auth = getAuth(app);
+          if (!auth.currentUser) {
+            return false
+          }
+          setUserId(auth.currentUser.uid)
+          return true
+        }
+    
+        const retryWithTimeout = (fn, retryInterval, maxDuration) => {
+          const startTime = Date.now();
+        
+          const retry = async () => {
+            const result = await fn();
+        
+            if (result) {
+              setFetchingUser(false);
+              return
+            } else if (Date.now() - startTime < maxDuration) {
+              setTimeout(retry, retryInterval);
             } else {
-                setUserId(auth.currentUser.uid)
+              navigate("/login", { replace: true });
             }
-
-            setFetchingUser(false)
-        }, 500)
-    }, [])
+          };
+        
+          retry();
+        }
+    
+        retryWithTimeout(checkLoginStatus, 500, 5000)
+      }, []);
 
     useEffect(() => {
         const handleOutsideClick = (event) => {
@@ -49,6 +69,7 @@ const SubscriptionScreen = () => {
     useEffect(() => {
         const processSnapshot = async (doc) => {
             const user = doc.data()
+            console.log(`${JSON.stringify(user)}`)
             if (user) {
                 setUserSubscription(user['subscription'])
             }
@@ -68,22 +89,22 @@ const SubscriptionScreen = () => {
     }
     
     return (
-        <div>
-            {fetchingUser ? <></> : 
+        <div style={{height: '100%'}}>
+            {!fetchingUser &&
                 <div className="resultContainer">
                     <div className="headerContainer">
                         <div className="backNavigator" onClick={goBackToDashboard} >
                             <AiOutlineArrowLeft size={25} style={{marginRight: 10}}/>
-                            <h2 style={{margin: '0px'}}>Dashboard</h2>
+                            <p className="navigationHeaderText">Dashboard</p>
                         </div>
                         <UserInfoDisplay showModal={showModal} setShowModal={setShowModal} />
                     </div>
 
-                    <div className="subscriptionPlanText">
-                        <h1>Current plan: {userSubscription ?? 'None'}</h1>
-                    </div>
+                    <p className='subsectionHeaderText'>Current plan: {userSubscription ?? 'None'}</p>
 
                     <SubscriptionTable userId={userId}/>
+                    
+                    <Footer />
                 </div>
             }
         </div>   

@@ -9,6 +9,7 @@ import { AiOutlineArrowLeft } from 'react-icons/ai'
 import { secondsToHHMMSS } from "../util/helperFunctions";
 import { getAuth } from "@firebase/auth";
 import UserInfoDisplay from "../components/UserInfoDisplay";
+import Footer from "../components/Footer";
 
 const DEMO_CONTENTS = ['Rfg4OgKngtJ6eSmrD17Q']
 
@@ -231,6 +232,7 @@ const ResultScreen = () => {
                         </div>
                     </div>
                 }
+                <Footer />
             </div>}
         </div>
     )
