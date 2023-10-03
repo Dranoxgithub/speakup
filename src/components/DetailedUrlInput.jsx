@@ -82,7 +82,7 @@ const DetailedUrlInput = (props) => {
   const [activeTab, setActiveTab] = useState("url"); // possible values: 'url', 'text'
   const [userAckWordCount, setUserAckWordCount] = useState(false);
 
-  const [scriptOnly, setScriptOnly] = useState(false);
+  const [scriptOnly, setScriptOnly] = useState(true);
 
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
   const [voiceLibrary, setVoiceLibrary] = useState(AVAILABLE_VOICES);
@@ -128,26 +128,27 @@ const DetailedUrlInput = (props) => {
     });
 
     Promise.all(asyncOperations).then(async (newVoiceLibrary) => {
+      console.log(`added default voices, user voice id is ${props.userVoiceId}`)
       if (props.userVoiceId) {
         newVoiceLibrary = [
-          ...newVoiceLibrary,
           {
-            name: "Your Own Voice",
+            name: YOUR_OWN_VOICE,
             tags: [],
             audio: await getUserVoicePreviewAudio(),
           },
+          ...newVoiceLibrary
         ];
       }
       setVoiceLibrary(newVoiceLibrary);
     });
-  }, []);
+  }, [props.userVoiceId]);
 
   useEffect(() => {
     if (voiceId) {
       getUserVoicePreviewAudio().then((audio) => {
         let existYourOwnVoice = false;
         const newVoiceLibrary = voiceLibrary.map((voice) => {
-          if (voice.name == "Your Own Voice") {
+          if (voice.name == YOUR_OWN_VOICE) {
             existYourOwnVoice = true;
             voice.audio = audio;
           }
@@ -159,12 +160,12 @@ const DetailedUrlInput = (props) => {
           existYourOwnVoice
             ? newVoiceLibrary
             : [
-                ...newVoiceLibrary,
                 {
-                  name: "Your Own Voice",
+                  name: YOUR_OWN_VOICE,
                   tags: [],
                   audio: audio,
                 },
+                ...newVoiceLibrary
               ]
         );
       });

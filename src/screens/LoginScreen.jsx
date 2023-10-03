@@ -55,18 +55,26 @@ const LoginScreen = () => {
     }, [contentUrl])
 
     return (
-        <div className="centeredContainer">
-            <h1 className="title">Get your podcast via email</h1>
-            <GoogleAuth 
-                contentUrl={contentUrl} 
-                plainTextInput={plainTextInput}
-                podcastTitle={podcastTitle}
-                hostName={hostName}
-                voiceId={voiceId}
-                totalLength={totalLength}
-                contentId={contentId}
-                scriptOnly={scriptOnly}
-            />
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', backgroundColor: '#FAFAFA'}}>
+            <div className="centeredContainer">
+                <p className='plainText' style={{fontSize: '28px', color: '#2B1C50', marginBottom: '10px'}}>Get your podcast via Email</p>
+                <p className='plainText' style={{fontSize: '16px', color: '#777777', fontWeight: '500', marginLeft: '3px', marginBottom: '40px'}}>
+                    Create premium podcasts in minutes. Get free 10 minutes quota. No credit card required.
+                </p>
+                <GoogleAuth 
+                    contentUrl={contentUrl} 
+                    plainTextInput={plainTextInput}
+                    podcastTitle={podcastTitle}
+                    hostName={hostName}
+                    voiceId={voiceId}
+                    totalLength={totalLength}
+                    contentId={contentId}
+                    scriptOnly={scriptOnly}
+                />
+                <p className='plainText' style={{fontSize: '14px', color: '#777777', fontWeight: '500', marginLeft: '3px', marginTop: '40px'}}>
+                    By continuing, you agree to SpeakUp’s Terms of Service. Read our Privacy Policy.
+                </p>
+            </div>
         </div>
     )
 }

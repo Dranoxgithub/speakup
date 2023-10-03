@@ -19,12 +19,7 @@ import PodcastEditPreview from "../components/PodcastEditPreview";
 import { BiTimeFive } from "react-icons/bi";
 import UpgradePlanAlert from "../components/UpgradePlanAlert";
 import { Skeleton } from "@mui/material";
-
-const SUBSCRIPTION_PLAN_TO_MINUTES = {
-  Starter: 20,
-  Creator: 120,
-  Professional: 600,
-};
+import pLimit from 'p-limit'
 
 const PREMIUM_SUBSCRIPTION_PLAN = ["Creator", "Professional"];
 
@@ -67,30 +62,37 @@ const DashBoardScreen = () => {
 
   const populateDraftList = async (user) => {
     if (user.user_saved) {
-      const asyncOperations = user.user_saved.map(async (item) => {
-        const contentId = item.content_id;
-
-        const content = await getDocument("contents", contentId);
-        if (
-          content &&
-          content.status &&
-          (content.status === "script_pending" ||
-            content.status === "script_success")
-        ) {
-          const title = content.original_content.title;
-          let script;
-          if (content.result) {
-            if (content.result.script) {
-              script = content.result.script.best_summary;
+      const limit = pLimit(5)
+      const asyncOperations = user.user_saved.map((item) => {
+        return limit(async () => {
+          try {
+            const contentId = item.content_id;
+            const content = await getDocument("contents", contentId);
+            if (
+              content &&
+              content.status &&
+              (content.status === "script_pending" ||
+                content.status === "script_success")
+            ) {
+              const title = content.original_content.title;
+              let script;
+              if (content.result) {
+                if (content.result.script) {
+                  script = content.result.script.best_summary;
+                }
+              }
+              return {
+                contentId: contentId,
+                title: title,
+                script: script,
+                status: content.status,
+              };
             }
+          } catch (error) {
+            console.log(error)
+            return null
           }
-          return {
-            contentId: contentId,
-            title: title,
-            script: script,
-            status: content.status,
-          };
-        }
+        })
       });
       const list = await Promise.all(asyncOperations);
 
@@ -102,69 +104,77 @@ const DashBoardScreen = () => {
   const populateContentList = async (user) => {
     if (user.user_saved) {
       let totalLength = 0;
-      const asyncOperations = user.user_saved.map(async (item, index) => {
-        const contentId = item.content_id;
-        setContentIdEmailSent((prevDict) => ({
-          ...prevDict,
-          [contentId]: item.status && item.status == "notified",
-        }));
+      const limit = pLimit(5)
+      const asyncOperations = user.user_saved.map((item, index) => {
+        return limit(async() => {
+          try {
+            const contentId = item.content_id;
+            setContentIdEmailSent((prevDict) => ({
+              ...prevDict,
+              [contentId]: item.status && item.status == "notified",
+            }));
 
-        if (item.length) {
-          totalLength += +item.length;
-        }
+            if (item.length) {
+              totalLength += +item.length;
+            }
 
-        if (
-          item.status &&
-          item.status == "success" &&
-          contentIdEmailSent[contentId] == false
-        ) {
-          await sendEmailNotification(contentId);
-          setContentIdEmailSent((prevDict) => ({
-            ...prevDict,
-            [contentId]: true,
-          }));
-          user.user_saved[index].status = "notified";
-          await updateDocument("users", userId, user);
-        }
+            if (
+              item.status &&
+              item.status == "success" &&
+              contentIdEmailSent[contentId] == false
+            ) {
+              await sendEmailNotification(contentId);
+              setContentIdEmailSent((prevDict) => ({
+                ...prevDict,
+                [contentId]: true,
+              }));
+              user.user_saved[index].status = "notified";
+              await updateDocument("users", userId, user);
+            }
 
-        const content = await getDocument("contents", contentId);
-        if (content) {
-          const title = content.original_content.title;
-          let script;
-          let blobInfo;
-          let duration;
-          let shownotes;
-          let urls;
-          if (content.original_content) {
-            urls = content.original_content.urls;
+            const content = await getDocument("contents", contentId);
+            if (content) {
+              const title = content.original_content.title;
+              let script;
+              let blobInfo;
+              let duration;
+              let shownotes;
+              let urls;
+              if (content.original_content) {
+                urls = content.original_content.urls;
+              }
+              if (content.result) {
+                if (content.result.script) {
+                  script = content.result.script.best_summary;
+                }
+
+                if (content.result.audio) {
+                  blobInfo = await populateAudioBlob(content.result.audio.url);
+                  duration = content.result.audio.duration;
+                }
+
+                if (content.result.shownotes) {
+                  shownotes = content.result.shownotes.highlights;
+                }
+              }
+              return {
+                contentId: contentId,
+                title: title,
+                script: script,
+                blob: blobInfo ? blobInfo.blob : undefined,
+                audioUrl: blobInfo ? blobInfo.audioUrl : undefined,
+                duration: duration,
+                shownotes: shownotes,
+                created: content.created_at,
+                urls: urls,
+                status: content.status,
+              };
+            }
+          } catch (error) {
+            console.log(error)
+            return null
           }
-          if (content.result) {
-            if (content.result.script) {
-              script = content.result.script.best_summary;
-            }
-
-            if (content.result.audio) {
-              blobInfo = await populateAudioBlob(content.result.audio.url);
-              duration = content.result.audio.duration;
-            }
-
-            if (content.result.shownotes) {
-              shownotes = content.result.shownotes.highlights;
-            }
-          }
-          return {
-            contentId: contentId,
-            title: title,
-            script: script,
-            blob: blobInfo ? blobInfo.blob : undefined,
-            audioUrl: blobInfo ? blobInfo.audioUrl : undefined,
-            duration: duration,
-            shownotes: shownotes,
-            created: content.created_at,
-            urls: urls,
-            status: content.status,
-          };
-        }
+        }) 
       });
       const list = await Promise.all(asyncOperations);
       setTotalUsedLength(Math.floor(totalLength / 60));
@@ -209,14 +219,35 @@ const DashBoardScreen = () => {
   }, [userId]);
 
   useEffect(() => {
-    setTimeout(() => {
+    const checkLoginStatus = () => {
       const app = initializeFirebaseApp();
       const auth = getAuth(app);
       if (!auth.currentUser) {
-        navigate("/login", { replace: true });
+        return false
       }
-      setFetchingUser(false);
-    }, 1000);
+      return true
+    }
+
+    const retryWithTimeout = (fn, retryInterval, maxDuration) => {
+      const startTime = Date.now();
+    
+      const retry = async () => {
+        const result = await fn();
+    
+        if (result) {
+          setFetchingUser(false);
+          return
+        } else if (Date.now() - startTime < maxDuration) {
+          setTimeout(retry, retryInterval);
+        } else {
+          navigate("/login", { replace: true });
+        }
+      };
+    
+      retry();
+    }
+
+    retryWithTimeout(checkLoginStatus, 500, 5000)
   }, []);
 
   useEffect(() => {
@@ -279,32 +310,34 @@ const DashBoardScreen = () => {
                 alignItems: "center",
               }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  margin: "0px 10px",
-                }}
-              >
-                <BiTimeFive size={24} />
-                <h1
-                  className="dashboardHeaderText"
-                  style={{ fontSize: "24px", margin: "0px 10px" }}
+              {!isNaN(totalAllowedLength) && !isNaN(totalUsedLength) &&
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    margin: "0px 10px",
+                  }}
                 >
-                  {Math.max(0, totalAllowedLength - totalUsedLength)} min
-                </h1>
-
-                {totalAllowedLength - totalUsedLength <= 5 && (
-                  <button
-                    className="fileUploadButton"
-                    style={{ margin: "0px 10px" }}
-                    onClick={() => setShowUpgradePlanAlert(true)}
+                  <BiTimeFive size={24} />
+                  <h1
+                    className="dashboardHeaderText"
+                    style={{ fontSize: "24px", margin: "0px 10px" }}
                   >
-                    <p className="plainText">Add more time</p>
-                  </button>
-                )}
-              </div>
+                    {Math.max(0, totalAllowedLength - totalUsedLength)} min
+                  </h1>
+
+                  {totalAllowedLength - totalUsedLength <= 5 && (
+                    <button
+                      className="fileUploadButton"
+                      style={{ margin: "0px 10px" }}
+                      onClick={() => setShowUpgradePlanAlert(true)}
+                    >
+                      <p className="plainText">Add more time</p>
+                    </button>
+                  )}
+                </div>
+              }
 
               <UserInfoDisplay
                 showModal={showModal}
@@ -341,6 +374,28 @@ const DashBoardScreen = () => {
             ))}
 
           <div style={{ width: "90%" }}>
+            <p className="subsectionHeaderText">Draft</p>
+            {loading ? (
+              <div className="previewBoxesContainer">
+                {draftList.map(() => (
+                  <Skeleton
+                    variant="rectangular"
+                    height={250}
+                    className="previewContainer"
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="previewBoxesContainer">
+                {draftList.map((item) => (
+                  // @TODO: add draft preview card
+                  <></>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div style={{ width: "90%" }}>
             <p className="subsectionHeaderText">History</p>
             {loading ? (
               <div className="previewBoxesContainer">
@@ -371,6 +426,7 @@ const DashBoardScreen = () => {
               </div>
             )}
           </div>
+
         </div>
       )}
 

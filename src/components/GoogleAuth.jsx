@@ -6,6 +6,7 @@ import { createUserDocument, getDocument, updateDocument } from "../util/firebas
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import Loading from "./Loading";
 import { generatePodcast } from "../util/helperFunctions";
+import {FcGoogle} from 'react-icons/fc'
 
 const GoogleAuth = (props) => {
     const navigate = useNavigate()
@@ -71,10 +72,13 @@ const GoogleAuth = (props) => {
     }
 
     return (
-        <div>
+        <div style={{width: '100%'}}>
             { loading ? 
                 <Loading /> : 
-                <button className='loginButton' onClick={signup}>Continue with Google</button>
+                <button className='loginButton' onClick={signup}>
+                    <FcGoogle size={30} style={{position: 'absolute', left: '25'}} />
+                    <p className='plainText' style={{fontSize: '16px'}}>Continue with Google</p>
+                </button>
             }
         </div>
     )

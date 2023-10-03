@@ -6,7 +6,7 @@ const DEFAULT_PARAMS = {
   podcastTitle: null,
   hostName: null,
   voiceId: "Valley Girl",
-  totalLength: null,
+  totalLength: 10,
   scriptOnly: false,
   withMusic: true,
   tone: "narrative",
