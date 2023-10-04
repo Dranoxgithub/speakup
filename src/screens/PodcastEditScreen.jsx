@@ -71,7 +71,7 @@ const PodcastEditScreen = () => {
 
   useEffect(() => {
     const getWordCount = (text) => {
-      if (text === undefined) {
+      if (text === undefined || text === null) {
         return 0;
       } else {
         return text.trim().split(/\s+/).length;
@@ -79,7 +79,7 @@ const PodcastEditScreen = () => {
     };
     const wordCount =
       getWordCount(intro) +
-      getWordCount(bodyParas.join("\n\n")) +
+      (bodyParas.length === 0 ? 0 : getWordCount(bodyParas.join("\n\n"))) +
       getWordCount(outro);
     setEstimatedDuration(wordCount / 150);
   }, [intro, outro, bodyParas]);
