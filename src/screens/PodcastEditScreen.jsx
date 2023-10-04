@@ -10,6 +10,13 @@ import { updateDocument } from "../util/firebaseUtils";
 import { onSnapshot, getFirestore, doc } from "firebase/firestore";
 import CloseButton from "react-bootstrap/CloseButton";
 import { callAudioOnlyEndpoint } from "../util/helperFunctions";
+import {
+  AVAILABLE_VOICES,
+  getUserVoicePreviewAudio,
+  AVAILABLE_VOICES_NAMES,
+} from "../util/voice";
+import { getStorage, ref, getBlob } from "@firebase/storage";
+import { VoiceSettings, YOUR_OWN_VOICE } from "../components/VoiceSettings";
 
 const PodcastEditScreen = () => {
   const location = useLocation();
@@ -24,6 +31,43 @@ const PodcastEditScreen = () => {
   const [bodyParas, setBodyParas] = useState([]);
   const [error, setError] = useState();
   const [fetchingUser, setFetchingUser] = useState(true);
+  const [voiceId, setVoiceId] = useState();
+  const [selectedVoice, setSelectedVoice] = useState();
+  const [voiceLibrary, setVoiceLibrary] = useState(AVAILABLE_VOICES);
+  const [userVoiceId, setUserVoiceId] = useState();
+
+  useEffect(() => {
+    const app = initializeFirebaseApp();
+    const storage = getStorage(app);
+    const asyncOperations = AVAILABLE_VOICES.map(async (voice) => {
+      voice.isPlaying = false;
+      try {
+        const url = `demo/voice_preview/${voice.name
+          .split(" ")
+          .join("")
+          .toLowerCase()}.mp3`;
+        const audioRef = ref(storage, url);
+        const blob = await getBlob(audioRef);
+        voice.audio = URL.createObjectURL(blob);
+      } catch {}
+
+      return voice;
+    });
+
+    Promise.all(asyncOperations).then(async (newVoiceLibrary) => {
+      if (userVoiceId) {
+        newVoiceLibrary = [
+          ...newVoiceLibrary,
+          {
+            name: "Your Own Voice",
+            tags: [],
+            audio: await getUserVoicePreviewAudio(userId),
+          },
+        ];
+      }
+      setVoiceLibrary(newVoiceLibrary);
+    });
+  }, []);
 
   useEffect(() => {
     const getWordCount = (text) => {
@@ -83,22 +127,19 @@ const PodcastEditScreen = () => {
 
     const inputParams = {
       intro: intro,
-      paragraphs: bodyParas, // check this
+      paragraphs: bodyParas,
       outro: outro,
       doc_id: contentId,
-      //   voiceId:
-      //     selectedVoice === YOUR_OWN_VOICE
-      //       ? voiceId
-      //         ? voiceId
-      //         : props.userVoiceId
-      //       : selectedVoice,
+      voiceId:
+        selectedVoice === YOUR_OWN_VOICE
+          ? voiceId
+            ? voiceId
+            : userVoiceId
+          : selectedVoice,
       with_music: false, // to change
     };
-    const errorMessage = await callAudioOnlyEndpoint(
-      userIdToken,
-      userId,
-      inputParams
-    );
+
+    const errorMessage = await callAudioOnlyEndpoint(userIdToken, inputParams);
 
     if (!errorMessage) {
       navigate("/dashboard", {
@@ -196,6 +237,22 @@ const PodcastEditScreen = () => {
             .length > 0
         ) {
           populateContentFromQueryParams(contentId);
+
+          user.user_saved.map(async (item) => {
+            if (item.content_id === contentId && item.voice) {
+              if (AVAILABLE_VOICES_NAMES.includes(item.voice)) {
+                setSelectedVoice(item.voice);
+              } else {
+                // when it is voice id, set it as your own voice
+                setSelectedVoice(YOUR_OWN_VOICE);
+              }
+            }
+          });
+
+          if (user.clone_voice_id) {
+            setUserVoiceId(user.clone_voice_id);
+          }
+
           console.log(`populated content from query params`);
         } else {
           console.log(`setting error to no permission`);
@@ -238,6 +295,13 @@ const PodcastEditScreen = () => {
             <div className="container">
               <h2 className="title">Edit </h2>
               <div className="contentRow"></div>
+              <VoiceSettings
+                voiceLibrary={voiceLibrary}
+                setVoiceLibrary={setVoiceLibrary}
+                selectedVoice={selectedVoice}
+                setSelectedVoice={setSelectedVoice}
+                setVoiceId={setVoiceId}
+              />
 
               {intro !== null && (
                 <>

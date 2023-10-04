@@ -11,19 +11,11 @@ import { YOUR_OWN_VOICE } from "./VoiceSettings";
 import Loading from "./Loading";
 import Popup from "../components/Popup";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
+import { AVAILABLE_VOICES, getUserVoicePreviewAudio } from "../util/voice";
 import { getStorage, ref, getBlob } from "@firebase/storage";
 import UpgradePlanAlert from "./UpgradePlanAlert";
 import GenerateAudioSettings from "./GenerateAudioSettings";
 import CreateInfoHelper from "./CreateInfoHelper";
-
-const AVAILABLE_VOICES = [
-  { name: "Alex", tags: ["american", "male", "young"] },
-  { name: "Bruce", tags: ["american", "male", "middle-aged"] },
-  { name: "Joanne", tags: ["american", "female", "young"] },
-  { name: "Valley Girl", tags: ["american", "female", "young"] },
-  { name: "Victoria", tags: ["british", "female", "middle-aged"] },
-  { name: "Zeus", tags: ["british", "male", "middle-aged"] },
-];
 
 export const PODCAST_STYLES = [
   { name: "Brief (5 - 10 min)", minLength: 5, maxLength: 10 },
@@ -134,7 +126,7 @@ const DetailedUrlInput = (props) => {
           {
             name: YOUR_OWN_VOICE,
             tags: [],
-            audio: await getUserVoicePreviewAudio(),
+            audio: await getUserVoicePreviewAudio(userId),
           },
           ...newVoiceLibrary
         ];
@@ -145,7 +137,7 @@ const DetailedUrlInput = (props) => {
 
   useEffect(() => {
     if (voiceId) {
-      getUserVoicePreviewAudio().then((audio) => {
+      getUserVoicePreviewAudio(userId).then((audio) => {
         let existYourOwnVoice = false;
         const newVoiceLibrary = voiceLibrary.map((voice) => {
           if (voice.name == YOUR_OWN_VOICE) {
@@ -171,22 +163,6 @@ const DetailedUrlInput = (props) => {
       });
     }
   }, [voiceId]);
-
-  const getUserVoicePreviewAudio = async () => {
-    const app = initializeFirebaseApp();
-    const storage = getStorage(app);
-    const userVoicePreviewUrl = `demo/voice_preview/${userId}`;
-    let userVoicePreviewAudio;
-    try {
-      const audioRef = ref(storage, userVoicePreviewUrl);
-      const blob = await getBlob(audioRef);
-      userVoicePreviewAudio = URL.createObjectURL(blob);
-      console.log(`got user voice preview audio ${userVoicePreviewUrl}`);
-    } catch {}
-
-    console.log(`returning user voice preview ${userVoicePreviewAudio}`);
-    return userVoicePreviewAudio;
-  };
 
   const wordCountCheck = async () => {
     setLoading(true);
@@ -292,7 +268,7 @@ const DetailedUrlInput = (props) => {
   };
 
   const onCreatePodcast = async () => {
-    const voiceId =
+    const voice_for_submission =
       selectedVoice === YOUR_OWN_VOICE
         ? voiceId
           ? voiceId
@@ -308,7 +284,7 @@ const DetailedUrlInput = (props) => {
             contentUrls: urls,
             podcastTitle: podcastTitle,
             hostName: hostName,
-            voiceId: voiceId,
+            voiceId: voice_for_submission,
             totalLength: totalMaxLength,
             scriptOnly: scriptOnly,
           };
@@ -330,7 +306,7 @@ const DetailedUrlInput = (props) => {
               contentUrl: urls.join(","),
               podcastTitle: podcastTitle,
               hostName: hostName,
-              voiceId: voiceId,
+              voiceId: voice_for_submission,
               totalLength: totalMaxLength,
               scriptOnly: scriptOnly,
             },
@@ -343,7 +319,7 @@ const DetailedUrlInput = (props) => {
           plainText: props.inputContent,
           podcastTitle: podcastTitle,
           hostName: hostName,
-          voiceId: voiceId,
+          voiceId: voice_for_submission,
           totalLength: totalMinLength,
           scriptOnly: scriptOnly,
         };
@@ -365,7 +341,7 @@ const DetailedUrlInput = (props) => {
             plainTextInput: props.inputContent,
             podcastTitle: podcastTitle,
             hostName: hostName,
-            voiceId: voiceId,
+            voiceId: voice_for_submission,
             totalLength: totalMinLength,
             scriptOnly: scriptOnly,
           },
@@ -407,12 +383,6 @@ const DetailedUrlInput = (props) => {
         }}
       ></Popup>
 
-      {notification && (
-        <div class="alert alert-success" role="alert">
-          <h4 class="alert-heading">Job successfully submitted!</h4>
-          <p>You need to wait for another minute before submitting new jobs.</p>
-        </div>
-      )}
       <div className="content">
         <div className="tabContainer">
           <button
@@ -521,6 +491,14 @@ const DetailedUrlInput = (props) => {
           userId={userId}
           canEditAd={props.canEditAd}
         />
+        {notification && (
+          <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading">Job successfully submitted!</h4>
+            <p>
+              You need to wait for another minute before submitting new jobs.
+            </p>
+          </div>
+        )}
 
         <button
           className={
