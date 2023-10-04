@@ -72,7 +72,7 @@ const LoginScreen = () => {
                     scriptOnly={scriptOnly}
                 />
                 <p className='plainText' style={{fontSize: '14px', color: '#777777', fontWeight: '500', marginLeft: '3px', marginTop: '40px'}}>
-                    By continuing, you agree to SpeakUp’s Terms of Service. Read our Privacy Policy.
+                    By continuing, you agree to SpeakUp’s <a href="https://startspeakup.com/legal/terms-and-conditions" style={{ color: '#777777'}}>Terms of Service</a>. Read our <a href="https://startspeakup.com/legal/privacy-policy" style={{ color: '#777777'}} >Privacy Policy</a>.
                 </p>
             </div>
         </div>
