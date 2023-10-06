@@ -1,9 +1,13 @@
-import { useEffect, useState } from "react"
-import { initializeFirebaseApp } from "../util/firebaseUtils"
-import { getStorage, ref, getBlob } from "firebase/storage"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import {RiDeleteBin6Line} from 'react-icons/ri'
+import {RiDeleteBin6Fill} from 'react-icons/ri'
+import {PiDownloadSimpleDuotone, PiDownloadSimpleFill} from 'react-icons/pi'
 
 const PodcastResultPreview = (props) => {
+    const [hoverPreviewBox, setHoverPreviewBox] = useState(false)
+    const [hoverDelete, setHoverDelete] = useState(false)
+    const [hoverDownload, setHoverDownload] = useState(false)
     const navigate = useNavigate()
 
     const navigateToResult = () => {
@@ -19,17 +23,85 @@ const PodcastResultPreview = (props) => {
         }})
     }
 
+    const getPodcastDownloadUrl = async () => {
+        var data = new Blob([props.blob], {type: 'audio/mp3'});
+        var downloadUrl = window.URL.createObjectURL(data);
+        const tempLink = document.createElement('a');
+        tempLink.href = downloadUrl;
+        tempLink.setAttribute('download', `${props.title}.mp3`);
+        tempLink.click();
+    }
+
     return (
-        <div className='previewContainer' onClick={navigateToResult}>
-            <h2 style={{margin: '0px'}}>{props.title}</h2>
-            {props.audioUrl ? 
-                <video controls name="podcast" className="audioPlayer">
+        <div className='previewContainer' onClick={navigateToResult} onMouseEnter={() => setHoverPreviewBox(true)} onMouseLeave={() => setHoverPreviewBox(false)}>
+            <p className="navigationHeaderText" style={{textAlign: 'initial', fontWeight: '500', fontSize: '24px', margin: '20px 20px'}}>{props.title}</p>
+            
+            <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0px 20px', height: '35px'}}>
+            { props.audioUrl ? 
+                <audio controls name="podcast" style={{marginBottom: '10px'}}>
                     <source src={props.audioUrl} type='audio/mp3' />
-                </video> : 
-                (props.status == 'failed' ? 
-                    <h2 className="generatingText" style={{color: 'red'}}>🚨 Failed</h2> :
-                    <h2 className="generatingText">Generating...</h2>)
+                </audio> : 
+                <div>
+                    {props.status == 'audio_failed' &&
+                        <p className="navigationHeaderText" style={{fontWeight: '500', fontSize: '18px'}}>Audio generation failed</p>
+                    }
+                    {props.status == 'audio_pending' &&
+                        <p className="navigationHeaderText" style={{fontWeight: '500', fontSize: '18px'}}>Generating audio...</p>
+                    }
+                </div>
             }
+
+            {hoverPreviewBox &&
+                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                    <div style={{marginRight: '10px'}}>
+                        {hoverDownload ? 
+                            <PiDownloadSimpleFill 
+                                size={30} 
+                                color={'#2B1C50'} 
+                                onMouseEnter={() => setHoverDownload(true)} 
+                                onMouseLeave={() => setHoverDownload(false)} 
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    getPodcastDownloadUrl()
+                                }}
+                            /> :
+                            <PiDownloadSimpleDuotone 
+                                size={30} 
+                                color={'#2B1C50'} 
+                                onMouseEnter={() => setHoverDownload(true)} 
+                                onMouseLeave={() => setHoverDownload(false)}
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    getPodcastDownloadUrl()
+                                }}
+                            />
+                        }
+                    </div>
+                    {hoverDelete ? 
+                        <RiDeleteBin6Fill 
+                            size={30} 
+                            color={'#2B1C50'} 
+                            onMouseEnter={() => setHoverDelete(true)} 
+                            onMouseLeave={() => setHoverDelete(false)} 
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                props.deleteContent()
+                            }}
+                        /> : 
+                        <RiDeleteBin6Line 
+                            size={30} 
+                            color={'#2B1C50'} 
+                            onMouseEnter={() => setHoverDelete(true)} 
+                            onMouseLeave={() => setHoverDelete(false)}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                props.deleteContent()
+                            }}
+                        />
+                    }
+                </div>
+            }
+            </div>
         </div>
     )
 }

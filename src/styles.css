@@ -367,7 +367,7 @@ a {
 
 .previewBoxesContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Adjust the width as needed */
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); /* Adjust the width as needed */
   gap: 10px; /* Add some gap for spacing between items */
   margin-top: 20px;
 }
@@ -375,7 +375,7 @@ a {
 .previewContainer {
   border-width: 2px;
   border-color: #ebebeb;
-  height: 250px;
+  height: 280px;
   border-style: solid;
   border-radius: 20px;
   margin: 10px 20px 10px 0px;
@@ -393,10 +393,6 @@ a {
 
 .generatingText {
   margin-bottom: 0px;
-}
-
-.audioPlayer {
-  margin-top: -60px;
 }
 
 .profilePic {
@@ -699,10 +695,6 @@ a {
 .customizedInputField {
   font-size: 16px;
   margin: 16px 0px;
-}
-
-.previewContainer h2 {
-  font-size: 24px;
 }
 
 /* toggle */

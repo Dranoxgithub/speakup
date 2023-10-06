@@ -72,8 +72,9 @@ const DashBoardScreen = () => {
             if (
               content &&
               content.status &&
-              (content.status === "script_pending" ||
-                content.status === "script_success")
+              (content.status == "script_pending" ||
+                content.status == "script_success" ||
+                content.status == "script_failed")
             ) {
               const title = content.original_content.title;
               let script;
@@ -121,7 +122,7 @@ const DashBoardScreen = () => {
 
             if (
               item.status &&
-              item.status == "success" &&
+              item.status == "audio_success" &&
               contentIdEmailSent[contentId] == false
             ) {
               await sendEmailNotification(contentId);
@@ -134,7 +135,12 @@ const DashBoardScreen = () => {
             }
 
             const content = await getDocument("contents", contentId);
-            if (content) {
+            if (content && 
+              item.status && 
+              (item.status == 'audio_pending' || 
+              item.status == 'audio_success' || 
+              item.status == 'audio_failed' || 
+              item.status == 'notified')) {
               const title = content.original_content.title;
               let script;
               let blobInfo;
@@ -168,7 +174,7 @@ const DashBoardScreen = () => {
                 shownotes: shownotes,
                 created: content.created_at,
                 urls: urls,
-                status: content.status,
+                status: item.status,
               };
             }
           } catch (error) {
@@ -285,6 +291,13 @@ const DashBoardScreen = () => {
     setErrorMessage();
   };
 
+  const deleteContent = async (contentId) => {
+    const user = await getDocument('users', userId)
+    user.user_saved = user.user_saved.filter(item => item.content_id != contentId)
+
+    await updateDocument('users', userId, user)
+  }
+
   return (
     <div>
       {fetchingUser ? (
@@ -374,14 +387,15 @@ const DashBoardScreen = () => {
               </h4>
             ))}
 
-          <div style={{ width: "90%" }}>
+          <div style={{ width: "90%", marginBottom: '60px' }}>
             <p className="subsectionHeaderText">Draft</p>
             {loading ? (
               <div className="previewBoxesContainer">
-                {draftList.map(() => (
+                {draftList.map((item) => (
                   <Skeleton
+                    key={item.contentId}
                     variant="rectangular"
-                    height={250}
+                    height={280}
                     className="previewContainer"
                   />
                 ))}
@@ -389,21 +403,28 @@ const DashBoardScreen = () => {
             ) : (
               <div className="previewBoxesContainer">
                 {draftList.map((item) => (
-                  // @TODO: add draft preview card
-                  <></>
+                  <PodcastEditPreview 
+                    key={item.contentId}
+                    title={item.title}
+                    status={item.status}
+                    script={item.script}
+                    urls={item.urls}
+                    deleteContent={() => deleteContent(item.contentId)}
+                  />
                 ))}
               </div>
             )}
           </div>
 
-          <div style={{ width: "90%", marginBottom: '20px' }}>
+          <div style={{ width: "90%", marginBottom: '60px' }}>
             <p className="subsectionHeaderText">History</p>
             {loading ? (
               <div className="previewBoxesContainer">
-                {contentList.map(() => (
+                {contentList.map((item) => (
                   <Skeleton
                     variant="rectangular"
-                    height={250}
+                    key={item.contentId}
+                    height={280}
                     className="previewContainer"
                   />
                 ))}
@@ -422,12 +443,13 @@ const DashBoardScreen = () => {
                     created={item.created}
                     urls={item.urls}
                     status={item.status}
+                    deleteContent={() => deleteContent(item.contentId)}
                   />
                 ))}
               </div>
             )}
           </div>
-          
+
           <Footer />
         </div>
       )}
