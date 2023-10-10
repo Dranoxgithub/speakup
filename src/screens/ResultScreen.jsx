@@ -11,7 +11,7 @@ import { getAuth } from "@firebase/auth";
 import UserInfoDisplay from "../components/UserInfoDisplay";
 import Footer from "../components/Footer";
 
-const DEMO_CONTENTS = ['Rfg4OgKngtJ6eSmrD17Q']
+export const DEMO_CONTENTS = ['Rfg4OgKngtJ6eSmrD17Q', 'bZMp8rqMZcs7gZQDWSrg']
 
 const ResultScreen = () => {
     const location = useLocation()

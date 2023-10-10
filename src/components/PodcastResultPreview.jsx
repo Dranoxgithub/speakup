@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom"
 import {RiDeleteBin6Line} from 'react-icons/ri'
 import {RiDeleteBin6Fill} from 'react-icons/ri'
 import {PiDownloadSimpleDuotone, PiDownloadSimpleFill} from 'react-icons/pi'
+import {DEMO_CONTENTS} from '../screens/ResultScreen'
+import { secondsToHHMMSS } from "../util/helperFunctions"
 
 const PodcastResultPreview = (props) => {
     const [hoverPreviewBox, setHoverPreviewBox] = useState(false)
@@ -34,7 +36,16 @@ const PodcastResultPreview = (props) => {
 
     return (
         <div className='previewContainer' onClick={navigateToResult} onMouseEnter={() => setHoverPreviewBox(true)} onMouseLeave={() => setHoverPreviewBox(false)}>
-            <p className="navigationHeaderText" style={{textAlign: 'initial', fontWeight: '500', fontSize: '24px', margin: '20px 20px'}}>{props.title}</p>
+            <div style={{ position: 'absolute', left: '35px', top: '25px', display: 'flex', flexDirection: 'row' }}>
+                { DEMO_CONTENTS.includes(props.contentId) &&
+                    <p className="previewTagText">DEMO</p>
+                }
+                { props.duration &&
+                    <p className="previewTagText" style={{backgroundColor: '#777777'}}>{secondsToHHMMSS(props.duration)}</p>
+                }
+            </div>
+
+            <p className="navigationHeaderText" style={{textAlign: 'initial', fontWeight: '500', fontSize: '24px', margin: '60px 20px 0px 20px'}}>{props.title}</p>
             
             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0px 20px', height: '35px'}}>
             { props.audioUrl ? 
@@ -54,27 +65,28 @@ const PodcastResultPreview = (props) => {
             {hoverPreviewBox &&
                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                     <div style={{marginRight: '10px'}}>
-                        {hoverDownload ? 
-                            <PiDownloadSimpleFill 
-                                size={30} 
-                                color={'#2B1C50'} 
-                                onMouseEnter={() => setHoverDownload(true)} 
-                                onMouseLeave={() => setHoverDownload(false)} 
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    getPodcastDownloadUrl()
-                                }}
-                            /> :
-                            <PiDownloadSimpleDuotone 
-                                size={30} 
-                                color={'#2B1C50'} 
-                                onMouseEnter={() => setHoverDownload(true)} 
-                                onMouseLeave={() => setHoverDownload(false)}
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    getPodcastDownloadUrl()
-                                }}
-                            />
+                        { props.audioUrl &&
+                            (hoverDownload ? 
+                                <PiDownloadSimpleFill 
+                                    size={30} 
+                                    color={'#2B1C50'} 
+                                    onMouseEnter={() => setHoverDownload(true)} 
+                                    onMouseLeave={() => setHoverDownload(false)} 
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        getPodcastDownloadUrl()
+                                    }}
+                                /> :
+                                <PiDownloadSimpleDuotone 
+                                    size={30} 
+                                    color={'#2B1C50'} 
+                                    onMouseEnter={() => setHoverDownload(true)} 
+                                    onMouseLeave={() => setHoverDownload(false)}
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        getPodcastDownloadUrl()
+                                    }}
+                                />)
                         }
                     </div>
                     {hoverDelete ? 

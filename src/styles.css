@@ -375,7 +375,7 @@ a {
 .previewContainer {
   border-width: 2px;
   border-color: #ebebeb;
-  height: 280px;
+  height: 320px;
   border-style: solid;
   border-radius: 20px;
   margin: 10px 20px 10px 0px;
@@ -385,6 +385,7 @@ a {
   align-items: center;
   font-family: "Poppins";
   padding: 20px;
+  position: relative;
 }
 
 .previewContainer:hover {
@@ -556,6 +557,16 @@ a {
   margin-left: 10px;
   padding: 5px 15px;
   border-radius: 15px;
+}
+
+.previewTagText {
+  background-color: #3F1691;
+  padding: 5px 15px;
+  border-radius: 50px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0px 5px;
 }
 
 .divider {

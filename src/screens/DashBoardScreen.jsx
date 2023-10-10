@@ -387,68 +387,74 @@ const DashBoardScreen = () => {
               </h4>
             ))}
 
-          <div style={{ width: "90%", marginBottom: '60px' }}>
-            <p className="subsectionHeaderText">Draft</p>
-            {loading ? (
-              <div className="previewBoxesContainer">
-                {draftList.map((item) => (
-                  <Skeleton
-                    key={item.contentId}
-                    variant="rectangular"
-                    height={280}
-                    className="previewContainer"
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="previewBoxesContainer">
-                {draftList.map((item) => (
-                  <PodcastEditPreview 
-                    key={item.contentId}
-                    title={item.title}
-                    status={item.status}
-                    script={item.script}
-                    urls={item.urls}
-                    deleteContent={() => deleteContent(item.contentId)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+          {draftList && draftList.length > 0 && 
+            <div style={{ width: "90%", marginBottom: '60px' }}>
+              <p className="subsectionHeaderText">Draft</p>
+              {loading ? (
+                <div className="previewBoxesContainer">
+                  {draftList.map((item) => (
+                    <Skeleton
+                      key={item.contentId}
+                      variant="rectangular"
+                      height={280}
+                      className="previewContainer"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="previewBoxesContainer">
+                  {draftList.map((item) => (
+                    <PodcastEditPreview 
+                      key={item.contentId}
+                      contentId={item.contentId}
+                      title={item.title}
+                      status={item.status}
+                      script={item.script}
+                      urls={item.urls}
+                      deleteContent={() => deleteContent(item.contentId)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          }
 
-          <div style={{ width: "90%", marginBottom: '60px' }}>
-            <p className="subsectionHeaderText">History</p>
-            {loading ? (
-              <div className="previewBoxesContainer">
-                {contentList.map((item) => (
-                  <Skeleton
-                    variant="rectangular"
-                    key={item.contentId}
-                    height={280}
-                    className="previewContainer"
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="previewBoxesContainer">
-                {contentList.map((item) => (
-                  <PodcastResultPreview
-                    key={item.contentId}
-                    title={item.title}
-                    script={item.script}
-                    blob={item.blob}
-                    audioUrl={item.audioUrl}
-                    duration={item.duration}
-                    shownotes={item.shownotes}
-                    created={item.created}
-                    urls={item.urls}
-                    status={item.status}
-                    deleteContent={() => deleteContent(item.contentId)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+          {contentList && contentList.length > 0 &&
+            <div style={{ width: "90%", marginBottom: '60px' }}>
+              <p className="subsectionHeaderText">History</p>
+              {loading ? (
+                <div className="previewBoxesContainer">
+                  {contentList.map((item) => (
+                    <Skeleton
+                      variant="rectangular"
+                      key={item.contentId}
+                      height={280}
+                      className="previewContainer"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="previewBoxesContainer">
+                  {contentList.map((item) => (
+                    <PodcastResultPreview
+                      key={item.contentId}
+                      contentId={item.contentId}
+                      title={item.title}
+                      script={item.script}
+                      blob={item.blob}
+                      audioUrl={item.audioUrl}
+                      duration={item.duration}
+                      shownotes={item.shownotes}
+                      created={item.created}
+                      urls={item.urls}
+                      status={item.status}
+                      deleteContent={() => deleteContent(item.contentId)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          }
 
           <Footer />
         </div>

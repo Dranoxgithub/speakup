@@ -13,10 +13,21 @@ export async function createUserDocument(uid: string) {
     const user = (await getDoc(docRef)).data();
 
     if (user === undefined) {
+      const demos = [
+        {
+          content_id: 'bZMp8rqMZcs7gZQDWSrg',
+          status: 'audio_success'
+        },
+        {
+          content_id: 'Rfg4OgKngtJ6eSmrD17Q',
+          status: 'audio_success'
+        },
+      ]
       // console.log(`Creating a new user document for uid ${uid}.`);
       await setDoc(docRef, { 
         id: uid, 
-        quota: 10
+        quota: 10,
+        user_saved: demos
       });
       return true;
     }
