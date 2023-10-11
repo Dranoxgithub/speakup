@@ -386,6 +386,7 @@ a {
   font-family: "Poppins";
   padding: 20px;
   position: relative;
+  background-color: #fff;
 }
 
 .previewContainer:hover {
