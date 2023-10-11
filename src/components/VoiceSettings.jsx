@@ -130,7 +130,7 @@ export const VoiceSettings = (props) => {
           }}
         >
           <p className="plainText">
-            {isCloneVoiceShown ? "Back" : "+ Add Voice"}
+            + Add Voice
           </p>
         </button>
       </div>
