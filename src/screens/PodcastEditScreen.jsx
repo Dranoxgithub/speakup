@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getDocument, initializeFirebaseApp } from "../util/firebaseUtils";
 import { useAppSelector } from "../redux/hooks";
-import { getUserId, getUserIdToken } from "../redux/userSlice";
+import { getUserId } from "../redux/userSlice";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { getAuth } from "@firebase/auth";
 import UserInfoDisplay from "../components/UserInfoDisplay";
@@ -22,7 +22,6 @@ const PodcastEditScreen = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
-  const userIdToken = useAppSelector(getUserIdToken);
   const userId = useAppSelector(getUserId);
   const [contentId, setContentId] = useState();
   const [estimatedDuration, setEstimatedDuration] = useState(0);
@@ -138,6 +137,10 @@ const PodcastEditScreen = () => {
           : selectedVoice,
       with_music: false, // to change
     };
+
+    const app = initializeFirebaseApp()
+    const auth = getAuth(app)
+    const userIdToken = await auth.currentUser.getIdToken()
 
     const errorMessage = await callAudioOnlyEndpoint(userIdToken, inputParams);
 

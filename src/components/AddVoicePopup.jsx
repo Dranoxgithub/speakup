@@ -5,9 +5,10 @@ import { CiCircleRemove } from "react-icons/ci"
 import { getStorage, ref, uploadBytes, listAll, deleteObject } from "firebase/storage";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { useAppSelector } from "../redux/hooks";
-import { getUserId, getUserIdToken } from "../redux/userSlice";
+import { getUserId } from "../redux/userSlice";
 import { cloneVoice } from "../util/helperFunctions";
 import Loading from "./Loading";
+import { getAuth } from "@firebase/auth";
 
 const AddVoicePopup = (props) => {
     const [dragActive, setDragActive] = useState(false);
@@ -18,7 +19,6 @@ const AddVoicePopup = (props) => {
     const storage = getStorage(initializeFirebaseApp());
 
     const userId = useAppSelector(getUserId);
-    const userIdToken = useAppSelector(getUserIdToken);
 
     // handle drag events
     const handleDrag = function(e) {
@@ -77,7 +77,9 @@ const AddVoicePopup = (props) => {
             });
 
             await Promise.all(uploadPromises);
-
+            const app = initializeFirebaseApp()
+            const auth = getAuth(app)
+            const userIdToken = await auth.currentUser.getIdToken()
             const voiceId = await cloneVoice(userIdToken, userId);
             setFiles([]);
             props.setVoice(voiceId)
@@ -114,12 +116,13 @@ const AddVoicePopup = (props) => {
                     value={voiceName}
                     onChange={(e) => setVoiceName(e.target.value)}
                     className="customizedInput"
+                    disabled={uploading}
                 />
 
                 <p className="scriptSettingsText" style={{textAlign: 'initial', color: '#828282'}}>Upload voice samples</p>
 
                 <form className="fileUploadForm" onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>
-                    <input type="file" id="fileUploadInput" style={{display: 'none'}} accept=".mp3" multiple={true} onChange={handleChange} />
+                    <input type="file" id="fileUploadInput" style={{display: 'none'}} accept=".mp3" multiple={true} onChange={handleChange} disabled={uploading} />
                     
                     <label className="fileUploadLabel" htmlFor="fileUploadInput">
                         {files && files.length > 0 ? 
@@ -130,6 +133,9 @@ const AddVoicePopup = (props) => {
                                         <CiCircleRemove size={20} onClick={(e) => {
                                             e.preventDefault()
                                             e.stopPropagation()
+                                            if (uploading) {
+                                                return;
+                                            }
                                             removeFile(item.name)
                                         }}/>
                                     </div>

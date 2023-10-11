@@ -30,30 +30,36 @@ const UserInfoDisplay = (props) => {
 
     return (
         <div>
-            {profilePic ? 
-                <div className="profilePicContainer">
+            <div className="profilePicContainer">
+                {profilePic ? 
                     <img 
                         className="profilePic" 
                         src={profilePic} 
                         onClick={showOrHideModal}
-                    />
-                    { props.showModal ? 
-                        <div className="profileDetailBox">
-                            <h3 className="userName">Signed in as {displayName}</h3>
-                            <div className="divider" />
-                            <div className="profileSelection" onClick={navigateToSubscriptionPage}>
-                                <RiMoneyCnyCircleFill size={20} style={{marginLeft: '20px'}} color="#2d3142"/>
-                                <p className="profileSelectionText">Subscription</p>
-                            </div>
+                    /> : 
+                    <div 
+                        className="profilePic" 
+                        style={{backgroundColor: '#fff'}}
+                        onClick={showOrHideModal}
+                    >
+                    </div>
+                }
+                { props.showModal ? 
+                    <div className="profileDetailBox">
+                        <h3 className="userName">Signed in as {displayName}</h3>
+                        <div className="divider" />
+                        <div className="profileSelection" onClick={navigateToSubscriptionPage}>
+                            <RiMoneyCnyCircleFill size={20} style={{marginLeft: '20px'}} color="#2d3142"/>
+                            <p className="profileSelectionText">Subscription</p>
+                        </div>
 
-                            <div className="profileSelection" onClick={signoutUser}>
-                                <PiSignOutBold size={20} style={{marginLeft: '20px'}} color="#2d3142"/>
-                                <p className="profileSelectionText">Sign Out</p>
-                            </div>
-                        </div> : <></>
-                    }
-                </div> : 
-                <></> }
+                        <div className="profileSelection" onClick={signoutUser}>
+                            <PiSignOutBold size={20} style={{marginLeft: '20px'}} color="#2d3142"/>
+                            <p className="profileSelectionText">Sign Out</p>
+                        </div>
+                    </div> : <></>
+                }
+            </div>
         </div>
     )
 }

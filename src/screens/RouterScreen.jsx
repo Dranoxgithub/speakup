@@ -10,8 +10,7 @@ import {
   setUserEmail,
   setUserId,
   setUserProfilePic,
-  setUserDisplayName,
-  setUserIdToken,
+  setUserDisplayName
 } from "../redux/userSlice";
 import WebFont from "webfontloader";
 import SubscriptionScreen from "./SubscriptionScreen";
@@ -37,7 +36,6 @@ const RouterScreen = () => {
         dispatch(setUserEmail(user.email));
         dispatch(setUserProfilePic(user.photoURL));
         dispatch(setUserDisplayName(user.displayName));
-        dispatch(setUserIdToken(user.accessToken));
       }
     });
   }, []);

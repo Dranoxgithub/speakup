@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import CloneVoice from "./CloneVoice";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import AddVoicePopup from "./AddVoicePopup";

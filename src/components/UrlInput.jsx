@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react"
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from "react"
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from "../redux/hooks";
-import { getUserId, getUserIdToken } from "../redux/userSlice";
+import { getUserId } from "../redux/userSlice";
 import { generatePodcast } from "../util/helperFunctions";
+import { getAuth } from "@firebase/auth";
 
 const UrlInput = (props) => {
     const userId = useAppSelector(getUserId)
-    const userIdToken = useAppSelector(getUserIdToken)
 
     const navigate = useNavigate()
     
@@ -35,6 +35,11 @@ const UrlInput = (props) => {
                 const inputParams = {
                     contentUrls: [url.trim()]
                 }
+
+                const app = initializeFirebaseApp()
+                const auth = getAuth(app)
+                const userIdToken = await auth.currentUser.getIdToken()
+
                 const errorMessage = await generatePodcast(
                     userIdToken, 
                     userId,

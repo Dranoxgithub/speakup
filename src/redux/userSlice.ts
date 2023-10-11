@@ -15,7 +15,6 @@ import { RootState } from "./store";
 export interface UserState {
   id: string;
   email: string;
-  idToken: string;
   refreshToken: string;
   profilePic: string;
   displayName: string;
@@ -29,7 +28,6 @@ interface UserInfo {
 const initialState: UserState = {
   id: "",
   email: "",
-  idToken: "",
   refreshToken: "",
   profilePic: "",
   displayName: "",
@@ -77,7 +75,6 @@ function createLoginExtraReducers(builder: ActionReducerMapBuilder<UserState>) {
     userLoginThunk.fulfilled,
     (state: UserState, action: PayloadAction<any>) => {
       state.id = action.payload.user.localId;
-      state.idToken = action.payload.user.accessToken;
       state.refreshToken = action.payload.user.refreshToken;
       console.log(`User Login success. ${JSON.stringify(action.payload)}`);
     }
@@ -99,7 +96,6 @@ function createSignupExtraReducers(
     userSignupThunk.fulfilled,
     (state: UserState, action: PayloadAction<any>) => {
       state.id = action.payload.user.localId;
-      state.idToken = action.payload.user.accessToken;
       state.refreshToken = action.payload.user.refreshToken;
       console.log(`User Signup success. ${JSON.stringify(action.payload)}`);
     }
@@ -117,9 +113,6 @@ export const userSlice = createSlice({
     setUserId: (state, action: PayloadAction<string>) => {
       state.id = action.payload;
       console.log("Successfully set user id to " + state.id);
-    },
-    setUserIdToken: (state, action: PayloadAction<string>) => {
-      state.idToken = action.payload;
     },
     setUserEmail: (state, action: PayloadAction<string>) => {
       state.email = action.payload;
@@ -140,12 +133,11 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setUserId, setUserIdToken, setUserEmail, setUserDisplayName, setUserProfilePic } = userSlice.actions;
+export const { setUserId, setUserEmail, setUserDisplayName, setUserProfilePic } = userSlice.actions;
 
 export const getUserState = ({ user }: RootState) => user;
 
 export const getUserId = ({ user }: RootState) => user.id;
-export const getUserIdToken = ({ user }: RootState) => user.idToken;
 export const getUserEmail = ({ user }: RootState) => user.email;
 export const getUserProfilePic = ({ user }: RootState) => user.profilePic;
 export const getUserDisplayName = ({ user }: RootState) => user.displayName;

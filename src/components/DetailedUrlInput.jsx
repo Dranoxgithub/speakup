@@ -1,10 +1,11 @@
 import { useAppSelector } from "../redux/hooks";
-import { getUserId, getUserIdToken } from "../redux/userSlice";
+import { getUserId } from "../redux/userSlice";
 import {
   generatePodcast,
   checkWordCount,
   AD_CONTENT,
 } from "../util/helperFunctions";
+import { getAuth } from "@firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { YOUR_OWN_VOICE } from "./VoiceSettings";
@@ -55,7 +56,6 @@ const DetailedUrlInput = (props) => {
   }, []);
 
   const userId = useAppSelector(getUserId);
-  const userIdToken = useAppSelector(getUserIdToken);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -180,6 +180,9 @@ const DetailedUrlInput = (props) => {
       const urls = extractUrls(props.inputContent);
       console.log(`extracted following urls: ${urls}`);
       if (urls && userId) {
+        const app = initializeFirebaseApp()
+        const auth = getAuth(app)
+        const userIdToken = await auth.currentUser.getIdToken()
         const errorMessage = await checkWordCount(userIdToken, urls);
         console.log(errorMessage);
       }
@@ -275,6 +278,9 @@ const DetailedUrlInput = (props) => {
           : props.userVoiceId
         : selectedVoice;
 
+    const app = initializeFirebaseApp()
+    const auth = getAuth(app)
+    const userIdToken = await auth.currentUser.getIdToken()
     if (activeTab === "url") {
       const urls = extractUrls(props.inputContent);
       console.log(`extracted following urls: ${urls}`);
