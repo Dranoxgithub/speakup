@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import CloneVoice from "./CloneVoice";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
+import AddVoicePopup from "./AddVoicePopup";
 
 export const YOUR_OWN_VOICE = "Your Own Voice";
 
@@ -134,63 +135,73 @@ export const VoiceSettings = (props) => {
         </button>
       </div>
 
-      {isVoicePreviewShown && (
-        <div style={{ position: "relative" }}>
-          <div className="selectionDropDownContainer">
-            {props.voiceLibrary.map((item, index) => (
-              <div key={item.name}>
-                <div
-                  className="selectionDropDownItem"
-                  onClick={() => handleVoiceSelection(item.name)}
-                >
+      {isVoicePreviewShown && 
+        (
+          <div style={{ position: "relative" }}>
+            <div className="selectionDropDownContainer">
+              {props.voiceLibrary.map((item, index) => (
+                <div key={item.name}>
                   <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
+                    className="selectionDropDownItem"
+                    onClick={() => handleVoiceSelection(item.name)}
                   >
-                    {item.audio &&
-                      (item.isPlaying ? (
-                        <FaPause
-                          size={18}
-                          onClick={(e) => toggleAudio(e, item.name)}
-                          style={{ marginRight: "10px" }}
-                        />
-                      ) : (
-                        <FaPlay
-                          size={18}
-                          onClick={(e) => toggleAudio(e, item.name)}
-                          style={{ marginRight: "10px" }}
-                        />
-                      ))}
-                    <p className="plainText">{item.name}</p>
-                  </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      {item.audio &&
+                        (item.isPlaying ? (
+                          <FaPause
+                            size={18}
+                            onClick={(e) => toggleAudio(e, item.name)}
+                            style={{ marginRight: "10px" }}
+                          />
+                        ) : (
+                          <FaPlay
+                            size={18}
+                            onClick={(e) => toggleAudio(e, item.name)}
+                            style={{ marginRight: "10px" }}
+                          />
+                        ))}
+                      <p className="plainText">{item.name}</p>
+                    </div>
 
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    {item.tags.map((tag) => (
-                      <div key={tag} className="tagText">
-                        <p style={{ margin: "0px", fontFamily: "Poppins" }}>
-                          {tag}
-                        </p>
-                      </div>
-                    ))}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      {item.tags.map((tag) => (
+                        <div key={tag} className="tagText">
+                          <p style={{ margin: "0px", fontFamily: "Poppins" }}>
+                            {tag}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {isCloneVoiceShown && (
-        <CloneVoice
+        // <CloneVoice
+        //   setVoice={(voiceId) => {
+        //     props.setVoiceId(voiceId);
+        //     props.setSelectedVoice(YOUR_OWN_VOICE);
+        //     setIsVoicePreviewShown(false);
+        //   }}
+        // />
+        <AddVoicePopup 
+          closeModal={() => setIsCloneVoiceShown(false)}
           setVoice={(voiceId) => {
             props.setVoiceId(voiceId);
             props.setSelectedVoice(YOUR_OWN_VOICE);

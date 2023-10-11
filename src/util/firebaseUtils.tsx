@@ -4,8 +4,6 @@ import { getFirestore, getDoc, doc, setDoc } from "firebase/firestore";
 
 export async function createUserDocument(uid: string) {
   try {
-    // console.log(`calling create user document with uid: ${uid}`);
-
     const app = initializeFirebaseApp();
     const db = getFirestore(app);
     console.log(`got firestore`);
