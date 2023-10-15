@@ -25,6 +25,7 @@ const PodcastEditScreen = () => {
   const userId = useAppSelector(getUserId);
   const [contentId, setContentId] = useState();
   const [estimatedDuration, setEstimatedDuration] = useState(0);
+  const [numOfSections, setNumOfSections] = useState(0);
   const [intro, setIntro] = useState();
   const [outro, setOutro] = useState();
   const [bodyParas, setBodyParas] = useState([]);
@@ -76,11 +77,21 @@ const PodcastEditScreen = () => {
         return text.trim().split(/\s+/).length;
       }
     };
+    const getSectionn = (text) => {
+      if (text === undefined || text === null) {
+        return 0;
+      } else {
+        return 1;
+      }
+    };
     const wordCount =
       getWordCount(intro) +
       (bodyParas.length === 0 ? 0 : getWordCount(bodyParas.join("\n\n"))) +
       getWordCount(outro);
     setEstimatedDuration(wordCount / 150);
+    setNumOfSections(
+      getSectionn(intro) + bodyParas.length + getSectionn(outro)
+    );
   }, [intro, outro, bodyParas]);
 
   const [showModal, setShowModal] = useState(false);
@@ -113,7 +124,7 @@ const PodcastEditScreen = () => {
       result: {
         script: {
           intro: intro,
-          paragraphs: [bodyParasString],
+          paragraphs: bodyParas, // [bodyParasString]
           outro: outro,
           best_summary: scriptString,
         },
@@ -138,9 +149,9 @@ const PodcastEditScreen = () => {
       with_music: false, // to change
     };
 
-    const app = initializeFirebaseApp()
-    const auth = getAuth(app)
-    const userIdToken = await auth.currentUser.getIdToken()
+    const app = initializeFirebaseApp();
+    const auth = getAuth(app);
+    const userIdToken = await auth.currentUser.getIdToken();
 
     const errorMessage = await callAudioOnlyEndpoint(userIdToken, inputParams);
 
@@ -210,9 +221,10 @@ const PodcastEditScreen = () => {
             setOutro(content.result.script.outro);
           }
           if (content.result.script.paragraphs) {
-            setBodyParas([
-              ...content.result.script.paragraphs[0].split("\n\n"),
-            ]);
+            // setBodyParas([
+            //   ...content.result.script.paragraphs[0].split("\n\n"),
+            // ]);
+            setBodyParas([...content.result.script.paragraphs]);
           }
         }
       }
@@ -304,6 +316,7 @@ const PodcastEditScreen = () => {
                 selectedVoice={selectedVoice}
                 setSelectedVoice={setSelectedVoice}
                 setVoiceId={setVoiceId}
+                showAddVoice={false}
               />
 
               {intro !== null && (
@@ -315,11 +328,13 @@ const PodcastEditScreen = () => {
                     }}
                     className="urlInput"
                   />
-                  <CloseButton
-                    onClick={(e) => {
-                      setIntro(null);
-                    }}
-                  />
+                  {numOfSections > 1 && (
+                    <CloseButton
+                      onClick={(e) => {
+                        setIntro(null);
+                      }}
+                    />
+                  )}
                 </>
               )}
 
@@ -333,8 +348,15 @@ const PodcastEditScreen = () => {
                       onChange={handleTextareaChange}
                       className="urlInput"
                     />
-                    <CloseButton onClick={handleTextareaDelete} />
-                    <button onClick={handleInsertBelow}>+</button>
+                    {numOfSections > 1 && (
+                      <CloseButton
+                        name={index}
+                        onClick={handleTextareaDelete}
+                      />
+                    )}
+                    <button name={index} onClick={handleInsertBelow}>
+                      +
+                    </button>
                   </>
                 ))}
 
@@ -347,11 +369,13 @@ const PodcastEditScreen = () => {
                     }}
                     className="urlInput"
                   />
-                  <CloseButton
-                    onClick={(e) => {
-                      setOutro(null);
-                    }}
-                  />
+                  {numOfSections > 1 && (
+                    <CloseButton
+                      onClick={(e) => {
+                        setOutro(null);
+                      }}
+                    />
+                  )}
                 </>
               )}
               <div
@@ -367,7 +391,7 @@ const PodcastEditScreen = () => {
                 }}
               >
                 <p className="greyBoldText">
-                  Estimated duration: {estimatedDuration} min
+                  Estimated duration: {Math.round(estimatedDuration)} min
                 </p>
               </div>
 

@@ -120,76 +120,73 @@ export const VoiceSettings = (props) => {
             <BsChevronDown size={20} id="voiceSettingsDown" />
           )}
         </div>
-
-        <button
-          className="addVoiceButton"
-          onClick={() => {
-            setIsCloneVoiceShown((prevValue) => !prevValue);
-            setIsVoicePreviewShown(false);
-          }}
-        >
-          <p className="plainText">
-            + Add Voice
-          </p>
-        </button>
+        {(props.showAddVoice == null || props.showAddVoice) && ( // show this section when either this field is not defined(for backward compatability) or it is set to true
+          <button
+            className="addVoiceButton"
+            onClick={() => {
+              setIsCloneVoiceShown((prevValue) => !prevValue);
+              setIsVoicePreviewShown(false);
+            }}
+          >
+            <p className="plainText">+ Add Voice</p>
+          </button>
+        )}
       </div>
 
-      {isVoicePreviewShown && 
-        (
-          <div style={{ position: "relative" }}>
-            <div className="selectionDropDownContainer">
-              {props.voiceLibrary.map((item, index) => (
-                <div key={item.name}>
+      {isVoicePreviewShown && (
+        <div style={{ position: "relative" }}>
+          <div className="selectionDropDownContainer">
+            {props.voiceLibrary.map((item, index) => (
+              <div key={item.name}>
+                <div
+                  className="selectionDropDownItem"
+                  onClick={() => handleVoiceSelection(item.name)}
+                >
                   <div
-                    className="selectionDropDownItem"
-                    onClick={() => handleVoiceSelection(item.name)}
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      {item.audio &&
-                        (item.isPlaying ? (
-                          <FaPause
-                            size={18}
-                            onClick={(e) => toggleAudio(e, item.name)}
-                            style={{ marginRight: "10px" }}
-                          />
-                        ) : (
-                          <FaPlay
-                            size={18}
-                            onClick={(e) => toggleAudio(e, item.name)}
-                            style={{ marginRight: "10px" }}
-                          />
-                        ))}
-                      <p className="plainText">{item.name}</p>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      {item.tags.map((tag) => (
-                        <div key={tag} className="tagText">
-                          <p style={{ margin: "0px", fontFamily: "Poppins" }}>
-                            {tag}
-                          </p>
-                        </div>
+                    {item.audio &&
+                      (item.isPlaying ? (
+                        <FaPause
+                          size={18}
+                          onClick={(e) => toggleAudio(e, item.name)}
+                          style={{ marginRight: "10px" }}
+                        />
+                      ) : (
+                        <FaPlay
+                          size={18}
+                          onClick={(e) => toggleAudio(e, item.name)}
+                          style={{ marginRight: "10px" }}
+                        />
                       ))}
-                    </div>
+                    <p className="plainText">{item.name}</p>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    {item.tags.map((tag) => (
+                      <div key={tag} className="tagText">
+                        <p style={{ margin: "0px", fontFamily: "Poppins" }}>
+                          {tag}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        )
-      }
+        </div>
+      )}
 
       {isCloneVoiceShown && (
         // <CloneVoice
@@ -199,7 +196,7 @@ export const VoiceSettings = (props) => {
         //     setIsVoicePreviewShown(false);
         //   }}
         // />
-        <AddVoicePopup 
+        <AddVoicePopup
           closeModal={() => setIsCloneVoiceShown(false)}
           setVoice={(voiceId) => {
             props.setVoiceId(voiceId);
