@@ -22,7 +22,7 @@ const RouterScreen = () => {
   useEffect(() => {
     WebFont.load({
       google: {
-        families: ["Poppins:400,500,700"],
+        families: ["Poppins:400,500,700,800,900"],
       },
     });
   }, []);

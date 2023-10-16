@@ -513,7 +513,7 @@ const DetailedUrlInput = (props) => {
           onClick={wordCountCheck}
           disabled={isButtonDisabled()}
         >
-          <p className="plainText">Generate</p>
+          <p className="plainText">{scriptOnly ? 'Generate Script' : 'Generate Script & Audio'}</p>
         </button>
       </div>
 

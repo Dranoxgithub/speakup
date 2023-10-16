@@ -21,6 +21,7 @@ import UpgradePlanAlert from "../components/UpgradePlanAlert";
 import { Skeleton } from "@mui/material";
 import pLimit from 'p-limit'
 import Footer from '../components/Footer'
+import purple_logo from '../assets/purple_logo.svg'
 
 const PREMIUM_SUBSCRIPTION_PLAN = ["Creator", "Professional"];
 
@@ -310,9 +311,11 @@ const DashBoardScreen = () => {
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
+                padding: '10px 0px'
               }}
             >
-              <h1 className="dashboardHeaderText">Dashboard</h1>
+              <img src={purple_logo} height={36} style={{marginRight: '10px', fill: '#2b1c50'}} />
+              <h1 className="dashboardHeaderText">SpeakUp</h1>
               <div className="betaTag">
                 <p className="plainText">BETA</p>
               </div>
@@ -336,7 +339,7 @@ const DashBoardScreen = () => {
                   <BiTimeFive size={24} />
                   <h1
                     className="dashboardHeaderText"
-                    style={{ fontSize: "24px", margin: "0px 10px" }}
+                    style={{ fontSize: "24px", margin: "0px 10px", fontWeight: '700' }}
                   >
                     {Math.max(0, totalAllowedLength - totalUsedLength)} min
                   </h1>

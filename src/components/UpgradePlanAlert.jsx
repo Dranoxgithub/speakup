@@ -16,7 +16,7 @@ const UpgradePlanAlert = (props) => {
                     color="#757575"
                     onClick={(e) => closeModal(e)}
                 />
-                <h2 className='dashboardHeaderText' style={{marginTop: '3%', fontSize: '36px'}}>Upgrade your plan</h2>
+                <h2 className='dashboardHeaderText' style={{marginTop: '3%', fontWeight: '700'}}>Upgrade your plan</h2>
 
                 <SubscriptionTable userId={props.userId}/>
             </div>

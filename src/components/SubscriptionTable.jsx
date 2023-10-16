@@ -16,6 +16,16 @@ const SubscriptionTable = (props) => {
                 client-reference-id={props.userId}
             >
             </stripe-pricing-table> */}
+
+            <a 
+                className="plainText"
+                href="https://billing.stripe.com/p/login/5kA5o30jqgDx7Mk9AA"
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{color: '#2b1c50', textDecoration: 'underline'}}
+            >
+                Manage your subscription
+            </a>
         </div>
     )
 }
