@@ -25,9 +25,6 @@ const PodcastEditScreen = () => {
   const userId = useAppSelector(getUserId);
   const [contentId, setContentId] = useState();
   const [estimatedDuration, setEstimatedDuration] = useState(0);
-  const [numOfSections, setNumOfSections] = useState(0);
-  const [intro, setIntro] = useState();
-  const [outro, setOutro] = useState();
   const [bodyParas, setBodyParas] = useState([]);
   const [error, setError] = useState();
   const [fetchingUser, setFetchingUser] = useState(true);
@@ -77,22 +74,9 @@ const PodcastEditScreen = () => {
         return text.trim().split(/\s+/).length;
       }
     };
-    const getSectionn = (text) => {
-      if (text === undefined || text === null) {
-        return 0;
-      } else {
-        return 1;
-      }
-    };
-    const wordCount =
-      getWordCount(intro) +
-      (bodyParas.length === 0 ? 0 : getWordCount(bodyParas.join("\n\n"))) +
-      getWordCount(outro);
+    const wordCount = getWordCount(bodyParas.join("\n\n"));
     setEstimatedDuration(wordCount / 150);
-    setNumOfSections(
-      getSectionn(intro) + bodyParas.length + getSectionn(outro)
-    );
-  }, [intro, outro, bodyParas]);
+  }, [bodyParas]);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -100,32 +84,30 @@ const PodcastEditScreen = () => {
 
   const handleTextareaChange = (event) => {
     const currentBody = [...bodyParas];
-    currentBody[event.target.name] = event.target.value;
+    currentBody[parseInt(event.target.name)] = event.target.value;
     setBodyParas(currentBody);
   };
 
   const handleTextareaDelete = (event) => {
     const currentBody = [...bodyParas];
-    currentBody.splice(event.target.name, 1);
+    currentBody.splice(parseInt(event.target.name), 1);
     setBodyParas(currentBody);
   };
 
   const handleInsertBelow = (event) => {
     const currentBody = [...bodyParas];
-    currentBody.splice(event.target.name + 1, 0, "");
+    currentBody.splice(parseInt(event.target.name) + 1, 0, "");
     setBodyParas(currentBody);
   };
 
   const savePodcastEdit = async () => {
-    const bodyParasString = bodyParas.join("\n\n");
-    const scriptString =
-      intro + "<br>" + bodyParas.join("<br><br>") + "<br>" + outro;
+    const scriptString = bodyParas.join("\n").replace("\n", "<br>");
     await updateDocument("contents", contentId, {
       result: {
         script: {
-          intro: intro,
-          paragraphs: bodyParas, // [bodyParasString]
-          outro: outro,
+          intro: bodyParas[0],
+          paragraphs: bodyParas.length > 2 ? bodyParas.slice(1, -1) : [],
+          outro: bodyParas.length > 1 ? bodyParas[bodyParas.length - 1] : "", // if more than 1 para, there's outro
           best_summary: scriptString,
         },
       },
@@ -136,9 +118,9 @@ const PodcastEditScreen = () => {
     savePodcastEdit();
 
     const inputParams = {
-      intro: intro,
-      paragraphs: bodyParas,
-      outro: outro,
+      intro: bodyParas[0],
+      paragraphs: bodyParas.length > 2 ? bodyParas.slice(1, -1) : [],
+      outro: bodyParas.length > 1 ? bodyParas[bodyParas.length - 1] : "",
       doc_id: contentId,
       voiceId:
         selectedVoice === YOUR_OWN_VOICE
@@ -214,18 +196,17 @@ const PodcastEditScreen = () => {
       const content = doc.data();
       if (content) {
         if (content.result) {
+          var currentBody = [];
+          if (content.result.script.paragraphs) {
+            currentBody = content.result.script.paragraphs;
+          }
           if (content.result.script.intro) {
-            setIntro(content.result.script.intro);
+            currentBody.splice(0, 0, content.result.script.intro);
           }
           if (content.result.script.outro) {
-            setOutro(content.result.script.outro);
+            currentBody.push(content.result.script.outro);
           }
-          if (content.result.script.paragraphs) {
-            // setBodyParas([
-            //   ...content.result.script.paragraphs[0].split("\n\n"),
-            // ]);
-            setBodyParas([...content.result.script.paragraphs]);
-          }
+          setBodyParas([...currentBody]);
         }
       }
     };
@@ -319,25 +300,6 @@ const PodcastEditScreen = () => {
                 showAddVoice={false}
               />
 
-              {intro !== null && (
-                <>
-                  <textarea
-                    value={intro}
-                    onChange={(e) => {
-                      setIntro(e.target.value);
-                    }}
-                    className="urlInput"
-                  />
-                  {numOfSections > 1 && (
-                    <CloseButton
-                      onClick={(e) => {
-                        setIntro(null);
-                      }}
-                    />
-                  )}
-                </>
-              )}
-
               {bodyParas &&
                 bodyParas.map((item, index) => (
                   <>
@@ -348,7 +310,7 @@ const PodcastEditScreen = () => {
                       onChange={handleTextareaChange}
                       className="urlInput"
                     />
-                    {numOfSections > 1 && (
+                    {bodyParas.length > 1 && (
                       <CloseButton
                         name={index}
                         onClick={handleTextareaDelete}
@@ -360,24 +322,6 @@ const PodcastEditScreen = () => {
                   </>
                 ))}
 
-              {outro !== null && (
-                <>
-                  <textarea
-                    value={outro}
-                    onChange={(e) => {
-                      setOutro(e.target.value);
-                    }}
-                    className="urlInput"
-                  />
-                  {numOfSections > 1 && (
-                    <CloseButton
-                      onClick={(e) => {
-                        setOutro(null);
-                      }}
-                    />
-                  )}
-                </>
-              )}
               <div
                 style={{
                   marginBottom: "20px",
