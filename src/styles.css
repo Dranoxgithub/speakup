@@ -158,6 +158,24 @@
   color: #fff;
 }
 
+.editPageSubmitButtonGroup {
+  width: 900px;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  position: fixed;
+  bottom: 20px;
+}
+
+.editPageSubmitButton {
+  padding: 15px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  background-color: #ebebeb;
+  margin-left: 20px;
+}
+
 .customizedInputContainer {
   border-style: solid;
   border-width: 1px;

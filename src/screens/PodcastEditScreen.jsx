@@ -307,7 +307,7 @@ const PodcastEditScreen = () => {
           {error ? (
             <h2>{error}</h2>
           ) : (
-            <div className="container">
+            <div className="container" style={{position: 'relative', marginBottom: '100px'}}>
               <h2 className="title">Edit </h2>
               <div className="contentRow"></div>
               <VoiceSettings
@@ -390,23 +390,24 @@ const PodcastEditScreen = () => {
                   width: "900px",
                 }}
               >
-                <p className="greyBoldText">
-                  Estimated duration: {Math.round(estimatedDuration)} min
-                </p>
               </div>
 
-              <div className="tabContainer">
+              <div className="editPageSubmitButtonGroup">
                 <button
-                  className="navigateButton activeTab"
+                  className="editPageSubmitButton"
                   onClick={savePodcastEdit}
                 >
-                  <p className="buttonText">Save Draft</p>
+                  <p className="plainText" style={{fontSize: '20px', fontWeight: '800'}}>Save Draft</p>
                 </button>
                 <button
-                  className="navigateButton activeTab"
+                  className="editPageSubmitButton"
+                  style={{backgroundColor: '#734df6', textAlign: 'initial'}}
                   onClick={generateAudioOnly}
                 >
-                  <p className="buttonText">Generate podcast</p>
+                  <p className="plainText" style={{fontSize: '20px', color: '#fff', fontWeight: '800'}}>Generate Audio</p>
+                  <p className="plainText" style={{fontSize: '16px', fontWeight: '400', color: '#ddd'}}>
+                    Estimated duration: {Math.round(estimatedDuration)} min
+                  </p>
                 </button>
               </div>
             </div>
