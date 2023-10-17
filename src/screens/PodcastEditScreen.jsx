@@ -401,11 +401,11 @@ const PodcastEditScreen = () => {
                 </button>
                 <button
                   className="editPageSubmitButton"
-                  style={{backgroundColor: '#734df6', textAlign: 'initial'}}
+                  style={{backgroundColor: '#734df6', textAlign: 'initial', filter: 'drop-shadow(0px 4px 10px rgba(115, 77, 246, 0.30))'}}
                   onClick={generateAudioOnly}
                 >
                   <p className="plainText" style={{fontSize: '20px', color: '#fff', fontWeight: '800'}}>Generate Audio</p>
-                  <p className="plainText" style={{fontSize: '16px', fontWeight: '400', color: '#ddd'}}>
+                  <p className="plainText" style={{fontSize: '14px', fontWeight: '400', color: '#ddd' }}>
                     Estimated duration: {Math.round(estimatedDuration)} min
                   </p>
                 </button>
