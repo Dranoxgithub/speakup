@@ -75,12 +75,11 @@
 }
 
 .content {
-  margin-bottom: 1rem;
+  margin-bottom: 60px;
   margin-top: 2rem;
   display: flex;
   flex-direction: column; /* Changed from row to column */
   align-items: center; /* To center align children vertically */
-  /* width: 900px; */
   width: 100%;
 }
 
