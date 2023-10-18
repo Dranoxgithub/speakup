@@ -8,7 +8,6 @@ import { getAuth } from "@firebase/auth";
 import UserInfoDisplay from "../components/UserInfoDisplay";
 import { updateDocument } from "../util/firebaseUtils";
 import { onSnapshot, getFirestore, doc } from "firebase/firestore";
-import CloseButton from "react-bootstrap/CloseButton";
 import { callAudioOnlyEndpoint } from "../util/helperFunctions";
 import {
   AVAILABLE_VOICES,
@@ -17,6 +16,9 @@ import {
 } from "../util/voice";
 import { getStorage, ref, getBlob } from "@firebase/storage";
 import { VoiceSettings, YOUR_OWN_VOICE } from "../components/VoiceSettings";
+import Header from "../components/Header";
+import UpgradePlanAlert from "../components/UpgradePlanAlert";
+import EditingParagraph from "../components/EditingParagraph";
 
 const PodcastEditScreen = () => {
   const location = useLocation();
@@ -32,6 +34,7 @@ const PodcastEditScreen = () => {
   const [selectedVoice, setSelectedVoice] = useState();
   const [voiceLibrary, setVoiceLibrary] = useState(AVAILABLE_VOICES);
   const [userVoiceId, setUserVoiceId] = useState();
+  const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
 
   useEffect(() => {
     const app = initializeFirebaseApp();
@@ -266,31 +269,52 @@ const PodcastEditScreen = () => {
     navigate("/dashboard", { replace: true });
   };
 
+  const getParagraphTitle = (index, length) => {
+    if (index == 0) {
+      return 'Intro'
+    } else if (index == length-1) {
+      return 'Outro'
+    } else {
+      return 'Body paragraph ' + index
+    }
+  }
+
   return (
     <div>
       {fetchingUser ? (
         <></>
       ) : (
-        <div className="resultContainer">
-          {
-            <div className="headerContainer">
-              <div className="backNavigator" onClick={goBackToDashboard}>
-                <AiOutlineArrowLeft size={25} style={{ marginRight: 10 }} />
-                <h2 style={{ margin: "0px" }}>Dashboard</h2>
-              </div>
-              <UserInfoDisplay
-                showModal={showModal}
-                setShowModal={setShowModal}
-              />
-            </div>
-          }
+        <div className="dashboardContainer">
+          <Header 
+            isDashboard={false}
+            goBackToDashboard={goBackToDashboard}
+            totalAllowedLength={location.state.totalAllowedLength}
+            totalUsedLength={location.state.totalUsedLength}
+            setShowUpgradePlanAlert={setShowUpgradePlanAlert}
+            showModal={showModal}
+            setShowModal={setShowModal}
+          />
 
           {error ? (
             <h2>{error}</h2>
           ) : (
-            <div className="container" style={{position: 'relative', marginBottom: '100px'}}>
-              <h2 className="title">Edit </h2>
-              <div className="contentRow"></div>
+            <div className="dashboardContainer" style={{position: 'relative', margin: '0px 0px 150px 0px', width: '100%'}}>
+              <p className="plainText" style={{fontSize: '38px', textAlign: 'initial', width: '900px', margin: '60px 0px 30px 0px'}}>{location.state.title}</p>
+
+              {bodyParas &&
+                bodyParas.map((item, index) => (
+                  <EditingParagraph 
+                    width={'900px'}
+                    paragraphTitle={getParagraphTitle(index, bodyParas.length)}
+                    item={item}
+                    index={index}
+                    handleTextareaChange={handleTextareaChange}
+                    handleTextareaDelete={handleTextareaDelete}
+                    canDelete={bodyParas.length > 1}
+                    canInsert={index != bodyParas.length-1}
+                  />
+                ))}
+
               <VoiceSettings
                 voiceLibrary={voiceLibrary}
                 setVoiceLibrary={setVoiceLibrary}
@@ -299,42 +323,6 @@ const PodcastEditScreen = () => {
                 setVoiceId={setVoiceId}
                 showAddVoice={false}
               />
-
-              {bodyParas &&
-                bodyParas.map((item, index) => (
-                  <>
-                    <textarea
-                      value={item}
-                      key={index}
-                      name={index}
-                      onChange={handleTextareaChange}
-                      className="urlInput"
-                    />
-                    {bodyParas.length > 1 && (
-                      <CloseButton
-                        name={index}
-                        onClick={handleTextareaDelete}
-                      />
-                    )}
-                    <button name={index} onClick={handleInsertBelow}>
-                      +
-                    </button>
-                  </>
-                ))}
-
-              <div
-                style={{
-                  marginBottom: "20px",
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  width: "900px",
-                }}
-              >
-              </div>
 
               <div className="editPageSubmitButtonGroup">
                 <button
@@ -357,6 +345,13 @@ const PodcastEditScreen = () => {
             </div>
           )}
         </div>
+      )}
+
+      {showUpgradePlanAlert && (
+        <UpgradePlanAlert
+          userId={userId}
+          closeModal={() => setShowUpgradePlanAlert(false)}
+        />
       )}
     </div>
   );

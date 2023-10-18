@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import {RiDeleteBin6Line} from 'react-icons/ri'
-import {RiDeleteBin6Fill} from 'react-icons/ri'
+import { RiDeleteBin6Line, RiDeleteBin6Fill } from 'react-icons/ri'
 import { useState } from "react";
 
 const PodcastEditPreview = (props) => {
@@ -20,6 +19,8 @@ const PodcastEditPreview = (props) => {
         title: props.title,
         script: props.script,
         urls: props.urls,
+        totalUsedLength: props.totalUsedLength,
+        totalAllowedLength: props.totalAllowedLength
       },
     });
   };

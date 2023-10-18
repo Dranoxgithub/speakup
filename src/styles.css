@@ -1,5 +1,5 @@
 .container {
-  background-color: #fff;
+  background-color: #fafafa;
   color: #2d3142;
   display: flex;
   flex-direction: column;
@@ -625,6 +625,13 @@ a {
   top: 50%; /* Center vertically */
   left: 50%; /* Center horizontally */
   transform: translate(-50%, -50%); /* Center the modal in the middle */
+}
+
+.editParagraphControlButtonsGroup {
+  position: absolute;
+  left: calc(100% + 30px);
+  white-space: nowrap;
+  bottom: 225px;
 }
 
 /* Background Overlay Styles */

@@ -12,16 +12,14 @@ import { useAppSelector } from "../redux/hooks";
 import { getUserId, getUserEmail } from "../redux/userSlice";
 import { v4 as uuidv4 } from "uuid";
 import { onSnapshot, getFirestore, doc } from "firebase/firestore";
-import UserInfoDisplay from "../components/UserInfoDisplay";
 import { getAuth } from "@firebase/auth";
 import DetailedUrlInput from "../components/DetailedUrlInput";
 import PodcastEditPreview from "../components/PodcastEditPreview";
-import { BiTimeFive } from "react-icons/bi";
 import UpgradePlanAlert from "../components/UpgradePlanAlert";
 import { Skeleton } from "@mui/material";
 import pLimit from 'p-limit'
 import Footer from '../components/Footer'
-import purple_logo from '../assets/purple_logo.svg'
+import Header from "../components/Header";
 
 const PREMIUM_SUBSCRIPTION_PLAN = ["Creator", "Professional"];
 
@@ -305,65 +303,15 @@ const DashBoardScreen = () => {
         <></>
       ) : (
         <div className="dashboardContainer">
-          <div className="headerContainer">
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                padding: '10px 0px'
-              }}
-            >
-              <img src={purple_logo} height={36} style={{marginRight: '10px', fill: '#2b1c50'}} />
-              <h1 className="dashboardHeaderText">SpeakUp</h1>
-              <div className="betaTag">
-                <p className="plainText">BETA</p>
-              </div>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              {!isNaN(totalAllowedLength) && !isNaN(totalUsedLength) &&
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    margin: "0px 10px",
-                  }}
-                >
-                  <BiTimeFive size={24} />
-                  <h1
-                    className="dashboardHeaderText"
-                    style={{ fontSize: "24px", margin: "0px 10px", fontWeight: '700' }}
-                  >
-                    {Math.max(0, totalAllowedLength - totalUsedLength)} min
-                  </h1>
-
-                  {totalAllowedLength - totalUsedLength <= 5 && (
-                    <button
-                      className="fileUploadButton"
-                      style={{ margin: "0px 10px" }}
-                      onClick={() => setShowUpgradePlanAlert(true)}
-                    >
-                      <p className="plainText">Add more time</p>
-                    </button>
-                  )}
-                </div>
-              }
-
-              <UserInfoDisplay
-                showModal={showModal}
-                setShowModal={setShowModal}
-              />
-            </div>
-          </div>
-
-          <div className="headerDivider"></div>
+          <Header 
+            isDashboard={true}
+            goBackToDashboard={()=>{}}
+            totalAllowedLength={totalAllowedLength}
+            totalUsedLength={totalUsedLength}
+            setShowUpgradePlanAlert={setShowUpgradePlanAlert}
+            showModal={showModal}
+            setShowModal={setShowModal}
+          />
 
           <DetailedUrlInput
             inputContent={inputContent}
@@ -414,6 +362,8 @@ const DashBoardScreen = () => {
                       status={item.status}
                       script={item.script}
                       urls={item.urls}
+                      totalUsedLength={totalUsedLength}
+                      totalAllowedLength={totalAllowedLength}
                       deleteContent={() => deleteContent(item.contentId)}
                     />
                   ))}

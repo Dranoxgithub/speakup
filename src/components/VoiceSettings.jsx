@@ -189,13 +189,6 @@ export const VoiceSettings = (props) => {
       )}
 
       {isCloneVoiceShown && (
-        // <CloneVoice
-        //   setVoice={(voiceId) => {
-        //     props.setVoiceId(voiceId);
-        //     props.setSelectedVoice(YOUR_OWN_VOICE);
-        //     setIsVoicePreviewShown(false);
-        //   }}
-        // />
         <AddVoicePopup
           closeModal={() => setIsCloneVoiceShown(false)}
           setVoice={(voiceId) => {
