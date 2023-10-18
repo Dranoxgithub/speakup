@@ -26,7 +26,7 @@ const EditingParagraph = (props) => {
                         ( hoverDelete ? 
                             <div 
                                 style={{display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer'}}
-                                onClick={props.handleTextareaDelete}
+                                onClick={() => props.handleTextareaDelete(props.index)}
                                 onMouseEnter={() => setHoverDelete(true)}
                                 onMouseLeave={() => setHoverDelete(false)}
                             >
@@ -35,7 +35,7 @@ const EditingParagraph = (props) => {
                             </div> :
                             <div 
                                 style={{display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer'}}
-                                onClick={props.handleTextareaDelete}
+                                onClick={() => props.handleTextareaDelete(props.index)}
                                 onMouseEnter={() => setHoverDelete(true)}
                                 onMouseLeave={() => setHoverDelete(false)}
                             >
@@ -48,7 +48,7 @@ const EditingParagraph = (props) => {
                         ( hoverInsert ? 
                             <div 
                                 style={{display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', marginTop: '20px'}}
-                                onClick={props.handleInsertBelow} 
+                                onClick={() => props.handleInsertBelow(props.index)} 
                                 onMouseEnter={() => setHoverInsert(true)}
                                 onMouseLeave={() => setHoverInsert(false)}
                             >
@@ -57,7 +57,7 @@ const EditingParagraph = (props) => {
                             </div> :
                             <div 
                                 style={{display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer', marginTop: '20px'}}
-                                onClick={props.handleInsertBelow} 
+                                onClick={() => props.handleInsertBelow(props.index)} 
                                 onMouseEnter={() => setHoverInsert(true)}
                                 onMouseLeave={() => setHoverInsert(false)}
                             >

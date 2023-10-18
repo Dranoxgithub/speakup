@@ -91,15 +91,15 @@ const PodcastEditScreen = () => {
     setBodyParas(currentBody);
   };
 
-  const handleTextareaDelete = (event) => {
+  const handleTextareaDelete = (index) => {
     const currentBody = [...bodyParas];
-    currentBody.splice(parseInt(event.target.name), 1);
+    currentBody.splice(index, 1);
     setBodyParas(currentBody);
   };
 
-  const handleInsertBelow = (event) => {
+  const handleInsertBelow = (index) => {
     const currentBody = [...bodyParas];
-    currentBody.splice(parseInt(event.target.name) + 1, 0, "");
+    currentBody.splice(index + 1, 0, "");
     setBodyParas(currentBody);
   };
 
@@ -310,6 +310,7 @@ const PodcastEditScreen = () => {
                     index={index}
                     handleTextareaChange={handleTextareaChange}
                     handleTextareaDelete={handleTextareaDelete}
+                    handleInsertBelow={handleInsertBelow}
                     canDelete={bodyParas.length > 1}
                     canInsert={index != bodyParas.length-1}
                   />
