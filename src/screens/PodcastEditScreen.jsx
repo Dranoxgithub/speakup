@@ -16,6 +16,7 @@ import {
 } from "../util/voice";
 import { getStorage, ref, getBlob } from "@firebase/storage";
 import { VoiceSettings, YOUR_OWN_VOICE } from "../components/VoiceSettings";
+import Loading from "../components/Loading";
 import Header from "../components/Header";
 import UpgradePlanAlert from "../components/UpgradePlanAlert";
 import EditingParagraph from "../components/EditingParagraph";
@@ -35,6 +36,7 @@ const PodcastEditScreen = () => {
   const [voiceLibrary, setVoiceLibrary] = useState(AVAILABLE_VOICES);
   const [userVoiceId, setUserVoiceId] = useState();
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const app = initializeFirebaseApp();
@@ -102,6 +104,11 @@ const PodcastEditScreen = () => {
     currentBody.splice(index + 1, 0, "");
     setBodyParas(currentBody);
   };
+  const showLoadingWhileSavingEdit = async () => {
+    setLoading(true);
+    await savePodcastEdit();
+    setLoading(false);
+  };
 
   const savePodcastEdit = async () => {
     const scriptString = bodyParas.join("\n").replace("\n", "<br>");
@@ -118,6 +125,7 @@ const PodcastEditScreen = () => {
   };
 
   const generateAudioOnly = async () => {
+    setLoading(true);
     savePodcastEdit();
 
     const inputParams = {
@@ -139,7 +147,7 @@ const PodcastEditScreen = () => {
     const userIdToken = await auth.currentUser.getIdToken();
 
     const errorMessage = await callAudioOnlyEndpoint(userIdToken, inputParams);
-
+    setLoading(false);
     if (!errorMessage) {
       navigate("/dashboard", {
         replace: true,
@@ -271,13 +279,13 @@ const PodcastEditScreen = () => {
 
   const getParagraphTitle = (index, length) => {
     if (index == 0) {
-      return 'Intro'
-    } else if (index == length-1) {
-      return 'Outro'
+      return "Intro";
+    } else if (index == length - 1) {
+      return "Outro";
     } else {
-      return 'Body paragraph ' + index
+      return "Body paragraph " + index;
     }
-  }
+  };
 
   return (
     <div>
@@ -285,7 +293,7 @@ const PodcastEditScreen = () => {
         <></>
       ) : (
         <div className="dashboardContainer">
-          <Header 
+          <Header
             isDashboard={false}
             goBackToDashboard={goBackToDashboard}
             totalAllowedLength={location.state.totalAllowedLength}
@@ -298,13 +306,30 @@ const PodcastEditScreen = () => {
           {error ? (
             <h2>{error}</h2>
           ) : (
-            <div className="dashboardContainer" style={{position: 'relative', margin: '0px 0px 150px 0px', width: '100%'}}>
-              <p className="plainText" style={{fontSize: '38px', textAlign: 'initial', width: '900px', margin: '60px 0px 30px 0px'}}>{location.state.title}</p>
+            <div
+              className="dashboardContainer"
+              style={{
+                position: "relative",
+                margin: "0px 0px 150px 0px",
+                width: "100%",
+              }}
+            >
+              <p
+                className="plainText"
+                style={{
+                  fontSize: "38px",
+                  textAlign: "initial",
+                  width: "900px",
+                  margin: "60px 0px 30px 0px",
+                }}
+              >
+                {location.state.title}
+              </p>
 
               {bodyParas &&
                 bodyParas.map((item, index) => (
-                  <EditingParagraph 
-                    width={'900px'}
+                  <EditingParagraph
+                    width={"900px"}
                     paragraphTitle={getParagraphTitle(index, bodyParas.length)}
                     item={item}
                     index={index}
@@ -312,7 +337,7 @@ const PodcastEditScreen = () => {
                     handleTextareaDelete={handleTextareaDelete}
                     handleInsertBelow={handleInsertBelow}
                     canDelete={bodyParas.length > 1}
-                    canInsert={index != bodyParas.length-1}
+                    canInsert={index != bodyParas.length - 1}
                   />
                 ))}
 
@@ -326,22 +351,54 @@ const PodcastEditScreen = () => {
               />
 
               <div className="editPageSubmitButtonGroup">
-                <button
-                  className="editPageSubmitButton"
-                  onClick={savePodcastEdit}
-                >
-                  <p className="plainText" style={{fontSize: '20px', fontWeight: '800'}}>Save Draft</p>
-                </button>
-                <button
-                  className="editPageSubmitButton"
-                  style={{backgroundColor: '#734df6', textAlign: 'initial', filter: 'drop-shadow(0px 4px 10px rgba(115, 77, 246, 0.30))'}}
-                  onClick={generateAudioOnly}
-                >
-                  <p className="plainText" style={{fontSize: '20px', color: '#fff', fontWeight: '800'}}>Generate Audio</p>
-                  <p className="plainText" style={{fontSize: '14px', fontWeight: '400', color: '#ddd' }}>
-                    Estimated duration: {Math.round(estimatedDuration)} min
-                  </p>
-                </button>
+                {loading ? (
+                  <Loading />
+                ) : (
+                  <div>
+                    <button
+                      className="editPageSubmitButton"
+                      onClick={showLoadingWhileSavingEdit}
+                    >
+                      <p
+                        className="plainText"
+                        style={{ fontSize: "20px", fontWeight: "800" }}
+                      >
+                        Save Draft
+                      </p>
+                    </button>
+                    <button
+                      className="editPageSubmitButton"
+                      style={{
+                        backgroundColor: "#734df6",
+                        textAlign: "initial",
+                        filter:
+                          "drop-shadow(0px 4px 10px rgba(115, 77, 246, 0.30))",
+                      }}
+                      onClick={generateAudioOnly}
+                    >
+                      <p
+                        className="plainText"
+                        style={{
+                          fontSize: "20px",
+                          color: "#fff",
+                          fontWeight: "800",
+                        }}
+                      >
+                        Generate Audio
+                      </p>
+                      <p
+                        className="plainText"
+                        style={{
+                          fontSize: "14px",
+                          fontWeight: "400",
+                          color: "#ddd",
+                        }}
+                      >
+                        Estimated duration: {Math.round(estimatedDuration)} min
+                      </p>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}
