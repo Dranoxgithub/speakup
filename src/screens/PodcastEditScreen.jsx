@@ -339,7 +339,7 @@ const PodcastEditScreen = () => {
                 {loading ? (
                   <Loading />
                 ) : (
-                  <div>
+                  <div className="editPageSubmitButtonGroup">
                     <button
                       className="editPageSubmitButton"
                       onClick={showLoadingWhileSavingEdit}
