@@ -3,9 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getDocument, initializeFirebaseApp } from "../util/firebaseUtils";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId } from "../redux/userSlice";
-import { AiOutlineArrowLeft } from "react-icons/ai";
 import { getAuth } from "@firebase/auth";
-import UserInfoDisplay from "../components/UserInfoDisplay";
 import { updateDocument } from "../util/firebaseUtils";
 import { onSnapshot, getFirestore, doc } from "firebase/firestore";
 import { callAudioOnlyEndpoint } from "../util/helperFunctions";
@@ -19,12 +17,16 @@ import { VoiceSettings, YOUR_OWN_VOICE } from "../components/VoiceSettings";
 import Header from "../components/Header";
 import UpgradePlanAlert from "../components/UpgradePlanAlert";
 import EditingParagraph from "../components/EditingParagraph";
+import { getUserTotalAllowedLength, getUserTotalUsedLength } from "../redux/userSlice"
 
 const PodcastEditScreen = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
   const userId = useAppSelector(getUserId);
+  const totalAllowedLength = useAppSelector(getUserTotalAllowedLength)
+  const totalUsedLength = useAppSelector(getUserTotalUsedLength)
+
   const [contentId, setContentId] = useState();
   const [estimatedDuration, setEstimatedDuration] = useState(0);
   const [bodyParas, setBodyParas] = useState([]);
@@ -288,8 +290,8 @@ const PodcastEditScreen = () => {
           <Header 
             isDashboard={false}
             goBackToDashboard={goBackToDashboard}
-            totalAllowedLength={location.state.totalAllowedLength}
-            totalUsedLength={location.state.totalUsedLength}
+            totalAllowedLength={totalAllowedLength}
+            totalUsedLength={totalUsedLength}
             setShowUpgradePlanAlert={setShowUpgradePlanAlert}
             showModal={showModal}
             setShowModal={setShowModal}
@@ -299,7 +301,7 @@ const PodcastEditScreen = () => {
             <h2>{error}</h2>
           ) : (
             <div className="dashboardContainer" style={{position: 'relative', margin: '0px 0px 150px 0px', width: '100%'}}>
-              <p className="plainText" style={{fontSize: '38px', textAlign: 'initial', width: '900px', margin: '60px 0px 30px 0px'}}>{location.state.title}</p>
+              <p className="plainText" style={{fontSize: '38px', textAlign: 'initial', width: '900px', margin: '60px 0px 30px 0px', color: '#2B1C50'}}>{location.state.title}</p>
 
               {bodyParas &&
                 bodyParas.map((item, index) => (

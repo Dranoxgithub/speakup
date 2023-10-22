@@ -10,7 +10,7 @@ const EditingParagraph = (props) => {
     return (
         <div style={{width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '20px'}}  onMouseEnter={() => setHoverParagraph(true)} onMouseLeave={() => setHoverParagraph(false)}>
             <div style={{width: props.width, position: 'relative'}}>
-                <p className="plainText" style={{textAlign: 'initial', fontSize: '24px', marginBottom: '15px'}}>{props.paragraphTitle}</p>
+                <p className="plainText" style={{textAlign: 'initial', fontSize: '24px', marginBottom: '15px', color: '#2B1C50'}}>{props.paragraphTitle}</p>
                 <textarea
                     value={props.item}
                     key={props.index}

@@ -9,12 +9,12 @@ const Header = (props) => {
             <div className="headerContainer">
             {props.isDashboard ? 
                 <div
-                style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    padding: '10px 0px'
-                }}
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: '10px 0px'
+                    }}
                 >
                 <img src={purple_logo} height={36} style={{marginRight: '10px', fill: '#2b1c50'}} />
                 
@@ -24,8 +24,8 @@ const Header = (props) => {
                     </div> 
                 </div> : 
                 <div className="backNavigator" onClick={props.goBackToDashboard}>
-                    <AiOutlineArrowLeft size={25} style={{ marginRight: 10 }} />
-                    <p className="plainText" style={{fontSize: '30px'}}>Dashboard</p>
+                    <AiOutlineArrowLeft size={25} style={{ marginRight: 10 }} color='#2B1C50' />
+                    <p className="plainText" style={{fontSize: '30px', color: '#2B1C50'}}>Dashboard</p>
                     <div className="betaTag">
                         <p className="plainText" style={{fontSize: '16px'}}>BETA</p>
                     </div>

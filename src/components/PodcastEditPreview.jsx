@@ -19,8 +19,6 @@ const PodcastEditPreview = (props) => {
         title: props.title,
         script: props.script,
         urls: props.urls,
-        totalUsedLength: props.totalUsedLength,
-        totalAllowedLength: props.totalAllowedLength
       },
     });
   };

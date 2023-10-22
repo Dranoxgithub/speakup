@@ -26,6 +26,19 @@ export const secondsToHHMMSS = (seconds) => {
   return `${hrs}${mins}${scnds}`;
 };
 
+export const secondsToLengthText = (seconds) => {
+  // credits - https://stackoverflow.com/a/37096512
+  seconds = Number(seconds);
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor((seconds % 3600) % 60);
+
+  const hrs = h > 0 ? `${h} hr` : "";
+  const mins = m > 0 ? ` ${m} min` : "";
+  const scnds = s > 0 ? ` ${s} sec` : "";
+  return `${hrs}${mins}${scnds}`;
+};
+
 export const generatePodcast = async (
   idToken,
   userid,

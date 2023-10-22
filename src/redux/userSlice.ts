@@ -18,6 +18,8 @@ export interface UserState {
   refreshToken: string;
   profilePic: string;
   displayName: string;
+  totalAllowedLength: number;
+  totalUsedLength: number;
 }
 
 interface UserInfo {
@@ -31,6 +33,8 @@ const initialState: UserState = {
   refreshToken: "",
   profilePic: "",
   displayName: "",
+  totalAllowedLength: NaN,
+  totalUsedLength: NaN
 };
 
 export const userLoginThunk = createAsyncThunk(
@@ -125,6 +129,14 @@ export const userSlice = createSlice({
     setUserDisplayName: (state, action: PayloadAction<string>) => {
       state.displayName = action.payload;
       console.log(`Successfully set user display name to ${state.displayName}`)
+    },
+    setUserTotalAllowedLength: (state, action: PayloadAction<number>) => {
+      state.totalAllowedLength = action.payload;
+      console.log(`Successfully set user total allowed length to ${state.totalAllowedLength}`)
+    },
+    setUserTotalUsedLength: (state, action: PayloadAction<number>) => {
+      state.totalUsedLength = action.payload;
+      console.log(`Successfully set user total used length to ${state.totalUsedLength}`)
     }
   },
   extraReducers: (builder) => {
@@ -133,7 +145,14 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setUserId, setUserEmail, setUserDisplayName, setUserProfilePic } = userSlice.actions;
+export const { 
+  setUserId, 
+  setUserEmail, 
+  setUserDisplayName, 
+  setUserProfilePic, 
+  setUserTotalAllowedLength, 
+  setUserTotalUsedLength 
+} = userSlice.actions;
 
 export const getUserState = ({ user }: RootState) => user;
 
@@ -141,5 +160,7 @@ export const getUserId = ({ user }: RootState) => user.id;
 export const getUserEmail = ({ user }: RootState) => user.email;
 export const getUserProfilePic = ({ user }: RootState) => user.profilePic;
 export const getUserDisplayName = ({ user }: RootState) => user.displayName;
+export const getUserTotalAllowedLength = ({ user }: RootState) => user.totalAllowedLength;
+export const getUserTotalUsedLength = ({ user }: RootState) => user.totalUsedLength;
 
 export default userSlice.reducer;

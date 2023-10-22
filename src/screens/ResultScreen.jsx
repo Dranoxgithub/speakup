@@ -5,11 +5,13 @@ import { getDocument, initializeFirebaseApp } from "../util/firebaseUtils";
 import Loading from "../components/Loading";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId } from "../redux/userSlice";
-import { AiOutlineArrowLeft } from 'react-icons/ai'
-import { secondsToHHMMSS } from "../util/helperFunctions";
+import { secondsToHHMMSS, secondsToLengthText } from "../util/helperFunctions";
 import { getAuth } from "@firebase/auth";
-import UserInfoDisplay from "../components/UserInfoDisplay";
 import Footer from "../components/Footer";
+import Header from "../components/Header";
+import UpgradePlanAlert from "../components/UpgradePlanAlert";
+import { getUserTotalAllowedLength, getUserTotalUsedLength } from "../redux/userSlice"
+import { MdOutlineContentCopy } from 'react-icons/md'
 
 export const DEMO_CONTENTS = ['Rfg4OgKngtJ6eSmrD17Q', 'bZMp8rqMZcs7gZQDWSrg']
 
@@ -18,6 +20,9 @@ const ResultScreen = () => {
     const queryParams = new URLSearchParams(location.search)
 
     const userId = useAppSelector(getUserId)
+    const totalAllowedLength = useAppSelector(getUserTotalAllowedLength)
+    const totalUsedLength = useAppSelector(getUserTotalUsedLength)
+
     const [title, setTitle] = useState()
     const [script, setScript] = useState()
     const [shownotes, setShownotes] = useState()
@@ -32,25 +37,49 @@ const ResultScreen = () => {
     const [isDemoResult, setIsDemoResult] = useState(false)
 
     const [showModal, setShowModal] = useState(false)
+    const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
 
     const navigate = useNavigate()
 
     useEffect(() => {
-        setTimeout(() => {
-            if (queryParams.has('contentId') && DEMO_CONTENTS.includes(queryParams.get('contentId'))) {
-                setFetchingUser(false)
-                setIsDemoResult(true)
-                return
-            }
-
-            const app = initializeFirebaseApp()
-            const auth = getAuth(app)
-            if (!auth.currentUser) {
-                navigate('/login', {replace: true, state: {contentId: queryParams.has('contentId') ? queryParams.get('contentId') : null}})
-            }
+        if (queryParams.has('contentId') && DEMO_CONTENTS.includes(queryParams.get('contentId'))) {
             setFetchingUser(false)
-        }, 500)
-    }, [])
+            setIsDemoResult(true)
+            return
+        }
+    }, [queryParams])
+
+    useEffect(() => {
+        const checkLoginStatus = () => {
+          const app = initializeFirebaseApp();
+          const auth = getAuth(app);
+          if (!auth.currentUser && !isDemoResult) {
+            return false
+          }
+          return true
+        }
+    
+        const retryWithTimeout = (fn, retryInterval, maxDuration) => {
+          const startTime = Date.now();
+        
+          const retry = async () => {
+            const result = await fn();
+        
+            if (result) {
+              setFetchingUser(false);
+              return
+            } else if (Date.now() - startTime < maxDuration) {
+              setTimeout(retry, retryInterval);
+            } else {
+              navigate("/login", { replace: true });
+            }
+          };
+        
+          retry();
+        }
+    
+        retryWithTimeout(checkLoginStatus, 500, 5000)
+    }, []);
     
     useEffect(() => {
         const handleOutsideClick = (event) => {
@@ -132,7 +161,7 @@ const ResultScreen = () => {
                     populateContentFromQueryParams(contentId)
                     console.log(`populated content from query params`)
                 } else {
-                    console.log(`setting error to no permission`)
+                    console.log(`setting error to no permission - isDemo: ${isDemoResult}`)
                     setError(`Sorry, you don't have permission to view the content :(`)
                 }
             }
@@ -161,79 +190,108 @@ const ResultScreen = () => {
         navigate('/Dashboard', {replace: true})
     }
 
+    const copyContentToClipboard = async (content) => {
+        let contentToCopy = ''
+        if (typeof content === 'string') {
+            content.split('<br>').map(item => {
+                contentToCopy += item
+            })
+
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(contentToCopy)
+            }
+        }
+    }
+
     return (
         <div>
             {fetchingUser ? <></> : 
-            <div className="resultContainer">
-                {!isDemoResult &&
-                <div className="headerContainer">
-                    <div className="backNavigator" onClick={goBackToDashboard} >
-                        <AiOutlineArrowLeft size={25} style={{marginRight: 10}}/>
-                        <h2 style={{margin: '0px'}}>Dashboard</h2>
-                    </div>
-                    <UserInfoDisplay showModal={showModal} setShowModal={setShowModal} />
-                </div>}
+            <div className="dashboardContainer">
+                <Header 
+                    isDashboard={false}
+                    goBackToDashboard={goBackToDashboard}
+                    totalAllowedLength={totalAllowedLength}
+                    totalUsedLength={totalUsedLength}
+                    setShowUpgradePlanAlert={setShowUpgradePlanAlert}
+                    showModal={showModal}
+                    setShowModal={setShowModal}
+                />
                 
                 {error ? 
                     <h2>{error}</h2> : 
-                    <div className="container">
-                        <h2 className="title">{title}</h2>
-                        <div className="contentRow">
+                    <div className="dashboardContainer" style={{margin: '0px 0px 150px 0px', width: '950px'}}>
+                        <p className="plainText" style={{fontSize: '38px', textAlign: 'initial', margin: '60px 0px', color: '#2B1C50'}}>{title}</p>
+                        
+                        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
+                            <div className="resultPageContentContainer">
+                                <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', margin: '20px 0px'}}>About</p>
+                                <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}}>Date: {created.slice(0,10)}</p>
+                                <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500'}}>Sources:</p>
+                                {urls && urls.map((url, index) => (
+                                    <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500'}} key={index}>{url}</p>
+                                ))}
+                            </div>
 
-                            {created ? <p className="contentText">Created at: {created.slice(0,10)}</p> : null}
-                            {duration ? <p className="contentText">Audio length: {secondsToHHMMSS(duration)}</p> : null}
-                            {urls ? urls.map((url, index) => (
-                                <p className="contentText" key={index}>{url}</p>
-                            )) : null}
+                            <div className="resultPageContentContainer" style={{justifyContent: 'space-between'}}>
+                                <div>
+                                    <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', margin: '20px 0px'}}>Preview</p>
+                                    <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}}>{secondsToLengthText(duration)}</p>
+                                </div>
+                                {audioUrl &&
+                                    <audio controls name="podcast" className="audioPlayer">
+                                        <source src={audioUrl} type='audio/mp3' />
+                                    </audio>
+                                }
+                            </div>  
+
+                            <div style={{width: '200px'}}>
+                                {/* <button
+                                    className="resultPageButton"
+                                    style={{backgroundColor: '#fff', borderStyle: 'solid', borderRadius: '20px', borderColor: '#d9d9d9', marginBottom: '20px'}}
+                                    onClick={getPodcastDownloadUrl}
+                                >
+                                    <p className="plainText" style={{color: '#fff', fontSize: '20px', color: '#2B1C50'}}>Publish Guide</p>
+                                </button> */}
+                                <button
+                                    className={audioUrl ? "resultPageButton" : "noDisplay"}
+                                    onClick={getPodcastDownloadUrl}
+                                >
+                                    <p className="plainText" style={{color: '#fff', fontSize: '20px'}}>Download</p>
+                                </button>
+                            </div>
                         </div>
 
-
-                        { !audioUrl 
-                        || !script 
-                        // || !shownotes 
-                        // || shownotes.length == 0 
-                        ? <Loading /> : <></>}
-
-                        {audioUrl ? 
-                            <video controls name="podcast" className="audioPlayer">
-                                <source src={audioUrl} type='audio/mp3' />
-                            </video> : 
-                            <></>
-                        }
-                        <div className={audioUrl ? "subsectionContainer" : "noDisplay"}>
-                            <button className="largeButton" onClick={getPodcastDownloadUrl}>
-                                <h1 className="largeButtonText">Download</h1>
-                            </button>
-                        </div>
-
-                        <div className={script ? "subsectionContainerFlexStart" : "noDisplay"}>
-                            <h3 className="subtitle">Script</h3>
-                            {
-                                (typeof script === 'string' ? script.split('<br>') : []).map((note, index) => (
-                                    <p className="contentText" key={index}>{note}</p>
-                                ))
-                            }
-                        </div>
-
-                        <div className={shownotes ? "subsectionContainerFlexStart" : "noDisplay"}>
-                            <h3 className="subtitle">Show Notes</h3>
+                        <div className={script ? "resultPageContentContainer" : "noDisplay"} style={{width: '100%', padding: '40px 60px', marginTop: '60px', maxHeight: '400px', overflow: 'auto'}}>
+                            <MdOutlineContentCopy size={20} color='#2B1C50' style={{position:' absolute', right: '40', top: '60'}} onClick={() => copyContentToClipboard(shownotes)}/>
+                            <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', marginBottom: '30px', marginTop: '10px'}}>Show notes</p>
                             {
                                 (typeof shownotes === 'string' ? shownotes.split('<br>') : []).map((note, index) => (
-                                    <p className="shownotesTextNew" key={index}>{note}</p>
+                                    <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}} key={index}>{note}</p>
                                 ))
                             }
-                            {/* <ul className="shownotesList">
-                                {shownotes && shownotes.map((item, index) => (
-                                    <li key={index}>
-                                        <p className="shownotesText">{secondsToHHMMSS(item.sec)}: {item.name}</p>
-                                    </li>
-                                ))}
-                            </ul> */}
+                        </div>
+
+                        <div className={script ? "resultPageContentContainer" : "noDisplay"} style={{width: '100%', padding: '40px 60px', marginTop: '60px', maxHeight: '600px', overflow: 'auto'}}>
+                            <MdOutlineContentCopy size={20} color='#2B1C50' style={{position:' absolute', right: '40', top: '60'}} onClick={() => copyContentToClipboard(script)}/>
+                            <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', marginBottom: '30px', marginTop: '10px'}}>Full Transcript</p>
+                            {
+                                (typeof script === 'string' ? script.split('<br>') : []).map((note, index) => (
+                                    <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}} key={index}>{note}</p>
+                                ))
+                            }
                         </div>
                     </div>
                 }
                 <Footer />
             </div>}
+
+
+            {showUpgradePlanAlert && (
+                <UpgradePlanAlert
+                userId={userId}
+                closeModal={() => setShowUpgradePlanAlert(false)}
+                />
+            )}
         </div>
     )
 }

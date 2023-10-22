@@ -190,6 +190,30 @@
   box-shadow: 0 0 1px 1px #734df6; /* This adds the orange glow */
 }
 
+.resultPageContentContainer {
+  text-align: initial;
+  width: 360px;
+  background-color: #fff;
+  border-style: solid;
+  border-color: #D9D9D9;
+  border-width: 1px;
+  border-radius: 20px;
+  padding: 20px 30px;
+  overflow-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.resultPageButton {
+  padding: 15px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  background-color: #734df6;
+  width: 200px;
+}
+
 .customizedInputBlock {
   display: flex;
   flex-direction: row;

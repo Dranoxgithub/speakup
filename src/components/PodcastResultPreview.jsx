@@ -10,6 +10,7 @@ const PodcastResultPreview = (props) => {
     const [hoverPreviewBox, setHoverPreviewBox] = useState(false)
     const [hoverDelete, setHoverDelete] = useState(false)
     const [hoverDownload, setHoverDownload] = useState(false)
+
     const navigate = useNavigate()
 
     const navigateToResult = () => {
@@ -21,7 +22,7 @@ const PodcastResultPreview = (props) => {
             duration: props.duration,
             shownotes: props.shownotes,
             created: props.created,
-            urls: props.urls
+            urls: props.urls,
         }})
     }
 

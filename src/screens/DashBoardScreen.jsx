@@ -8,8 +8,8 @@ import {
 import PodcastResultPreview from "../components/PodcastResultPreview";
 import { getStorage, ref, getBlob } from "firebase/storage";
 import Loading from "../components/Loading";
-import { useAppSelector } from "../redux/hooks";
-import { getUserId, getUserEmail } from "../redux/userSlice";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { getUserId, getUserEmail, setUserTotalAllowedLength, setUserTotalUsedLength } from "../redux/userSlice";
 import { v4 as uuidv4 } from "uuid";
 import { onSnapshot, getFirestore, doc } from "firebase/firestore";
 import { getAuth } from "@firebase/auth";
@@ -29,6 +29,7 @@ const DashBoardScreen = () => {
   const userEmail = useAppSelector(getUserEmail);
 
   const navigate = useNavigate();
+  const dispatch = useAppDispatch()
 
   const [errorMessage, setErrorMessage] = useState();
   const [inputContent, setInputContent] = useState("");
@@ -183,7 +184,9 @@ const DashBoardScreen = () => {
         }) 
       });
       const list = await Promise.all(asyncOperations);
-      setTotalUsedLength(Math.floor(totalLength / 60));
+      const totalUsedLength = Math.floor(totalLength / 60)
+      setTotalUsedLength(totalUsedLength);
+      dispatch(setUserTotalUsedLength(totalUsedLength))
       return list.filter((item) => item && item != null).reverse();
     }
     return [];
@@ -207,7 +210,9 @@ const DashBoardScreen = () => {
         setUserVoiceId(user["clone_voice_id"]);
         const subscriptionPlan = user["subscription"];
         setCanEditAd(PREMIUM_SUBSCRIPTION_PLAN.includes(subscriptionPlan));
-        setTotalAllowedLength(user["quota"] ? +user["quota"] : 0);
+        const totalAllowedLength = user["quota"] ? +user["quota"] : 0
+        setTotalAllowedLength(totalAllowedLength);
+        dispatch(setUserTotalAllowedLength(totalAllowedLength))
         setContentList(await populateContentList(user));
         setDraftList(await populateDraftList(user));
       }
@@ -362,8 +367,6 @@ const DashBoardScreen = () => {
                       status={item.status}
                       script={item.script}
                       urls={item.urls}
-                      totalUsedLength={totalUsedLength}
-                      totalAllowedLength={totalAllowedLength}
                       deleteContent={() => deleteContent(item.contentId)}
                     />
                   ))}
