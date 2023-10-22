@@ -225,7 +225,7 @@ const ResultScreen = () => {
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
                             <div className="resultPageContentContainer">
                                 <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', margin: '20px 0px'}}>About</p>
-                                <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}}>Date: {created.slice(0,10)}</p>
+                                {created && <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}}>Date: {created.slice(0,10)}</p>}
                                 <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500'}}>Sources:</p>
                                 {urls && urls.map((url, index) => (
                                     <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500'}} key={index}>{url}</p>
@@ -235,7 +235,7 @@ const ResultScreen = () => {
                             <div className="resultPageContentContainer" style={{justifyContent: 'space-between'}}>
                                 <div>
                                     <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', margin: '20px 0px'}}>Preview</p>
-                                    <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}}>{secondsToLengthText(duration)}</p>
+                                    {duration && <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}}>{secondsToLengthText(duration)}</p>}
                                 </div>
                                 {audioUrl &&
                                     <audio controls name="podcast" className="audioPlayer">
@@ -264,7 +264,7 @@ const ResultScreen = () => {
                         <div className={script ? "resultPageContentContainer" : "noDisplay"} style={{width: '100%', padding: '40px 60px', marginTop: '60px', maxHeight: '400px', overflow: 'auto'}}>
                             <MdOutlineContentCopy size={20} color='#2B1C50' style={{position:' absolute', right: '40', top: '60'}} onClick={() => copyContentToClipboard(shownotes)}/>
                             <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', marginBottom: '30px', marginTop: '10px'}}>Show notes</p>
-                            {
+                            { shownotes &&
                                 (typeof shownotes === 'string' ? shownotes.split('<br>') : []).map((note, index) => (
                                     <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}} key={index}>{note}</p>
                                 ))
@@ -274,7 +274,7 @@ const ResultScreen = () => {
                         <div className={script ? "resultPageContentContainer" : "noDisplay"} style={{width: '100%', padding: '40px 60px', marginTop: '60px', maxHeight: '600px', overflow: 'auto'}}>
                             <MdOutlineContentCopy size={20} color='#2B1C50' style={{position:' absolute', right: '40', top: '60'}} onClick={() => copyContentToClipboard(script)}/>
                             <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', marginBottom: '30px', marginTop: '10px'}}>Full Transcript</p>
-                            {
+                            { script &&
                                 (typeof script === 'string' ? script.split('<br>') : []).map((note, index) => (
                                     <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}} key={index}>{note}</p>
                                 ))
