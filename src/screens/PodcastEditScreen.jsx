@@ -339,6 +339,12 @@ const PodcastEditScreen = () => {
                 {location.state.title}
               </p>
 
+              {notification && (
+                <div class="alert alert-success notification" role="alert">
+                  ✔️ Saved
+                </div>
+              )}
+
               {bodyParas &&
                 bodyParas.map((item, index) => (
                   <EditingParagraph
