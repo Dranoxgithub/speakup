@@ -22,6 +22,7 @@ import {
   getUserTotalAllowedLength,
   getUserTotalUsedLength,
 } from "../redux/userSlice";
+import { YOUR_OWN_VOICE } from "./VoiceSettings";
 
 const PodcastEditScreen = () => {
   const location = useLocation();
@@ -73,7 +74,7 @@ const PodcastEditScreen = () => {
         newVoiceLibrary = [
           ...newVoiceLibrary,
           {
-            name: "Your Own Voice",
+            name: YOUR_OWN_VOICE,
             tags: [],
             audio: await getUserVoicePreviewAudio(userId),
           },
@@ -81,7 +82,7 @@ const PodcastEditScreen = () => {
       }
       setVoiceLibrary(newVoiceLibrary);
     });
-  }, []);
+  }, [userVoiceId]);
 
   useEffect(() => {
     const getWordCount = (text) => {
