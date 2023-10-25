@@ -18,15 +18,18 @@ import Loading from "../components/Loading";
 import Header from "../components/Header";
 import UpgradePlanAlert from "../components/UpgradePlanAlert";
 import EditingParagraph from "../components/EditingParagraph";
-import { getUserTotalAllowedLength, getUserTotalUsedLength } from "../redux/userSlice"
+import {
+  getUserTotalAllowedLength,
+  getUserTotalUsedLength,
+} from "../redux/userSlice";
 
 const PodcastEditScreen = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
   const userId = useAppSelector(getUserId);
-  const totalAllowedLength = useAppSelector(getUserTotalAllowedLength)
-  const totalUsedLength = useAppSelector(getUserTotalUsedLength)
+  const totalAllowedLength = useAppSelector(getUserTotalAllowedLength);
+  const totalUsedLength = useAppSelector(getUserTotalUsedLength);
 
   const [contentId, setContentId] = useState();
   const [estimatedDuration, setEstimatedDuration] = useState(0);
@@ -39,6 +42,13 @@ const PodcastEditScreen = () => {
   const [userVoiceId, setUserVoiceId] = useState();
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [notification, setShowNotification] = useState(false);
+  const showNotificationTemporarily = () => {
+    setShowNotification(true);
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 3000);
+  };
 
   useEffect(() => {
     const app = initializeFirebaseApp();
@@ -110,6 +120,7 @@ const PodcastEditScreen = () => {
     setLoading(true);
     await savePodcastEdit();
     setLoading(false);
+    showNotificationTemporarily();
   };
 
   const savePodcastEdit = async () => {
@@ -308,8 +319,25 @@ const PodcastEditScreen = () => {
           {error ? (
             <h2>{error}</h2>
           ) : (
-            <div className="dashboardContainer" style={{position: 'relative', margin: '0px 0px 150px 0px', width: '100%'}}>
-              <p className="plainText" style={{fontSize: '38px', textAlign: 'initial', width: '900px', margin: '60px 0px 30px 0px', color: '#2B1C50'}}>{location.state.title}</p>
+            <div
+              className="dashboardContainer"
+              style={{
+                position: "relative",
+                margin: "0px 0px 150px 0px",
+                width: "100%",
+              }}
+            >
+              <p
+                className="plainText"
+                style={{
+                  fontSize: "38px",
+                  textAlign: "initial",
+                  width: "900px",
+                  margin: "60px 0px 30px 0px",
+                }}
+              >
+                {location.state.title}
+              </p>
 
               {bodyParas &&
                 bodyParas.map((item, index) => (
