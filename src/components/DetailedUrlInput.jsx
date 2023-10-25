@@ -455,26 +455,24 @@ const DetailedUrlInput = (props) => {
           className="urlInput"
         />
 
-        <div
-          style={{
-            marginBottom: "20px",
-            paddingLeft: "20px",
-            paddingRight: "20px",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            width: "900px",
-          }}
-        >
-          <p className="greyBoldText">
-            Remaining quota:{" "}
-            {props.totalAllowedLength && props.totalUsedLength
-              ? Math.max(0, props.totalAllowedLength - props.totalUsedLength)
-              : 0}{" "}
-            min
-          </p>
-        </div>
+        {!isNaN(props.totalAllowedLength) && !isNaN(props.totalUsedLength) &&
+          <div
+            style={{
+              marginBottom: "20px",
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              width: "900px",
+            }}
+          >
+            <p className="greyBoldText">
+              Remaining quota: {Math.max(0, props.totalAllowedLength - props.totalUsedLength)} min
+            </p>
+          </div>
+        }
 
         <GenerateAudioSettings
           selectedVoice={selectedVoice}
