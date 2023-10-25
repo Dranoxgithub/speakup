@@ -1,4 +1,4 @@
-import purple_logo from '../assets/purple_logo.svg'
+import purple_logo from '../assets/purple_logo.png'
 import UserInfoDisplay from "./UserInfoDisplay";
 import { BiTimeFive } from "react-icons/bi";
 import { AiOutlineArrowLeft } from "react-icons/ai";
