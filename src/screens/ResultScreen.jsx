@@ -262,7 +262,7 @@ const ResultScreen = () => {
                         </div>
 
                         <div className={script ? "resultPageContentContainer" : "noDisplay"} style={{width: '100%', padding: '40px 60px', marginTop: '60px', maxHeight: '400px', overflow: 'auto'}}>
-                            <MdOutlineContentCopy size={20} color='#2B1C50' style={{position:' absolute', right: '40', top: '60'}} onClick={() => copyContentToClipboard(shownotes)}/>
+                            <MdOutlineContentCopy size={20} color='#2B1C50' style={{position:' absolute', right: '40', top: '60', cursor: 'pointer'}} onClick={() => copyContentToClipboard(shownotes)}/>
                             <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', marginBottom: '30px', marginTop: '10px'}}>Show notes</p>
                             { shownotes &&
                                 (typeof shownotes === 'string' ? shownotes.split('<br>') : []).map((note, index) => (
@@ -272,7 +272,7 @@ const ResultScreen = () => {
                         </div>
 
                         <div className={script ? "resultPageContentContainer" : "noDisplay"} style={{width: '100%', padding: '40px 60px', marginTop: '60px', maxHeight: '600px', overflow: 'auto'}}>
-                            <MdOutlineContentCopy size={20} color='#2B1C50' style={{position:' absolute', right: '40', top: '60'}} onClick={() => copyContentToClipboard(script)}/>
+                            <MdOutlineContentCopy size={20} color='#2B1C50' style={{position:' absolute', right: '40', top: '60', cursor: 'pointer'}} onClick={() => copyContentToClipboard(script)}/>
                             <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', marginBottom: '30px', marginTop: '10px'}}>Full Transcript</p>
                             { script &&
                                 (typeof script === 'string' ? script.split('<br>') : []).map((note, index) => (
