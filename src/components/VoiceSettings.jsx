@@ -10,6 +10,13 @@ export const VoiceSettings = (props) => {
   const [isCloneVoiceShown, setIsCloneVoiceShown] = useState(false);
 
   const voiceSelectionDivRef = useRef(null);
+  const voicePreviewDivRef = useRef(null);
+
+  useEffect(() => {
+    if (isVoicePreviewShown && props.scrollToView) {
+      voicePreviewDivRef.current?.scrollIntoView({behavior: 'smooth'})
+    }
+  }, [isVoicePreviewShown])
 
   const handleClickOutside = (event) => {
     if (
@@ -91,7 +98,7 @@ export const VoiceSettings = (props) => {
   };
 
   return (
-    <div ref={voiceSelectionDivRef}>
+    <div ref={voiceSelectionDivRef} style={{height: '100%'}}>
       <div
         style={{
           flexDirection: "row",
@@ -134,7 +141,7 @@ export const VoiceSettings = (props) => {
       </div>
 
       {isVoicePreviewShown && (
-        <div style={{ position: "relative" }}>
+        <div style={{ position: "relative" }} ref={voicePreviewDivRef}>
           <div className="selectionDropDownContainer">
             {props.voiceLibrary.map((item, index) => (
               <div key={item.name}>

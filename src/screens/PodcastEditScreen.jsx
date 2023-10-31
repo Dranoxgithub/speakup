@@ -23,8 +23,6 @@ import {
   getUserTotalUsedLength,
 } from "../redux/userSlice";
 
-
-
 const PodcastEditScreen = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -369,6 +367,7 @@ const PodcastEditScreen = () => {
                 setSelectedVoice={setSelectedVoice}
                 setVoiceId={setVoiceId}
                 showAddVoice={false}
+                scrollToView={true}
               />
 
               <div className="editPageSubmitButtonGroup">
