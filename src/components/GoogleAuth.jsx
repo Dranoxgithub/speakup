@@ -22,6 +22,7 @@ const GoogleAuth = (props) => {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         if (credential != null) {
             // The signed-in user info.
+
             const user = result.user;
             await createUserDocument(user.uid)
 

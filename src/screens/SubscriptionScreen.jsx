@@ -100,13 +100,14 @@ const SubscriptionScreen = () => {
                         <UserInfoDisplay showModal={showModal} setShowModal={setShowModal} />
                     </div>
 
-                    <p className='subsectionHeaderText'>Current plan: {userSubscription ?? 'None'}</p>
+                    <p className='subsectionHeaderText'>Current plan: {userSubscription ?? 'Free'}</p>
 
                     <SubscriptionTable userId={userId}/>
                     
                     <Footer />
                 </div>
             }
+            
         </div>   
     )
 }
