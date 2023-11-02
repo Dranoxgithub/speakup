@@ -15,7 +15,7 @@ const Footer = () => {
             </div>
 
             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', paddingRight: '150px'}}>
-                <a href="mailto:founders@startspeakup.com" target="_blank" rel="noopener noreferrer">
+                <a href="mailto:nicholas@startspeakup.com" target="_blank" rel="noopener noreferrer">
                     <MdEmail size={30} color={'#fff'} style={{marginRight: '20px'}} />
                 </a>
 
@@ -31,7 +31,7 @@ const Footer = () => {
                     <AiOutlineTwitter size={30} color={'#fff'} style={{marginRight: '20px'}} />
                 </a>
                 
-                <a href="https://discord.gg/qtafUGvj" target="_blank" rel="noopener noreferrer">
+                <a href="https://discord.gg/CTunKDsC" target="_blank" rel="noopener noreferrer">
                     <BiLogoDiscordAlt size={30} color={'#fff'} style={{marginRight: '20px'}} />
                 </a>
 

@@ -107,7 +107,7 @@ const AddVoicePopup = (props) => {
                 />
                 <p className='plainText' style={{fontSize: '20px', margin: '40px 0px 10px 0px', textAlign: 'initial'}}>Add your voice</p>
                 <p className='plainText' style={{fontSize: '16px', fontWeight: '400', textAlign: 'initial', color: '#828282', marginBottom: '30px'}}>
-                    Sample quality is more important than quantity. Providing more than 5 minutes of audio in total brings little improvement.
+                    Sample quality is more important than quantity. Use clear, loud, and expresive samples with minimal background noise and no music. 5 minutes of audio is enough.
                 </p>
 
                 <p className="scriptSettingsText" style={{textAlign: 'initial', color: '#828282'}}>Give your voice a name</p>
@@ -144,7 +144,7 @@ const AddVoicePopup = (props) => {
                             <div>
                                 <PiUploadSimple color={'#828282'} size={50} />
                                 <p className="plainText" style={{fontSize: '16px', fontWeight: '400', margin: '20px 0px 5px 0px'}}>Upload up to 5 voice samples</p>
-                                <p className="plainText" style={{fontSize: '16px', fontWeight: '400', color: '#828282'}}>Supported: MP3</p>
+                                <p className="plainText" style={{fontSize: '16px', fontWeight: '400', color: '#828282'}}>Supported: .MP3 (10MB max)</p>
                             </div> 
                         }
                     </label>

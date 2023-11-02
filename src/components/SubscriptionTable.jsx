@@ -24,7 +24,7 @@ const SubscriptionTable = (props) => {
                 rel="noopener noreferrer"
                 style={{color: '#2b1c50', textDecoration: 'underline'}}
             >
-                Manage your subscription
+                Manage my subscription
             </a>
         </div>
     )
