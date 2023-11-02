@@ -20,7 +20,6 @@ import { Skeleton } from "@mui/material";
 import pLimit from 'p-limit'
 import Footer from '../components/Footer'
 import Header from "../components/Header";
-import { current } from "@reduxjs/toolkit";
 
 const PREMIUM_SUBSCRIPTION_PLAN = ["Creator", "Professional"];
 
@@ -231,7 +230,6 @@ const DashBoardScreen = () => {
   }, [userId]);
 
   useEffect(() => {
-    console.log("checking login status")
     const checkLoginStatus = () => {
       const app = initializeFirebaseApp();
       const auth = getAuth(app);
