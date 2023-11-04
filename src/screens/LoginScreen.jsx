@@ -57,8 +57,8 @@ const LoginScreen = () => {
     return (
         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', backgroundColor: '#FAFAFA'}}>
             <div className="centeredContainer">
-                <p className='plainText' style={{fontSize: '28px', color: '#2B1C50', marginBottom: '10px'}}>Get your podcast via Email</p>
-                <p className='plainText' style={{fontSize: '16px', color: '#777777', fontWeight: '500', marginLeft: '3px', marginBottom: '40px'}}>
+                <p className='plainText28px' style={{color: '#2B1C50', marginBottom: '10px'}}>Get your podcast via Email</p>
+                <p className='plainText16px' style={{color: '#777777', fontWeight: '500', marginLeft: '3px', marginBottom: '40px'}}>
                     Create premium podcasts in minutes. Get free 10 minutes quota. No credit card required.
                 </p>
                 <GoogleAuth 
@@ -71,7 +71,7 @@ const LoginScreen = () => {
                     contentId={contentId}
                     scriptOnly={scriptOnly}
                 />
-                <p className='plainText' style={{fontSize: '14px', color: '#777777', fontWeight: '500', marginLeft: '3px', marginTop: '40px'}}>
+                <p className='plainText14px' style={{color: '#777777', fontWeight: '500', marginLeft: '3px', marginTop: '40px'}}>
                     By continuing, you agree to SpeakUp’s <a href="https://startspeakup.com/legal/terms-and-conditions" style={{ color: '#777777'}}>Terms of Service</a>. Read our <a href="https://startspeakup.com/legal/privacy-policy" style={{ color: '#777777'}} >Privacy Policy</a>.
                 </p>
             </div>

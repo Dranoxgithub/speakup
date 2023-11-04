@@ -97,6 +97,15 @@ export const VoiceSettings = (props) => {
     setIsVoicePreviewShown(false);
   };
 
+  const handleCloneVoice = () => {
+    if (!props.canCloneVoice) {
+      props.setShowUpgradePlanAlert(true)
+    } else {
+      setIsCloneVoiceShown((prevValue) => !prevValue);
+      setIsVoicePreviewShown(false);
+    }
+  }
+
   return (
     <div ref={voiceSelectionDivRef} style={{height: '100%'}}>
       <div
@@ -130,10 +139,7 @@ export const VoiceSettings = (props) => {
         {(props.showAddVoice == null || props.showAddVoice) && ( // show this section when either this field is not defined(for backward compatability) or it is set to true
           <button
             className="addVoiceButton"
-            onClick={() => {
-              setIsCloneVoiceShown((prevValue) => !prevValue);
-              setIsVoicePreviewShown(false);
-            }}
+            onClick={handleCloneVoice}
           >
             <p className="plainText">+ Add Voice</p>
           </button>

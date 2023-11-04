@@ -45,6 +45,7 @@ const DashBoardScreen = () => {
   const [totalUsedLength, setTotalUsedLength] = useState();
   const [totalAllowedLength, setTotalAllowedLength] = useState();
   const [canEditAd, setCanEditAd] = useState();
+  const [canCloneVoice, setCanCloneVoice] = useState();
 
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
 
@@ -210,6 +211,7 @@ const DashBoardScreen = () => {
         setUserVoiceId(user["clone_voice_id"]);
         const subscriptionPlan = user["subscription"];
         setCanEditAd(PREMIUM_SUBSCRIPTION_PLAN.includes(subscriptionPlan));
+        setCanCloneVoice(PREMIUM_SUBSCRIPTION_PLAN.includes(subscriptionPlan));
         const totalAllowedLength = user["quota"] ? +user["quota"] : 0
         setTotalAllowedLength(totalAllowedLength);
         dispatch(setUserTotalAllowedLength(totalAllowedLength))
@@ -330,6 +332,7 @@ const DashBoardScreen = () => {
             totalUsedLength={totalUsedLength}
             totalAllowedLength={totalAllowedLength}
             canEditAd={canEditAd}
+            canCloneVoice={canCloneVoice}
           />
 
           {errorMessage &&

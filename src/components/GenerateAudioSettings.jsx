@@ -17,6 +17,8 @@ const GenerateAudioSettings = (props) => {
         setVoiceId={props.setVoiceId}
         showAddVoice={true}
         scrollToView={false}
+        canCloneVoice={props.canCloneVoice}
+        setShowUpgradePlanAlert={setShowUpgradePlanAlert}
       />
 
       <LengthSettings

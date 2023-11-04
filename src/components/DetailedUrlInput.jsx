@@ -494,6 +494,7 @@ const DetailedUrlInput = (props) => {
           setHostName={setHostName}
           userId={userId}
           canEditAd={props.canEditAd}
+          canCloneVoice={props.canCloneVoice}
         />
         {notification && (
           <div class="alert alert-success" role="alert">

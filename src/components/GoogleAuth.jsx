@@ -78,7 +78,7 @@ const GoogleAuth = (props) => {
                 <Loading /> : 
                 <button className='loginButton' onClick={signup}>
                     <FcGoogle size={30} style={{position: 'absolute', left: '25'}} />
-                    <p className='plainText' style={{fontSize: '16px'}}>Continue with Google</p>
+                    <p className='plainText16px'>Continue with Google</p>
                 </button>
             }
         </div>

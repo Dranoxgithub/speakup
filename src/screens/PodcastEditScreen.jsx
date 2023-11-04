@@ -368,6 +368,8 @@ const PodcastEditScreen = () => {
                 setVoiceId={setVoiceId}
                 showAddVoice={false}
                 scrollToView={true}
+                canCloneVoice={false}
+                setShowUpgradePlanAlert={() => {}}
               />
 
               <div className="editPageSubmitButtonGroup">
