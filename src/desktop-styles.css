@@ -1,4 +1,4 @@
-@media only screen and (min-device-width: 481px) {
+/* @media only screen and (min-device-width: 481px) { */
   .container {
     background-color: #fafafa;
     color: #2d3142;
@@ -635,7 +635,6 @@
     color: #ffffff;
     font-size: 14px;
     font-weight: 700;
-    margin: 0px 5px;
   }
 
   .divider {
@@ -678,6 +677,10 @@
     /* Center horizontally */
     transform: translate(-50%, -50%);
     /* Center the modal in the middle */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   .editParagraphControlButtonsGroup {
@@ -800,15 +803,15 @@
     border-radius: 100px;
     border: none;
     padding: 10px 30px;
-    margin-bottom: 10px;
+    margin: 10px 0px;
   }
 
   .fileUploadForm {
     height: 16rem;
-    max-width: 100%;
     text-align: center;
     position: relative;
     margin-bottom: 20px;
+    width: 100%;
   }
 
   .fileUploadForm.drag-active {
@@ -1024,4 +1027,4 @@
     z-index: 100;
     /* Ensures it appears above other content */
   }
-}
+/* } */

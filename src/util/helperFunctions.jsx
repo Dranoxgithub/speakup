@@ -9,6 +9,7 @@ const DEFAULT_PARAMS = {
   totalLength: 10,
   scriptOnly: false,
   withMusic: true,
+  bgmVolume: 1.3,
   tone: "narrative",
   ad: AD_CONTENT,
 };
@@ -60,6 +61,7 @@ export const generatePodcast = async (
       ad: inputParams.ad ?? DEFAULT_PARAMS.ad,
       script_only: inputParams.scriptOnly ?? DEFAULT_PARAMS.scriptOnly,
       with_music: inputParams.withMusic ?? DEFAULT_PARAMS.withMusic,
+      bgm_volume: inputParams.bgmVolume ?? DEFAULT_PARAMS.bgmVolume,
       tone: inputParams.tone ?? DEFAULT_PARAMS.tone,
     };
 
@@ -105,6 +107,7 @@ export const callAudioOnlyEndpoint = async (idToken, inputParams) => {
       voice: inputParams.voiceId ?? DEFAULT_PARAMS.voiceId,
       doc_id: inputParams.doc_id,
       with_music: inputParams.withMusic ?? DEFAULT_PARAMS.withMusic,
+      bgm_volume: inputParams.bgmVolume ?? DEFAULT_PARAMS.bgmVolume,
     };
 
     console.log(`body: ${JSON.stringify(body)}`);
@@ -117,6 +120,7 @@ export const callAudioOnlyEndpoint = async (idToken, inputParams) => {
       body: JSON.stringify(body),
     };
     const response = await fetchUrl(saveEndpoint, {}, requestOptions);
+    console.log(`callAudioOnlyEndpoint response: ${response} - ${JSON.stringify(response)}`)
     if (response.status !== 200) {
       console.log("callAudioOnlyEndpoint 200");
       return await response.text();
@@ -146,7 +150,7 @@ export const cloneVoice = async (idToken, userid) => {
       body: JSON.stringify(body),
     };
     const response = await fetchUrl(cloneVoiceEnpoint, {}, requestOptions);
-    console.log(`response status: ${JSON.stringify(response.status)}`);
+
     if (response.status != 200) {
       return null;
     } else {

@@ -20,6 +20,7 @@ import { Skeleton } from "@mui/material";
 import pLimit from 'p-limit'
 import Footer from '../components/Footer'
 import Header from "../components/Header";
+import MobileDisplayNotReadyAlert from "../components/MobileDisplayNotReadyAlert";
 
 const PREMIUM_SUBSCRIPTION_PLAN = ["Creator", "Professional"];
 
@@ -48,6 +49,12 @@ const DashBoardScreen = () => {
   const [canCloneVoice, setCanCloneVoice] = useState();
 
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false)
+  const [showMobileDisplayNotReadyAlert, setShowMobileDisplayNotReadyAlert] = useState(true)
+
+  useEffect(() => {
+    setIsMobileView(window.outerWidth <= 480)
+  }, [])
 
   const populateAudioBlob = async (url) => {
     if (url) {
@@ -423,6 +430,12 @@ const DashBoardScreen = () => {
         <UpgradePlanAlert
           userId={userId}
           closeModal={() => setShowUpgradePlanAlert(false)}
+        />
+      )}
+
+      {isMobileView && showMobileDisplayNotReadyAlert && (
+        <MobileDisplayNotReadyAlert 
+          closeModal={() => setShowMobileDisplayNotReadyAlert(false)}
         />
       )}
 

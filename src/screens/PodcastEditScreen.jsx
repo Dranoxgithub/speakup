@@ -22,6 +22,7 @@ import {
   getUserTotalAllowedLength,
   getUserTotalUsedLength,
 } from "../redux/userSlice";
+import MusicSettings from "../components/MusicSettings";
 
 const PodcastEditScreen = () => {
   const location = useLocation();
@@ -49,6 +50,8 @@ const PodcastEditScreen = () => {
       setShowNotification(false);
     }, 3000);
   };
+
+  const [backgroundMusicVolume, setBackgroundMusicVolume] = useState()
 
   useEffect(() => {
     const app = initializeFirebaseApp();
@@ -143,8 +146,8 @@ const PodcastEditScreen = () => {
 
     const inputParams = {
       intro: bodyParas[0],
-      paragraphs: bodyParas.length > 2 ? bodyParas.slice(1, -1) : [],
       outro: bodyParas.length > 1 ? bodyParas[bodyParas.length - 1] : "",
+      paragraphs: bodyParas.length > 2 ? bodyParas.slice(1, -1) : [],
       doc_id: contentId,
       voiceId:
         selectedVoice === YOUR_OWN_VOICE
@@ -152,7 +155,8 @@ const PodcastEditScreen = () => {
             ? voiceId
             : userVoiceId
           : selectedVoice,
-      with_music: false, // to change
+      withMusic: backgroundMusicVolume && backgroundMusicVolume != 0 ? true : false,
+      bgmVolume: backgroundMusicVolume,
     };
 
     const app = initializeFirebaseApp();
@@ -360,6 +364,12 @@ const PodcastEditScreen = () => {
                   />
                 ))}
 
+              <MusicSettings 
+                backgroundMusicVolume={backgroundMusicVolume}
+                setBackgroundMusicVolume={setBackgroundMusicVolume}
+                scrollToView={true}
+              />
+              
               <VoiceSettings
                 voiceLibrary={voiceLibrary}
                 setVoiceLibrary={setVoiceLibrary}
@@ -370,6 +380,7 @@ const PodcastEditScreen = () => {
                 scrollToView={true}
                 canCloneVoice={false}
                 setShowUpgradePlanAlert={() => {}}
+                showNotificationTemporarily={() => {}}
               />
 
               <div className="editPageSubmitButtonGroup">

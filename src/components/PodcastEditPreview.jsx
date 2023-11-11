@@ -25,7 +25,7 @@ const PodcastEditPreview = (props) => {
 
   return (
     <div className="previewContainer" onClick={navigateToEdit} onMouseEnter={() => setHoverPreviewBox(true)} onMouseLeave={() => setHoverPreviewBox(false)}>
-      <p className="navigationHeaderText" style={{textAlign: 'left', fontWeight: '500', fontSize: '24px', margin: '20px 20px', width: 'calc(100% - 20px)'}}>{props.title}</p>
+      <p className="navigationHeaderText" style={{textAlign: 'left', fontWeight: '500', fontSize: '24px', margin: '20px 20px', width: 'calc(100% - 40px)'}}>{props.title}</p>
       <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0px 20px', height: '35px'}}>
         <p className="navigationHeaderText" style={{fontWeight: '500', fontSize: '18px'}}>
           {STATUS_MAPPING[props.status]}

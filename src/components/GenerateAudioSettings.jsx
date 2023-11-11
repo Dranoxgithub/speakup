@@ -3,6 +3,7 @@ import UpgradePlanAlert from "./UpgradePlanAlert";
 import { VoiceSettings } from "./VoiceSettings";
 import LengthSettings from "./LengthSettings";
 import ScriptSettings from "./ScriptSettings";
+import MusicSettings from "./MusicSettings";
 
 const GenerateAudioSettings = (props) => {
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
@@ -19,6 +20,13 @@ const GenerateAudioSettings = (props) => {
         scrollToView={false}
         canCloneVoice={props.canCloneVoice}
         setShowUpgradePlanAlert={setShowUpgradePlanAlert}
+        showNotificationTemporarily={props.showNotificationTemporarily}
+      />
+
+      <MusicSettings 
+        backgroundMusicVolume={props.backgroundMusicVolume}
+        setBackgroundMusicVolume={props.setBackgroundMusicVolume}
+        scrollToView={false}
       />
 
       <LengthSettings

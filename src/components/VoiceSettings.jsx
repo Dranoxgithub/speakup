@@ -209,6 +209,7 @@ export const VoiceSettings = (props) => {
             props.setSelectedVoice(YOUR_OWN_VOICE);
             setIsVoicePreviewShown(false);
           }}
+          showNotificationTemporarily={props.showNotificationTemporarily}
         />
       )}
     </div>

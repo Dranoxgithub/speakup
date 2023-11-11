@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import GoogleAuth from "../components/GoogleAuth"
 import { useLocation } from "react-router-dom";
+import MobileDisplayNotReadyAlert from "../components/MobileDisplayNotReadyAlert";
 
 const LoginScreen = () => {
     const location = useLocation()
@@ -13,6 +14,13 @@ const LoginScreen = () => {
     const [totalLength, setTotalLength] = useState()
     const [contentId, setContentid] = useState()
     const [scriptOnly, setScriptOnly] = useState()
+
+    const [isMobileView, setIsMobileView] = useState(false)
+    const [showMobileDisplayNotReadyAlert, setShowMobileDisplayNotReadyAlert] = useState(true)
+
+    useEffect(() => {
+        setIsMobileView(window.outerWidth <= 480)
+    }, [])
 
     useEffect(() => {
         const populateContentFromQueryParams = (queryParams) => {
@@ -75,6 +83,14 @@ const LoginScreen = () => {
                     By continuing, you agree to SpeakUp’s <a href="https://startspeakup.com/legal/terms-and-conditions" style={{ color: '#777777'}}>Terms of Service</a>. Read our <a href="https://startspeakup.com/legal/privacy-policy" style={{ color: '#777777'}} >Privacy Policy</a>.
                 </p>
             </div>
+
+
+
+            {isMobileView && showMobileDisplayNotReadyAlert && (
+                <MobileDisplayNotReadyAlert 
+                    closeModal={() => setShowMobileDisplayNotReadyAlert(false)}
+                />
+            )}
         </div>
     )
 }

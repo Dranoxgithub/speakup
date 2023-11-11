@@ -46,7 +46,7 @@ const PodcastResultPreview = (props) => {
                 }
             </div>
 
-            <p className="navigationHeaderText" style={{textAlign: 'left', fontWeight: '500', fontSize: '24px', margin: '60px 20px 0px 20px', width: 'calc(100% - 20px)'}}>{props.title}</p>
+            <p className="navigationHeaderText" style={{textAlign: 'left', fontWeight: '500', fontSize: '24px', margin: '60px 20px 0px 20px', width: 'calc(100% - 40px)'}}>{props.title}</p>
             
             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0px 20px', height: '35px'}}>
             { props.audioUrl ? 

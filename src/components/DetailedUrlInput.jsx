@@ -25,6 +25,13 @@ export const PODCAST_STYLES = [
   // { name: 'Longer', length: 60 },
 ];
 
+export const BACKGROUND_MUSIC_VOLUME = [
+  { name: "No music", volume: 0 },
+  { name: "Quiet", volume: 1.1 },
+  { name: "Normal", volume: 1.3 },
+  { name: "Loud", volume: 1.5 }
+]
+
 const TEXT_DOS1 = ["Offline content", "PDF/Books", "Paywall content"];
 
 const TEXT_DOS2 = ["Forum threads", "Social feeds", "Online docs"];
@@ -66,6 +73,7 @@ const DetailedUrlInput = (props) => {
   const [selectedVoice, setSelectedVoice] = useState();
   const [totalMinLength, setTotalMinLength] = useState();
   const [totalMaxLength, setTotalMaxLength] = useState();
+  const [backgroundMusicVolume, setBackgroundMusicVolume] = useState()
   const [adContent, setAdContent] = useState(AD_CONTENT);
 
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
@@ -293,6 +301,8 @@ const DetailedUrlInput = (props) => {
             voiceId: voice_for_submission,
             totalLength: totalMaxLength,
             scriptOnly: scriptOnly,
+            withMusic: backgroundMusicVolume && backgroundMusicVolume != 0 ? true : false,
+            bgmVolume: backgroundMusicVolume,
           };
           const errorMessage = await generatePodcast(
             userIdToken,
@@ -495,6 +505,9 @@ const DetailedUrlInput = (props) => {
           userId={userId}
           canEditAd={props.canEditAd}
           canCloneVoice={props.canCloneVoice}
+          backgroundMusicVolume={backgroundMusicVolume}
+          setBackgroundMusicVolume={setBackgroundMusicVolume}
+          showNotificationTemporarily={showNotificationTemporarily}
         />
         {notification && (
           <div class="alert alert-success" role="alert">
