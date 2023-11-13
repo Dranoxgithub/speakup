@@ -19,7 +19,13 @@ const SubscriptionTable = (props) => {
 
             <a 
                 className="plainText"
+
+                // test
+                // href="https://billing.stripe.com/p/login/test_dR61877Kz6it9fa288"
+
+                // production
                 href="https://billing.stripe.com/p/login/5kA5o30jqgDx7Mk9AA"
+
                 target="_blank" 
                 rel="noopener noreferrer"
                 style={{color: '#2b1c50', textDecoration: 'underline'}}

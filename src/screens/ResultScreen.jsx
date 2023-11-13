@@ -53,9 +53,18 @@ const ResultScreen = () => {
         const checkLoginStatus = () => {
           const app = initializeFirebaseApp();
           const auth = getAuth(app);
-          if (!auth.currentUser && !isDemoResult) {
+          if (!auth.currentUser) {
+            if (isDemoResult) {
+                return true
+            }
+
+            if (queryParams && queryParams.has('contentId') && DEMO_CONTENTS.includes(queryParams.get('contentId'))) {
+                return true
+            }
+
             return false
           }
+
           return true
         }
     

@@ -69,7 +69,6 @@ const SubscriptionScreen = () => {
     useEffect(() => {
         const processSnapshot = async (doc) => {
             const user = doc.data()
-            console.log(`${JSON.stringify(user)}`)
             if (user) {
                 setUserSubscription(user['subscription'])
             }
