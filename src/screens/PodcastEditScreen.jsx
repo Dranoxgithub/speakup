@@ -402,13 +402,7 @@ const PodcastEditScreen = () => {
                       </p>
                     </button>
                     <button
-                      className="editPageSubmitButton"
-                      style={{
-                        backgroundColor: "#734df6",
-                        textAlign: "initial",
-                        filter:
-                          "drop-shadow(0px 4px 10px rgba(115, 77, 246, 0.30))",
-                      }}
+                      className="editPageSubmitButtonPurple"
                       onClick={generateAudioOnly}
                     >
                       <p

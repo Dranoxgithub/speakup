@@ -79,10 +79,11 @@ const DashBoardScreen = () => {
             const content = await getDocument("contents", contentId);
             if (
               content &&
-              content.status &&
-              (content.status == "script_pending" ||
-                content.status == "script_success" ||
-                content.status == "script_failed")
+              item.status &&
+              (item.status == "script_pending" ||
+                item.status == "script_success" ||
+                item.status == "audio_failed" ||
+                item.status == "script_failed")
             ) {
               const title = content.original_content.title;
               let script;
@@ -95,7 +96,7 @@ const DashBoardScreen = () => {
                 contentId: contentId,
                 title: title,
                 script: script,
-                status: content.status,
+                status: item.status,
               };
             }
           } catch (error) {
@@ -147,7 +148,7 @@ const DashBoardScreen = () => {
               item.status && 
               (item.status == 'audio_pending' || 
               item.status == 'audio_success' || 
-              item.status == 'audio_failed' || 
+              // item.status == 'audio_failed' || 
               item.status == 'notified')) {
               const title = content.original_content.title;
               let script;

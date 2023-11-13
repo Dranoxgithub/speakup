@@ -10,7 +10,8 @@ const PodcastEditPreview = (props) => {
   const STATUS_MAPPING = {
     'script_pending': 'Generating script...',
     'script_success': 'Script ready',
-    'script_failed': 'Script generation failed'
+    'script_failed': 'Script generation failed',
+    'audio_failed': 'Audio generation failed'
   }
 
   const navigateToEdit = () => {
