@@ -5,7 +5,7 @@ import { getDocument, initializeFirebaseApp } from "../util/firebaseUtils";
 import Loading from "../components/Loading";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId } from "../redux/userSlice";
-import { secondsToHHMMSS, secondsToLengthText } from "../util/helperFunctions";
+import { secondsToLengthText } from "../util/helperFunctions";
 import { getAuth } from "@firebase/auth";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
@@ -214,7 +214,11 @@ const ResultScreen = () => {
 
     return (
         <div>
-            {fetchingUser ? <></> : 
+            {fetchingUser ? (
+                <div style={{padding: '30%'}}>
+                    <Loading />
+                </div>
+            ) : 
             <div className="dashboardContainer">
                 <Header 
                     isDashboard={false}

@@ -307,7 +307,9 @@ const PodcastEditScreen = () => {
   return (
     <div>
       {fetchingUser ? (
-        <></>
+        <div style={{padding: '30%'}}>
+          <Loading />
+        </div>
       ) : (
         <div className="dashboardContainer">
           <Header
