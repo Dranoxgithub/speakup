@@ -145,6 +145,7 @@ const PodcastEditScreen = () => {
     savePodcastEdit();
 
     const inputParams = {
+      userId: userId,
       intro: bodyParas[0],
       outro: bodyParas.length > 1 ? bodyParas[bodyParas.length - 1] : "",
       paragraphs: bodyParas.length > 2 ? bodyParas.slice(1, -1) : [],

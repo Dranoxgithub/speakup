@@ -101,6 +101,7 @@ export const callAudioOnlyEndpoint = async (idToken, inputParams) => {
       "Content-Type": "application/json",
     };
     const body = {
+      user_id: inputParams.userId,
       intro: inputParams.intro,
       outro: inputParams.outro,
       paragraphs: inputParams.paragraphs,
