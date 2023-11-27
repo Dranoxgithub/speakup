@@ -85,7 +85,7 @@ const SubscriptionScreen = () => {
     }, [userId])
 
     const goBackToDashboard = () => {
-        navigate('/Dashboard', {replace: true})
+        navigate('/dashboard', {replace: true})
     }
     
     return (

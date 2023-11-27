@@ -31,7 +31,7 @@ const Footer = () => {
                     <AiOutlineTwitter size={30} color={'#fff'} style={{marginRight: '20px'}} />
                 </a>
                 
-                <a href="https://discord.gg/CTunKDsC" target="_blank" rel="noopener noreferrer">
+                <a href="https://discord.com/invite/VHZGJ6Wx" target="_blank" rel="noopener noreferrer">
                     <BiLogoDiscordAlt size={30} color={'#fff'} style={{marginRight: '20px'}} />
                 </a>
 

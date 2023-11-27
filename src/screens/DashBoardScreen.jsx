@@ -12,7 +12,7 @@ import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { getUserId, getUserEmail, setUserTotalAllowedLength, setUserTotalUsedLength } from "../redux/userSlice";
 import { v4 as uuidv4 } from "uuid";
 import { onSnapshot, getFirestore, doc } from "firebase/firestore";
-import { getAuth } from "@firebase/auth";
+import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import DetailedUrlInput from "../components/DetailedUrlInput";
 import PodcastEditPreview from "../components/PodcastEditPreview";
 import UpgradePlanAlert from "../components/UpgradePlanAlert";
@@ -239,36 +239,54 @@ const DashBoardScreen = () => {
     }
   }, [userId]);
 
+  // useEffect(() => {
+  //   const checkLoginStatus = () => {
+  //     const app = initializeFirebaseApp();
+  //     const auth = getAuth(app);
+  //     if (!auth.currentUser) {
+  //       return false
+  //     }
+  //     return true
+  //   }
+
+  //   const retryWithTimeout = (fn, retryInterval, maxDuration) => {
+  //     const startTime = Date.now();
+    
+  //     const retry = async () => {
+  //       const result = await fn();
+    
+  //       if (result) {
+  //         setFetchingUser(false);
+  //         return
+  //       } else if (Date.now() - startTime < maxDuration) {
+  //         setTimeout(retry, retryInterval);
+  //       } else {
+  //         navigate("/login", { replace: true });
+  //       }
+  //     };
+    
+  //     retry();
+  //   }
+
+  //   retryWithTimeout(checkLoginStatus, 500, 5000)
+  // }, []);
+
   useEffect(() => {
-    const checkLoginStatus = () => {
-      const app = initializeFirebaseApp();
-      const auth = getAuth(app);
-      if (!auth.currentUser) {
-        return false
+    const app = initializeFirebaseApp();
+    const auth = getAuth(app);
+  
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        // No user is signed in, redirect to singin page
+        navigate("/login", { replace: true });
       }
-      return true
-    }
+      // If user is signed in,clean up the fetchingUser state
+      setFetchingUser(false);
+  
+  });
 
-    const retryWithTimeout = (fn, retryInterval, maxDuration) => {
-      const startTime = Date.now();
-    
-      const retry = async () => {
-        const result = await fn();
-    
-        if (result) {
-          setFetchingUser(false);
-          return
-        } else if (Date.now() - startTime < maxDuration) {
-          setTimeout(retry, retryInterval);
-        } else {
-          navigate("/login", { replace: true });
-        }
-      };
-    
-      retry();
-    }
-
-    retryWithTimeout(checkLoginStatus, 500, 5000)
+    // Cleanup subscription on component unmount
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
