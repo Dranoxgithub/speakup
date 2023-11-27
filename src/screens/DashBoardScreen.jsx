@@ -278,7 +278,7 @@ const DashBoardScreen = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
         // No user is signed in, redirect to singin page
-        navigate("/login");
+        navigate("/login", { replace: true });
       }
       // If user is signed in,clean up the fetchingUser state
       setFetchingUser(false);
