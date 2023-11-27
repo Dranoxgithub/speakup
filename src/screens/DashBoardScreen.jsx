@@ -277,12 +277,14 @@ const DashBoardScreen = () => {
   
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        // No user is signed in, redirect to main landing page
-        window.location.replace('https://startspeakup.com/')
+        // No user is signed in, redirect to singin page
+        navigate("/login");
       }
-      // If user is signed in, no action is needed as they are already on the dashboard
-    });
+      // If user is signed in,clean up the fetchingUser state
+      setFetchingUser(false);
   
+  });
+
     // Cleanup subscription on component unmount
     return () => unsubscribe();
   }, []);
