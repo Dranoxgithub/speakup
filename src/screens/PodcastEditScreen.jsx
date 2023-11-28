@@ -52,6 +52,12 @@ const PodcastEditScreen = () => {
   };
 
   const [backgroundMusicVolume, setBackgroundMusicVolume] = useState()
+  // Update Intercom URL changes so that user can receive latest messages
+  useEffect(() => {
+    if (window.Intercom) {
+        window.Intercom('update')
+    }
+}, [])
 
   useEffect(() => {
     const app = initializeFirebaseApp();

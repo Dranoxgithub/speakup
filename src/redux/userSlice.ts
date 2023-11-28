@@ -34,7 +34,7 @@ const initialState: UserState = {
   profilePic: "",
   displayName: "",
   totalAllowedLength: NaN,
-  totalUsedLength: NaN
+  totalUsedLength: NaN,
 };
 
 export const userLoginThunk = createAsyncThunk(
@@ -47,6 +47,7 @@ export const userLoginThunk = createAsyncThunk(
         userLoginInfo.password
       );
       console.log(`User id: ${response.user.refreshToken}`);
+
       return response;
     } catch (error: any) {
       return Promise.reject(error.message);
@@ -137,7 +138,7 @@ export const userSlice = createSlice({
     setUserTotalUsedLength: (state, action: PayloadAction<number>) => {
       state.totalUsedLength = action.payload;
       console.log(`Successfully set user total used length to ${state.totalUsedLength}`)
-    }
+    },
   },
   extraReducers: (builder) => {
     createLoginExtraReducers(builder);
@@ -151,7 +152,7 @@ export const {
   setUserDisplayName, 
   setUserProfilePic, 
   setUserTotalAllowedLength, 
-  setUserTotalUsedLength 
+  setUserTotalUsedLength,
 } = userSlice.actions;
 
 export const getUserState = ({ user }: RootState) => user;

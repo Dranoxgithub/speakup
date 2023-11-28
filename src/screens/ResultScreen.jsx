@@ -41,6 +41,13 @@ const ResultScreen = () => {
 
     const navigate = useNavigate()
 
+    // Update Intercom URL changes so that user can receive latest messages
+    useEffect(() => {
+        if (window.Intercom) {
+            window.Intercom('update')
+        }
+    }, [])
+
     useEffect(() => {
         if (queryParams.has('contentId') && DEMO_CONTENTS.includes(queryParams.get('contentId'))) {
             setFetchingUser(false)
