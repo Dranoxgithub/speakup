@@ -17,6 +17,13 @@ const SubscriptionScreen = () => {
     const [userId, setUserId] = useState()
     const [userSubscription, setUserSubscription] = useState()
 
+    // Update Intercom URL changes so that user can receive latest messages
+    useEffect(() => {
+        if (window.Intercom) {
+            window.Intercom('update')
+        }
+    }, [])
+
     useEffect(() => {
         const checkLoginStatus = () => {
           const app = initializeFirebaseApp();
@@ -48,7 +55,7 @@ const SubscriptionScreen = () => {
         }
     
         retryWithTimeout(checkLoginStatus, 500, 5000)
-      }, []);
+      }, [navigate]);
 
     useEffect(() => {
         const handleOutsideClick = (event) => {

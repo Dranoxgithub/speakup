@@ -9,7 +9,7 @@ import PodcastResultPreview from "../components/PodcastResultPreview";
 import { getStorage, ref, getBlob } from "firebase/storage";
 import Loading from "../components/Loading";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
-import { getUserId, getUserEmail, setUserTotalAllowedLength, setUserTotalUsedLength } from "../redux/userSlice";
+import { getUserId, getUserEmail, setUserTotalAllowedLength, setUserTotalUsedLength, getUserDisplayName, getUserProfilePic } from "../redux/userSlice";
 import { v4 as uuidv4 } from "uuid";
 import { onSnapshot, getFirestore, doc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
@@ -28,6 +28,9 @@ const DashBoardScreen = () => {
   const location = useLocation();
   const userId = useAppSelector(getUserId);
   const userEmail = useAppSelector(getUserEmail);
+  const userDisplayName = useAppSelector(getUserDisplayName);
+  const userPhotoUrl = useAppSelector(getUserProfilePic)
+
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch()
@@ -288,6 +291,25 @@ const DashBoardScreen = () => {
     // Cleanup subscription on component unmount
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const bootIntercom = () => {
+      if (userId && userEmail) {
+        window.Intercom("boot", {
+          api_base: "https://api-iam.intercom.io",
+          app_id: "c9gojmn0",
+          name: userDisplayName,
+          email: userEmail,
+          user_id: userId,
+          user_photo: userPhotoUrl,
+        });
+      }
+    };
+    bootIntercom();
+  }, [userId, userEmail, userDisplayName, userPhotoUrl]);
+  
+
+
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
