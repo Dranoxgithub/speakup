@@ -12,11 +12,11 @@ import { getAuth } from "@firebase/auth";
 
 const MAX_FILE_SIZE = 1e+7
 
-const AddVoicePopup = (props) => {
+const AddVoiceUploadFilePopup = (props) => {
     const [dragActive, setDragActive] = useState(false);
     const [files, setFiles] = useState([]);
     const [uploading, setUploading] = useState(false)
-    const [voiceName, setVoiceName] = useState('')
+    // const [voiceName, setVoiceName] = useState('')
 
     const [errorMessage, setErrorMessage] = useState()
 
@@ -142,14 +142,14 @@ const AddVoicePopup = (props) => {
                     Sample quality is more important than quantity. Use clear, loud, and expresive samples with minimal background noise and no music. 5 minutes of audio is enough.
                 </p>
 
-                <p className="scriptSettingsText" style={{alignSelf: 'flex-start', color: '#828282'}}>Give your voice a name</p>
+                {/* <p className="scriptSettingsText" style={{alignSelf: 'flex-start', color: '#828282'}}>Give your voice a name</p>
                 <input
                     type="text"
                     value={voiceName}
                     onChange={(e) => setVoiceName(e.target.value)}
                     className="customizedInput"
                     disabled={uploading}
-                />
+                /> */}
 
                 <p className="scriptSettingsText" style={{alignSelf: 'flex-start', color: '#828282'}}>Upload voice samples</p>
 
@@ -207,4 +207,4 @@ const AddVoicePopup = (props) => {
     )
 }
 
-export default AddVoicePopup
+export default AddVoiceUploadFilePopup

@@ -1,13 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
-import AddVoicePopup from "./AddVoicePopup";
+import { BsSoundwave } from "react-icons/bs";
+import { MdFileUpload } from "react-icons/md";
+import AddVoiceUploadFilePopup from "./AddVoiceUploadFilePopup";
+import AddVoiceRecordNowPopup from "./AddVoiceRecordNowPopup";
 
 export const YOUR_OWN_VOICE = "Your Own Voice";
 
 export const VoiceSettings = (props) => {
   const [isVoicePreviewShown, setIsVoicePreviewShown] = useState(false);
-  const [isCloneVoiceShown, setIsCloneVoiceShown] = useState(false);
+  const [isUploadFilePopupShown, setIsUploadFilePopupShown] = useState(false);
+  const [isRecordNowPopupShown, setIsRecordNowPopupShown] = useState(false)
+
+  const [showAddVoiceDropdown, setShowAddVoiceDropdown] = useState(false)
 
   const voiceSelectionDivRef = useRef(null);
   const voicePreviewDivRef = useRef(null);
@@ -32,6 +38,7 @@ export const VoiceSettings = (props) => {
       !voiceSelectionDivRef.current.contains(event.target)
     ) {
       setIsVoicePreviewShown(false);
+      setShowAddVoiceDropdown(false)
     }
   };
 
@@ -97,11 +104,22 @@ export const VoiceSettings = (props) => {
     setIsVoicePreviewShown(false);
   };
 
-  const handleCloneVoice = () => {
+  const handleRecordNow = () => {
     if (!props.canCloneVoice) {
       props.setShowUpgradePlanAlert(true)
     } else {
-      setIsCloneVoiceShown((prevValue) => !prevValue);
+      setIsRecordNowPopupShown((prevValue) => !prevValue)
+      setShowAddVoiceDropdown(false)
+      setIsVoicePreviewShown(false)
+    }
+  }
+
+  const handleUploadFile = () => {
+    if (!props.canCloneVoice) {
+      props.setShowUpgradePlanAlert(true)
+    } else {
+      setIsUploadFilePopupShown((prevValue) => !prevValue);
+      setShowAddVoiceDropdown(false)
       setIsVoicePreviewShown(false);
     }
   }
@@ -137,12 +155,36 @@ export const VoiceSettings = (props) => {
           )}
         </div>
         {(props.showAddVoice == null || props.showAddVoice) && ( // show this section when either this field is not defined(for backward compatability) or it is set to true
-          <button
-            className="addVoiceButton"
-            onClick={handleCloneVoice}
-          >
-            <p className="plainText">+ Add Voice</p>
-          </button>
+          <div className="addVoiceContainer">
+            <button
+              className="addVoiceButton"
+              onClick={() => setShowAddVoiceDropdown((prevValue) => !prevValue)}
+            >
+              <p className="plainText">+ Add Voice</p>
+            </button>
+
+            { showAddVoiceDropdown && 
+              <div className="selectionDropDownContainer" style={{width: '100%', marginTop: '10px'}}>
+                <div
+                  className="selectionDropDownItem"
+                  style={{padding: '15px 20px', justifyContent: 'space-between'}}
+                  onClick={handleRecordNow}
+                >
+                  <BsSoundwave size={25} />
+                  <p className="plainText" style={{fontWeight: '500'}}>Record now</p>
+                </div>
+
+                <div
+                  className="selectionDropDownItem"
+                  style={{padding: '15px 20px', justifyContent: 'space-between'}}
+                  onClick={handleUploadFile}
+                >
+                  <MdFileUpload size={25} />
+                  <p className="plainText" style={{fontWeight: '500'}}>Upload a file</p>
+                </div>
+              </div>
+            }
+          </div>
         )}
       </div>
 
@@ -201,9 +243,21 @@ export const VoiceSettings = (props) => {
         </div>
       )}
 
-      {isCloneVoiceShown && (
-        <AddVoicePopup
-          closeModal={() => setIsCloneVoiceShown(false)}
+      {isUploadFilePopupShown && (
+        <AddVoiceUploadFilePopup
+          closeModal={() => setIsUploadFilePopupShown(false)}
+          setVoice={(voiceId) => {
+            props.setVoiceId(voiceId);
+            props.setSelectedVoice(YOUR_OWN_VOICE);
+            setIsVoicePreviewShown(false);
+          }}
+          showNotificationTemporarily={props.showNotificationTemporarily}
+        />
+      )}
+
+      {isRecordNowPopupShown && (
+        <AddVoiceRecordNowPopup 
+          closeModal={() => setIsRecordNowPopupShown(false)}
           setVoice={(voiceId) => {
             props.setVoiceId(voiceId);
             props.setSelectedVoice(YOUR_OWN_VOICE);

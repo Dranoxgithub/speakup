@@ -22,7 +22,7 @@ import Footer from '../components/Footer'
 import Header from "../components/Header";
 import MobileDisplayNotReadyAlert from "../components/MobileDisplayNotReadyAlert";
 
-const PREMIUM_SUBSCRIPTION_PLAN = ["Creator", "Professional"];
+const PREMIUM_SUBSCRIPTION_PLAN = ["Creator", "Growing Business"];
 
 const DashBoardScreen = () => {
   const location = useLocation();
@@ -221,8 +221,8 @@ const DashBoardScreen = () => {
       if (user) {
         setUserVoiceId(user["clone_voice_id"]);
         const subscriptionPlan = user["subscription"];
-        setCanEditAd(PREMIUM_SUBSCRIPTION_PLAN.includes(subscriptionPlan));
-        setCanCloneVoice(PREMIUM_SUBSCRIPTION_PLAN.includes(subscriptionPlan));
+        setCanEditAd(PREMIUM_SUBSCRIPTION_PLAN.filter(z => subscriptionPlan.includes(z)).length != 0)
+        setCanCloneVoice(PREMIUM_SUBSCRIPTION_PLAN.filter(z => subscriptionPlan.includes(z)).length != 0);
         const totalAllowedLength = user["quota"] ? +user["quota"] : 0
         setTotalAllowedLength(totalAllowedLength);
         dispatch(setUserTotalAllowedLength(totalAllowedLength))

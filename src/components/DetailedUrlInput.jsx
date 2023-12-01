@@ -510,8 +510,8 @@ const DetailedUrlInput = (props) => {
           showNotificationTemporarily={showNotificationTemporarily}
         />
         {notification && (
-          <div class="alert alert-success" role="alert">
-            <h4 class="alert-heading">Job successfully submitted!</h4>
+          <div className="alert alert-success" role="alert">
+            <h4 className="alert-heading">Job successfully submitted!</h4>
             <p>
               You need to wait for another minute before submitting new jobs.
             </p>
