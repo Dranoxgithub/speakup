@@ -23,6 +23,7 @@ import {
   getUserTotalUsedLength,
 } from "../redux/userSlice";
 import MusicSettings from "../components/MusicSettings";
+import WaitForResult from "../components/WaitForResult";
 
 const PodcastEditScreen = () => {
   const location = useLocation();
@@ -33,6 +34,7 @@ const PodcastEditScreen = () => {
   const totalUsedLength = useAppSelector(getUserTotalUsedLength);
 
   const [contentId, setContentId] = useState();
+  const [title, setTitle] = useState()
   const [estimatedDuration, setEstimatedDuration] = useState(0);
   const [bodyParas, setBodyParas] = useState([]);
   const [error, setError] = useState();
@@ -44,6 +46,7 @@ const PodcastEditScreen = () => {
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
   const [loading, setLoading] = useState(false);
   const [notification, setShowNotification] = useState(false);
+
   const showNotificationTemporarily = () => {
     setShowNotification(true);
     setTimeout(() => {
@@ -230,6 +233,9 @@ const PodcastEditScreen = () => {
     const processSnapshot = async (doc) => {
       const content = doc.data();
       if (content) {
+        if (content.original_content) {
+          setTitle(content.original_content.title)
+        }
         if (content.result) {
           var currentBody = [];
           if (content.result.script.paragraphs) {
@@ -241,7 +247,7 @@ const PodcastEditScreen = () => {
           if (content.result.script.outro) {
             currentBody.push(content.result.script.outro);
           }
-          setBodyParas([...currentBody]);
+          // setBodyParas([...currentBody]);
         }
       }
     };
@@ -318,7 +324,7 @@ const PodcastEditScreen = () => {
           <Loading />
         </div>
       ) : (
-        <div className="dashboardContainer">
+        <div className="dashboardContainer" style={{minHeight: '100vh', justifyContent: 'flex-start'}}>
           <Header
             isDashboard={false}
             goBackToDashboard={goBackToDashboard}
@@ -349,7 +355,7 @@ const PodcastEditScreen = () => {
                   margin: "60px 0px 30px 0px",
                 }}
               >
-                {location.state.title}
+                {title}
               </p>
 
               {notification && (
@@ -358,84 +364,88 @@ const PodcastEditScreen = () => {
                 </div>
               )}
 
-              {bodyParas &&
-                bodyParas.map((item, index) => (
-                  <EditingParagraph
-                    width={"900px"}
-                    paragraphTitle={getParagraphTitle(index, bodyParas.length)}
-                    item={item}
-                    index={index}
-                    handleTextareaChange={handleTextareaChange}
-                    handleTextareaDelete={handleTextareaDelete}
-                    handleInsertBelow={handleInsertBelow}
-                    canDelete={bodyParas.length > 1}
-                    canInsert={index != bodyParas.length - 1}
+              {bodyParas && bodyParas.length > 0 ?
+                <div>
+                  {bodyParas.map((item, index) => (
+                    <EditingParagraph
+                      width={"900px"}
+                      paragraphTitle={getParagraphTitle(index, bodyParas.length)}
+                      item={item}
+                      index={index}
+                      handleTextareaChange={handleTextareaChange}
+                      handleTextareaDelete={handleTextareaDelete}
+                      handleInsertBelow={handleInsertBelow}
+                      canDelete={bodyParas.length > 1}
+                      canInsert={index != bodyParas.length - 1}
+                    />
+                  ))}
+
+                  <MusicSettings 
+                    backgroundMusicVolume={backgroundMusicVolume}
+                    setBackgroundMusicVolume={setBackgroundMusicVolume}
+                    scrollToView={true}
                   />
-                ))}
+                  
+                  <VoiceSettings
+                    voiceLibrary={voiceLibrary}
+                    setVoiceLibrary={setVoiceLibrary}
+                    selectedVoice={selectedVoice}
+                    setSelectedVoice={setSelectedVoice}
+                    setVoiceId={setVoiceId}
+                    showAddVoice={false}
+                    scrollToView={true}
+                    canCloneVoice={false}
+                    setShowUpgradePlanAlert={() => {}}
+                    showNotificationTemporarily={() => {}}
+                  />
 
-              <MusicSettings 
-                backgroundMusicVolume={backgroundMusicVolume}
-                setBackgroundMusicVolume={setBackgroundMusicVolume}
-                scrollToView={true}
-              />
-              
-              <VoiceSettings
-                voiceLibrary={voiceLibrary}
-                setVoiceLibrary={setVoiceLibrary}
-                selectedVoice={selectedVoice}
-                setSelectedVoice={setSelectedVoice}
-                setVoiceId={setVoiceId}
-                showAddVoice={false}
-                scrollToView={true}
-                canCloneVoice={false}
-                setShowUpgradePlanAlert={() => {}}
-                showNotificationTemporarily={() => {}}
-              />
-
-              <div className="editPageSubmitButtonGroup">
-                {loading ? (
-                  <Loading />
-                ) : (
                   <div className="editPageSubmitButtonGroup">
-                    <button
-                      className="editPageSubmitButton"
-                      onClick={showLoadingWhileSavingEdit}
-                    >
-                      <p
-                        className="plainText"
-                        style={{ fontSize: "20px", fontWeight: "800" }}
-                      >
-                        Save Draft
-                      </p>
-                    </button>
-                    <button
-                      className="editPageSubmitButtonPurple"
-                      onClick={generateAudioOnly}
-                    >
-                      <p
-                        className="plainText"
-                        style={{
-                          fontSize: "20px",
-                          color: "#fff",
-                          fontWeight: "800",
-                        }}
-                      >
-                        Generate Audio
-                      </p>
-                      <p
-                        className="plainText"
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "400",
-                          color: "#ddd",
-                        }}
-                      >
-                        Estimated duration: {Math.round(estimatedDuration)} min
-                      </p>
-                    </button>
+                    {loading ? (
+                      <Loading />
+                    ) : (
+                      <div className="editPageSubmitButtonGroup">
+                        <button
+                          className="editPageSubmitButton"
+                          onClick={showLoadingWhileSavingEdit}
+                        >
+                          <p
+                            className="plainText"
+                            style={{ fontSize: "20px", fontWeight: "800" }}
+                          >
+                            Save Draft
+                          </p>
+                        </button>
+                        <button
+                          className="editPageSubmitButtonPurple"
+                          onClick={generateAudioOnly}
+                        >
+                          <p
+                            className="plainText"
+                            style={{
+                              fontSize: "20px",
+                              color: "#fff",
+                              fontWeight: "800",
+                            }}
+                          >
+                            Generate Audio
+                          </p>
+                          <p
+                            className="plainText"
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              color: "#ddd",
+                            }}
+                          >
+                            Estimated duration: {Math.round(estimatedDuration)} min
+                          </p>
+                        </button>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                </div> : 
+                <WaitForResult />
+            }
             </div>
           )}
         </div>

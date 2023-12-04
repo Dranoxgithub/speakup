@@ -207,7 +207,10 @@ const DetailedUrlInput = (props) => {
       // one time acknowledgement for word count
       setUserAckWordCount(false);
       console.log("calling onCreatePodcast in wordCountCheck");
-      onCreatePodcast();
+      const response = await onCreatePodcast();
+      if (response) {
+        navigate(`/edit?contentId=${response.doc_ref}`);
+      }
     } else {
       setLoading(false);
       setIsPopupOpen(true);
@@ -304,16 +307,19 @@ const DetailedUrlInput = (props) => {
             withMusic: backgroundMusicVolume && backgroundMusicVolume != 0 ? true : false,
             bgmVolume: backgroundMusicVolume,
           };
-          const errorMessage = await generatePodcast(
+          const response = await generatePodcast(
             userIdToken,
             userId,
             setLoading,
             inputParams
           );
-          props.setErrorMessage(errorMessage);
-          if (!errorMessage) {
+          if (response === 'string') {
+            props.setErrorMessage(response);
+            return undefined
+          } else {
             showNotificationTemporarily();
             props.setInputContent("");
+            return response
           }
         } else {
           navigate("/login", {
@@ -339,16 +345,19 @@ const DetailedUrlInput = (props) => {
           totalLength: totalMinLength,
           scriptOnly: scriptOnly,
         };
-        const errorMessage = await generatePodcast(
+        const response = await generatePodcast(
           userIdToken,
           userId,
           setLoading,
           inputParams
         );
-        props.setErrorMessage(errorMessage);
-        if (!errorMessage) {
+        if (response === 'string') {
+          props.setErrorMessage(response);
+          return undefined
+        } else {
           showNotificationTemporarily();
           props.setInputContent("");
+          return response
         }
       } else {
         navigate("/login", {

@@ -86,7 +86,7 @@ export const generatePodcast = async (
       return await response.text();
     } else {
       setLoading(false);
-      return undefined;
+      return await response.json();
     }
   } catch (error) {
     setLoading(false);
