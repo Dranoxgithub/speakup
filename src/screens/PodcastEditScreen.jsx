@@ -247,7 +247,7 @@ const PodcastEditScreen = () => {
           if (content.result.script.outro) {
             currentBody.push(content.result.script.outro);
           }
-          // setBodyParas([...currentBody]);
+          setBodyParas([...currentBody]);
         }
       }
     };
