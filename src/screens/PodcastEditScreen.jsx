@@ -24,6 +24,7 @@ import {
 } from "../redux/userSlice";
 import MusicSettings from "../components/MusicSettings";
 import WaitForResult from "../components/WaitForResult";
+import LoadingAnimation from "../components/LoadingAnimation";
 
 const PodcastEditScreen = () => {
   const location = useLocation();
@@ -321,7 +322,7 @@ const PodcastEditScreen = () => {
     <div>
       {fetchingUser ? (
         <div style={{padding: '30%'}}>
-          <Loading />
+          <LoadingAnimation />
         </div>
       ) : (
         <div className="dashboardContainer" style={{minHeight: '100vh', justifyContent: 'flex-start'}}>
