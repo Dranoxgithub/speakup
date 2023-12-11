@@ -7,7 +7,6 @@ import {
 } from "../util/firebaseUtils";
 import PodcastResultPreview from "../components/PodcastResultPreview";
 import { getStorage, ref, getBlob } from "firebase/storage";
-import Loading from "../components/Loading";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { getUserId, getUserEmail, setUserTotalAllowedLength, setUserTotalUsedLength, getUserDisplayName, getUserProfilePic } from "../redux/userSlice";
 import { v4 as uuidv4 } from "uuid";
@@ -21,6 +20,7 @@ import pLimit from 'p-limit'
 import Footer from '../components/Footer'
 import Header from "../components/Header";
 import MobileDisplayNotReadyAlert from "../components/MobileDisplayNotReadyAlert";
+import LoadingAnimation from "../components/LoadingAnimation";
 
 const PREMIUM_SUBSCRIPTION_PLAN = ["Creator", "Growing Business"];
 
@@ -356,7 +356,7 @@ const DashBoardScreen = () => {
     <div>
       {fetchingUser ? (
         <div style={{padding: '30%'}}>
-          <Loading />
+          <LoadingAnimation />
         </div>
       ) : (
         <div className="dashboardContainer">
