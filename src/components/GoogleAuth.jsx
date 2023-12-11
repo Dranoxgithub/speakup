@@ -37,7 +37,10 @@ const GoogleAuth = (props) => {
                     hostName: props.hostName,
                     voiceId: props.voiceId,
                     totalLength: props.totalLength,
-                    scriptOnly: props.scriptOnly
+                    scriptOnly: props.scriptOnly,
+                    withMusic: props.withMusic,
+                    bgmVolume: props.bgmVolume,
+                    language: props.language
                 }
                 const response = await generatePodcast(
                     user.accessToken, 
@@ -54,7 +57,10 @@ const GoogleAuth = (props) => {
                     hostName: props.hostName,
                     voiceId: props.voiceId,
                     totalLength: props.totalLength,
-                    scriptOnly: props.scriptOnly
+                    scriptOnly: props.scriptOnly,
+                    withMusic: props.withMusic,
+                    bgmVolume: props.bgmVolume,
+                    language: props.language
                 }
                 const response = await generatePodcast(
                     user.accessToken, 

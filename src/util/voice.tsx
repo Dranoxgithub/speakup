@@ -9,14 +9,6 @@ export const AVAILABLE_VOICES = [
   { name: "Victoria", tags: ["british", "female", "middle-aged"] },
   { name: "Zeus", tags: ["british", "male", "middle-aged"] },
 ];
-export const AVAILABLE_VOICES_NAMES = [
-  "Alex",
-  "Bruce",
-  "Joanne",
-  "Valley Girl",
-  "Victoria",
-  "Zeus",
-];
 
 export const getUserVoicePreviewAudio = async (userId: string) => {
   const app = initializeFirebaseApp();

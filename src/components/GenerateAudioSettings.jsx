@@ -1,8 +1,9 @@
 import { useState } from "react";
 import UpgradePlanAlert from "./UpgradePlanAlert";
 import { VoiceSettings } from "./VoiceSettings";
+import PodcastSettings from "./PodcastSettings";
+import LanguageSettings from "./LanguageSettings";
 import LengthSettings from "./LengthSettings";
-import ScriptSettings from "./ScriptSettings";
 import MusicSettings from "./MusicSettings";
 
 const GenerateAudioSettings = (props) => {
@@ -10,7 +11,14 @@ const GenerateAudioSettings = (props) => {
 
   return (
     <div>
+      <LanguageSettings 
+        selectedLanguage={props.selectedLanguage}
+        setSelectedLanguage={props.setSelectedLanguage}
+      />
+
       <VoiceSettings
+        selectedLanguage={props.selectedLanguage}
+        setSelectedLanguage={props.setSelectedLanguage}
         voiceLibrary={props.voiceLibrary}
         setVoiceLibrary={props.setVoiceLibrary}
         selectedVoice={props.selectedVoice}
@@ -23,20 +31,20 @@ const GenerateAudioSettings = (props) => {
         showNotificationTemporarily={props.showNotificationTemporarily}
       />
 
-      <MusicSettings 
+      {/* <MusicSettings 
         backgroundMusicVolume={props.backgroundMusicVolume}
         setBackgroundMusicVolume={props.setBackgroundMusicVolume}
         scrollToView={false}
-      />
+      /> */}
 
-      <LengthSettings
+      {/* <LengthSettings
         totalMinLength={props.totalMinLength}
         setTotalMinLength={props.setTotalMinLength}
         totalMaxLength={props.totalMaxLength}
         setTotalMaxLength={props.setTotalMaxLength}
-      />
+      /> */}
 
-      <ScriptSettings
+      <PodcastSettings
         scriptOnly={props.scriptOnly}
         setScriptOnly={props.setScriptOnly}
         adContent={props.adContent}
@@ -47,6 +55,12 @@ const GenerateAudioSettings = (props) => {
         setHostName={props.setHostName}
         setShowUpgradePlanAlert={setShowUpgradePlanAlert}
         canEditAd={props.canEditAd}
+        backgroundMusicVolume={props.backgroundMusicVolume}
+        setBackgroundMusicVolume={props.setBackgroundMusicVolume}
+        totalMinLength={props.totalMinLength}
+        setTotalMinLength={props.setTotalMinLength}
+        totalMaxLength={props.totalMaxLength}
+        setTotalMaxLength={props.setTotalMaxLength}
       />
 
       {showUpgradePlanAlert && (

@@ -10,6 +10,7 @@ const DEFAULT_PARAMS = {
   scriptOnly: false,
   withMusic: true,
   bgmVolume: 1.3,
+  language: 'English',
   tone: "narrative",
   ad: AD_CONTENT,
 };
@@ -62,6 +63,7 @@ export const generatePodcast = async (
       script_only: inputParams.scriptOnly ?? DEFAULT_PARAMS.scriptOnly,
       with_music: inputParams.withMusic ?? DEFAULT_PARAMS.withMusic,
       bgm_volume: inputParams.bgmVolume ?? DEFAULT_PARAMS.bgmVolume,
+      language: inputParams.language ?? DEFAULT_PARAMS.language,
       tone: inputParams.tone ?? DEFAULT_PARAMS.tone,
     };
 

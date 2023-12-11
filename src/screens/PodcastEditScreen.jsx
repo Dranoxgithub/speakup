@@ -10,7 +10,6 @@ import { callAudioOnlyEndpoint } from "../util/helperFunctions";
 import {
   AVAILABLE_VOICES,
   getUserVoicePreviewAudio,
-  AVAILABLE_VOICES_NAMES,
 } from "../util/voice";
 import { getStorage, ref, getBlob } from "@firebase/storage";
 import { VoiceSettings, YOUR_OWN_VOICE } from "../components/VoiceSettings";
@@ -277,7 +276,7 @@ const PodcastEditScreen = () => {
 
           user.user_saved.map(async (item) => {
             if (item.content_id === contentId && item.voice) {
-              if (AVAILABLE_VOICES_NAMES.includes(item.voice)) {
+              if (AVAILABLE_VOICES.filter(voice => voice.name === item.voice).length > 0) {
                 setSelectedVoice(item.voice);
               } else {
                 // when it is voice id, set it as your own voice

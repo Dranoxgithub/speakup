@@ -12,8 +12,11 @@ const LoginScreen = () => {
     const [hostName, setHostName] = useState()
     const [voiceId, setVoiceId] = useState()
     const [totalLength, setTotalLength] = useState()
-    const [contentId, setContentid] = useState()
+    const [contentId, setContentId] = useState()
     const [scriptOnly, setScriptOnly] = useState()
+    const [withMusic, setWithMusic] = useState()
+    const [bgmVolume, setBgmVolume] = useState()
+    const [language, setLanguage] = useState()
 
     const [isMobileView, setIsMobileView] = useState(false)
     const [showMobileDisplayNotReadyAlert, setShowMobileDisplayNotReadyAlert] = useState(true)
@@ -31,6 +34,9 @@ const LoginScreen = () => {
             queryParams.has('voiceId') && setVoiceId(queryParams.get('voiceId'))
             queryParams.has('totalLength') && setTotalLength(queryParams.get('totalLength'))
             queryParams.has(`scriptOnly`) && setScriptOnly(queryParams.get(`scriptOnly`))
+            queryParams.has(`withMusic`) && setWithMusic(queryParams.get(`withMusic`))
+            queryParams.has(`bgmVolume`) && setBgmVolume(queryParams.get(`bgmVolume`))
+            queryParams.has(`language`) && setLanguage(queryParams.get(`language`))
         }
 
         const populateContentFromState = () => {
@@ -40,8 +46,11 @@ const LoginScreen = () => {
             setHostName(location.state.hostName)
             setVoiceId(location.state.voiceId)
             setTotalLength(location.state.totalLength)
-            setContentid(location.state.contentId)
+            setContentId(location.state.contentId)
             setScriptOnly(location.state.scriptOnly)
+            setWithMusic(location.state.withMusic)
+            setBgmVolume(location.state.bgmVolume)
+            setLanguage(location.state.language)
         }
 
         const populateContent = async () => {
@@ -78,6 +87,9 @@ const LoginScreen = () => {
                     totalLength={totalLength}
                     contentId={contentId}
                     scriptOnly={scriptOnly}
+                    withMusic={withMusic}
+                    bgmVolume={bgmVolume}
+                    language={language}
                 />
                 <p className='plainText14px' style={{color: '#777777', fontWeight: '500', marginLeft: '3px', marginTop: '40px'}}>
                     By continuing, you agree to SpeakUp’s <a href="https://startspeakup.com/legal/terms-and-conditions" style={{ color: '#777777'}}>Terms of Service</a>. Read our <a href="https://startspeakup.com/legal/privacy-policy" style={{ color: '#777777'}} >Privacy Policy</a>.

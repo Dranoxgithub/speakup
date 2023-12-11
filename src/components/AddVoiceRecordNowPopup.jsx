@@ -7,6 +7,11 @@ import { getStorage, ref, uploadBytes, listAll, deleteObject } from "firebase/st
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { getAuth } from "@firebase/auth";
 import { cloneVoice } from "../util/helperFunctions";
+import MultiLanguageSelection from "./MultiLanguageSelection";
+
+const LANGUAGE_TO_SCRIPT = {
+    "English": "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+}
 
 const AddVoiceRecordNowPopup = (props) => {
     const [recordingStatus, setRecordingStatus] = useState('initial')
@@ -129,7 +134,16 @@ const AddVoiceRecordNowPopup = (props) => {
                     onClick={(e) => closeModal(e)}
                 />
                 <p className='plainText' style={{fontSize: '20px', margin: '40px 0px 10px 0px', alignSelf: 'flex-start'}}>Clone your voice</p>
-                <p className='plainText' style={{fontSize: '16px', fontWeight: '400', textAlign: 'initial', color: '#828282', marginBottom: '60px'}}>
+                
+                <div style={{display: 'flex', flexDirection: 'row', margin: '15px 0px 30px 0px'}}>
+                    <p className="plainText" style={{fontWeight: '400', fontSize: '16px', paddingTop: '2px'}}>Languages:</p>
+                    <MultiLanguageSelection 
+                        selectedLanguage={props.selectedLanguage}
+                        setSelectedLanguage={props.setSelectedLanguage}
+                    />
+                </div>
+
+                <p className='plainText' style={{fontSize: '16px', fontWeight: '400', textAlign: 'initial', color: '#828282', marginBottom: '30px'}}>
                     First, record the statement below to clone your voice to use for podcast. For best results, read with range in your voice and tone in a quiet environment. 
                 </p>
 
@@ -148,7 +162,7 @@ const AddVoiceRecordNowPopup = (props) => {
                     </p>
 
                     <p className='plainText' style={{fontSize: '16px', fontWeight: '500', textAlign: 'initial', marginBottom: '45px'}}>
-                        is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                        {LANGUAGE_TO_SCRIPT[props.selectedLanguage]}
                     </p>
                 </div>
 

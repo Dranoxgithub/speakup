@@ -18,6 +18,38 @@ import UpgradePlanAlert from "./UpgradePlanAlert";
 import GenerateAudioSettings from "./GenerateAudioSettings";
 import CreateInfoHelper from "./CreateInfoHelper";
 
+export const AVAILABLE_LANGUAGES = [
+  'English',
+  'Japanese',
+  'Chinese',
+  'German',
+  'Hindi',
+  'French',
+  'Korean',
+  'Portuguese',
+  'Italian',
+  'Spanish',
+  'Indonesian',
+  'Dutch',
+  'Turkish',
+  'Filipino',
+  'Polish',
+  'Swedish',
+  'Bulgarian',
+  'Romanian',
+  'Arabic',
+  'Czech',
+  'Greek',
+  'Finnish',
+  'Croatian',
+  'Malay',
+  'Slovak',
+  'Danish',
+  'Tamil',
+  'Ukrainian',
+  'Russian'
+]
+
 export const PODCAST_STYLES = [
   { name: "Brief (5 - 10 min)", minLength: 5, maxLength: 10 },
   { name: "Medium (10 - 20 min)", minLength: 10, maxLength: 20 },
@@ -67,13 +99,14 @@ const DetailedUrlInput = (props) => {
 
   const [loading, setLoading] = useState(false);
 
+  const [selectedLanguage, setSelectedLanguage] = useState('English')
   const [podcastTitle, setPodcastTitle] = useState();
   const [hostName, setHostName] = useState();
   const [voiceId, setVoiceId] = useState();
   const [selectedVoice, setSelectedVoice] = useState();
-  const [totalMinLength, setTotalMinLength] = useState();
-  const [totalMaxLength, setTotalMaxLength] = useState();
-  const [backgroundMusicVolume, setBackgroundMusicVolume] = useState()
+  const [totalMinLength, setTotalMinLength] = useState(5);
+  const [totalMaxLength, setTotalMaxLength] = useState(10);
+  const [backgroundMusicVolume, setBackgroundMusicVolume] = useState(1.3)
   const [adContent, setAdContent] = useState(AD_CONTENT);
 
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
@@ -306,6 +339,7 @@ const DetailedUrlInput = (props) => {
             scriptOnly: scriptOnly,
             withMusic: backgroundMusicVolume && backgroundMusicVolume != 0 ? true : false,
             bgmVolume: backgroundMusicVolume,
+            language: selectedLanguage
           };
           const response = await generatePodcast(
             userIdToken,
@@ -331,6 +365,9 @@ const DetailedUrlInput = (props) => {
               voiceId: voice_for_submission,
               totalLength: totalMaxLength,
               scriptOnly: scriptOnly,
+              withMusic: backgroundMusicVolume && backgroundMusicVolume != 0 ? true : false,
+              bgmVolume: backgroundMusicVolume,
+              language: selectedLanguage
             },
           });
         }
@@ -344,6 +381,9 @@ const DetailedUrlInput = (props) => {
           voiceId: voice_for_submission,
           totalLength: totalMinLength,
           scriptOnly: scriptOnly,
+          withMusic: backgroundMusicVolume && backgroundMusicVolume != 0 ? true : false,
+          bgmVolume: backgroundMusicVolume,
+          language: selectedLanguage
         };
         const response = await generatePodcast(
           userIdToken,
@@ -369,6 +409,9 @@ const DetailedUrlInput = (props) => {
             voiceId: voice_for_submission,
             totalLength: totalMinLength,
             scriptOnly: scriptOnly,
+            withMusic: backgroundMusicVolume && backgroundMusicVolume != 0 ? true : false,
+            bgmVolume: backgroundMusicVolume,
+            language: selectedLanguage
           },
         });
       }
@@ -494,6 +537,8 @@ const DetailedUrlInput = (props) => {
         }
 
         <GenerateAudioSettings
+          selectedLanguage={selectedLanguage}
+          setSelectedLanguage={setSelectedLanguage}
           selectedVoice={selectedVoice}
           setSelectedVoice={setSelectedVoice}
           voiceLibrary={voiceLibrary}

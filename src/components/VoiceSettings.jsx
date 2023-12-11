@@ -257,6 +257,8 @@ export const VoiceSettings = (props) => {
 
       {isRecordNowPopupShown && (
         <AddVoiceRecordNowPopup 
+          selectedLanguage={props.selectedLanguage}
+          setSelectedLanguage={props.setSelectedLanguage}
           closeModal={() => setIsRecordNowPopupShown(false)}
           setVoice={(voiceId) => {
             props.setVoiceId(voiceId);

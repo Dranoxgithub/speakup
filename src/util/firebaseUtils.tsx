@@ -25,7 +25,8 @@ export async function createUserDocument(uid: string) {
       await setDoc(docRef, { 
         id: uid, 
         quota: 10,
-        user_saved: demos
+        user_saved: demos,
+        subscription: 'Free'
       });
       return true;
     }
