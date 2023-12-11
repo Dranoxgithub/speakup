@@ -7,7 +7,7 @@ import { AiOutlineArrowLeft } from 'react-icons/ai'
 import { getFirestore, onSnapshot, doc } from "firebase/firestore"
 import SubscriptionTable from "../components/SubscriptionTable"
 import Footer from "../components/Footer"
-import Loading from "../components/Loading"
+import LoadingAnimation from "../components/LoadingAnimation"
 
 const SubscriptionScreen = () => {
     const navigate = useNavigate()
@@ -99,7 +99,7 @@ const SubscriptionScreen = () => {
         <div style={{height: '100%'}}>
             {fetchingUser ? (
                 <div style={{padding: '30%'}}>
-                    <Loading />
+                    <LoadingAnimation />
                 </div>
             ) :
                 <div className="resultContainer">

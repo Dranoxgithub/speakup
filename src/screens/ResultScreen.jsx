@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { getStorage, ref, getBlob } from "firebase/storage"
 import { getDocument, initializeFirebaseApp } from "../util/firebaseUtils";
-import Loading from "../components/Loading";
 import { useAppSelector } from "../redux/hooks";
 import { getUserId } from "../redux/userSlice";
 import { secondsToLengthText } from "../util/helperFunctions";
@@ -12,6 +11,7 @@ import Header from "../components/Header";
 import UpgradePlanAlert from "../components/UpgradePlanAlert";
 import { getUserTotalAllowedLength, getUserTotalUsedLength } from "../redux/userSlice"
 import { MdOutlineContentCopy } from 'react-icons/md'
+import LoadingAnimation from "../components/LoadingAnimation";
 
 export const DEMO_CONTENTS = ['Rfg4OgKngtJ6eSmrD17Q', 'bZMp8rqMZcs7gZQDWSrg']
 
@@ -223,7 +223,7 @@ const ResultScreen = () => {
         <div>
             {fetchingUser ? (
                 <div style={{padding: '30%'}}>
-                    <Loading />
+                    <LoadingAnimation />
                 </div>
             ) : 
             <div className="dashboardContainer">
