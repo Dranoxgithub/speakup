@@ -180,7 +180,7 @@ const PodcastEditScreen = () => {
         state: { errorMessage: response },
       });
     } else {
-      navigate(`/result?contentId=${response.doc_ref}`)
+      navigate(`/result?contentId=${response.doc_id}`)
     }
   };
 

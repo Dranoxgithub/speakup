@@ -71,10 +71,7 @@ const GoogleAuth = (props) => {
                     errorMessage = response;
                 }
             }
-    
-            // userDoc.isFreeTrialUsed = true; // potential bugs: if the user podcast is not generated successfully, the user will still be marked as used free trial
-            // // another bug: if the user indeed has used free trial, the page don't show the error message
-            // await updateDocument('users', user.uid, userDoc)
+
             if (props.contentId) {
                 navigate(`/result?contentId=${props.contentId}`)
                 return 

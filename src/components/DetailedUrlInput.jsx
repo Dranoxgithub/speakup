@@ -245,7 +245,7 @@ const DetailedUrlInput = (props) => {
         if (scriptOnly) {
           navigate(`/edit?contentId=${response.doc_ref}`);
         } else {
-          navigate(`/result?contentId=${response.doc_ref}`);
+          navigate(`/result?contentId=${response.doc_id}`);
         }
       }
     } else {
