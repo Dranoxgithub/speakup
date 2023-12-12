@@ -12,10 +12,12 @@ import UpgradePlanAlert from "../components/UpgradePlanAlert";
 import { getUserTotalAllowedLength, getUserTotalUsedLength } from "../redux/userSlice"
 import { MdOutlineContentCopy } from 'react-icons/md'
 import LoadingAnimation from "../components/LoadingAnimation";
+import { doc, getFirestore, onSnapshot } from "firebase/firestore";
+import WaitForResult from "../components/WaitForResult";
 
 export const DEMO_CONTENTS = ['Rfg4OgKngtJ6eSmrD17Q', 'bZMp8rqMZcs7gZQDWSrg']
 
-const ResultScreen = () => {
+const PodcastResultScreen = () => {
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
 
@@ -127,7 +129,15 @@ const ResultScreen = () => {
         }
         
         const populateContentFromQueryParams = async (contentId) => {
-            const content = await getDocument('contents', contentId)
+            const app = initializeFirebaseApp();
+            const db = getFirestore(app);
+            onSnapshot(doc(db, 'contents', contentId), async(doc) => {
+                await processContentSnapshot(doc)
+            })
+        }
+
+        const processContentSnapshot = async (doc) => {
+            const content = doc.data()
             if (content) {
                 setTitle(content.original_content.title)
                 if (content.result) {
@@ -242,6 +252,8 @@ const ResultScreen = () => {
                     <div className="dashboardContainer" style={{margin: '0px 0px 150px 0px', width: '950px'}}>
                         <p className="plainText" style={{fontSize: '38px', textAlign: 'initial', margin: '60px 0px', color: '#2B1C50'}}>{title}</p>
                         
+                        {!audioUrl && <WaitForResult page='result' />}
+
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
                             <div className="resultPageContentContainer">
                                 <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', margin: '20px 0px'}}>About</p>
@@ -254,14 +266,16 @@ const ResultScreen = () => {
 
                             <div className="resultPageContentContainer" style={{justifyContent: 'space-between'}}>
                                 <div>
-                                    <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', margin: '20px 0px'}}>Preview</p>
-                                    {duration && <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}}>{secondsToLengthText(duration)}</p>}
+                                    <div>
+                                        <p className="plainText" style={{fontSize: '24px', color: '#2B1C50', margin: '20px 0px'}}>Preview</p>
+                                        { duration && <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}}>{secondsToLengthText(duration)}</p>}
+                                    </div>
+                                    { audioUrl &&
+                                        <audio controls name="podcast" className="audioPlayer">
+                                            <source src={audioUrl} type='audio/mp3' />
+                                        </audio>
+                                    }
                                 </div>
-                                {audioUrl &&
-                                    <audio controls name="podcast" className="audioPlayer">
-                                        <source src={audioUrl} type='audio/mp3' />
-                                    </audio>
-                                }
                             </div>  
 
                             <div style={{width: '200px'}}>
@@ -305,7 +319,6 @@ const ResultScreen = () => {
                 <Footer />
             </div>}
 
-
             {showUpgradePlanAlert && (
                 <UpgradePlanAlert
                 userId={userId}
@@ -316,4 +329,4 @@ const ResultScreen = () => {
     )
 }
 
-export default ResultScreen
+export default PodcastResultScreen

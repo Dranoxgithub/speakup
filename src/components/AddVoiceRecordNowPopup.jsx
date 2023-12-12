@@ -8,10 +8,7 @@ import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { getAuth } from "@firebase/auth";
 import { cloneVoice } from "../util/helperFunctions";
 import MultiLanguageSelection from "./MultiLanguageSelection";
-
-const LANGUAGE_TO_SCRIPT = {
-    "English": "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-}
+import { AVAILABLE_LANGUAGES } from "./DetailedUrlInput";
 
 const AddVoiceRecordNowPopup = (props) => {
     const [recordingStatus, setRecordingStatus] = useState('initial')
@@ -156,13 +153,9 @@ const AddVoiceRecordNowPopup = (props) => {
                     disabled={recording}
                 /> */}
 
-                <div style={{padding:'0px 20px'}}>
-                    <p className='plainText' style={{fontSize: '16px', fontWeight: '400', textAlign: 'initial', marginBottom: '30px'}}>
-                        I want SpeakUp AI to create an artificial version of my voice that I can use to create speech that sounds like me. I am training my voice by reading the following statement:
-                    </p>
-
-                    <p className='plainText' style={{fontSize: '16px', fontWeight: '500', textAlign: 'initial', marginBottom: '45px'}}>
-                        {LANGUAGE_TO_SCRIPT[props.selectedLanguage]}
+                <div style={{padding:'0px 20px', maxHeight: '300px', overflow: 'auto', marginBottom: '20px'}}>
+                    <p className='plainText' style={{fontSize: '16px', fontWeight: '400', textAlign: 'initial', marginBottom: '45px', whiteSpace: 'pre-line'}}>
+                        {AVAILABLE_LANGUAGES.find(item => item.name === props.selectedLanguage).script}
                     </p>
                 </div>
 

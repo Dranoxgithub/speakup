@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import LoginScreen from "./LoginScreen";
-import ResultScreen from "./ResultScreen";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import DashBoardScreen from "./DashBoardScreen";
@@ -15,6 +14,7 @@ import {
 import WebFont from "webfontloader";
 import SubscriptionScreen from "./SubscriptionScreen";
 import PodcastEditScreen from "./PodcastEditScreen";
+import PodcastResultScreen from "./PodcastResultScreen";
 
 const RouterScreen = () => {
   const dispatch = useAppDispatch();
@@ -46,7 +46,7 @@ const RouterScreen = () => {
         <Route path="/" element={<DashBoardScreen />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/dashboard" element={<DashBoardScreen />} />
-        <Route path="/result" element={<ResultScreen />} />
+        <Route path="/result" element={<PodcastResultScreen />} />
         <Route path="/edit" element={<PodcastEditScreen />} />
         <Route path="/subscription" element={<SubscriptionScreen />} />
       </Routes>

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import {RiDeleteBin6Line} from 'react-icons/ri'
 import {RiDeleteBin6Fill} from 'react-icons/ri'
 import {PiDownloadSimpleDuotone, PiDownloadSimpleFill} from 'react-icons/pi'
-import {DEMO_CONTENTS} from '../screens/ResultScreen'
+import {DEMO_CONTENTS} from '../screens/PodcastResultScreen'
 import { secondsToHHMMSS } from "../util/helperFunctions"
 
 const PodcastResultPreview = (props) => {

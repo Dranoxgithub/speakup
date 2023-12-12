@@ -881,6 +881,7 @@
     width: 900px;
     text-align: initial;
     padding: 50px 50px;
+    margin-bottom: 60px;
   }
 
   @keyframes spin {

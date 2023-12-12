@@ -73,8 +73,6 @@ export const generatePodcast = async (
       body.plain_text = inputParams.plainText;
     }
 
-    console.log(`body: ${JSON.stringify(body)}`);
-
     const saveEndpoint =
       "https://unified-save-articles-jcjaqcgmja-uc.a.run.app";
     const requestOptions = {
@@ -113,8 +111,6 @@ export const callAudioOnlyEndpoint = async (idToken, inputParams) => {
       bgm_volume: inputParams.bgmVolume ?? DEFAULT_PARAMS.bgmVolume,
     };
 
-    console.log(`body: ${JSON.stringify(body)}`);
-
     const saveEndpoint =
       "https://generate-audio-endpoint-jcjaqcgmja-uc.a.run.app";
     const requestOptions = {
@@ -128,7 +124,7 @@ export const callAudioOnlyEndpoint = async (idToken, inputParams) => {
       console.log("callAudioOnlyEndpoint 200");
       return await response.text();
     } else {
-      return undefined;
+      return await response.json();
     }
   } catch (error) {
     console.log("callAudioOnlyEndpoint " + error.message);

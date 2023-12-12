@@ -6,15 +6,15 @@ const MultiLanguageSelection = (props) => {
 
     return (
         <div style={{display: 'flex', flexWrap: 'wrap'}}>
-            {AVAILABLE_LANGUAGES.map((language) => (
+            {AVAILABLE_LANGUAGES.map((item) => (
                 <div 
-                    key={language} 
+                    key={item.name} 
                     className="tagText" 
-                    style={props.selectedLanguage === language ? {...basePillStyle, backgroundColor: '#734df6'} : basePillStyle}
-                    onClick={() => props.setSelectedLanguage(language)}
+                    style={props.selectedLanguage === item.name ? {...basePillStyle, backgroundColor: '#734df6'} : basePillStyle}
+                    onClick={() => props.setSelectedLanguage(item.name)}
                 >
-                    <p className="plainText" style={props.selectedLanguage === language ? {...baseTextStyle, color: '#fff', fontWeight: '600'} : baseTextStyle}>
-                        {language}
+                    <p className="plainText" style={props.selectedLanguage === item.name ? {...baseTextStyle, color: '#fff', fontWeight: '600'} : baseTextStyle}>
+                        {item.name}
                     </p>
                 </div>
             ))}

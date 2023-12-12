@@ -173,19 +173,14 @@ const PodcastEditScreen = () => {
     const auth = getAuth(app);
     const userIdToken = await auth.currentUser.getIdToken();
 
-    const errorMessage = await callAudioOnlyEndpoint(userIdToken, inputParams);
+    const response = await callAudioOnlyEndpoint(userIdToken, inputParams);
     setLoading(false);
-    if (!errorMessage) {
+    if (response === 'string') {
       navigate("/dashboard", {
-        replace: true,
-        state: {
-          notification: true,
-        },
+        state: { errorMessage: response },
       });
     } else {
-      navigate("/dashboard", {
-        state: { errorMessage: errorMessage },
-      });
+      navigate(`/result?contentId=${response.doc_ref}`)
     }
   };
 
@@ -444,7 +439,7 @@ const PodcastEditScreen = () => {
                     )}
                   </div>
                 </div> : 
-                <WaitForResult />
+                <WaitForResult page='edit' />
             }
             </div>
           )}
