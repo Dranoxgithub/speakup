@@ -248,7 +248,7 @@ const PodcastEditScreen = () => {
           if (content.result.script.outro) {
             currentBody.push(content.result.script.outro);
           }
-          // setBodyParas([...currentBody]);
+          setBodyParas([...currentBody]);
         }
 
         // console.log(`to send notification: ${toSendNotification}, content status: ${content.status}, is notification sent ${content.isNotificationSent}`)
