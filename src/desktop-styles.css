@@ -1060,4 +1060,8 @@
     z-index: 100;
     /* Ensures it appears above other content */
   }
+
+  #languagePill:hover {
+    background-color: #d9d1fb;
+  }
 /* } */

@@ -8,6 +8,7 @@ const MultiLanguageSelection = (props) => {
         <div style={{display: 'flex', flexWrap: 'wrap'}}>
             {AVAILABLE_LANGUAGES.map((item) => (
                 <div 
+                    id="languagePill"
                     key={item.name} 
                     className="tagText" 
                     style={props.selectedLanguage === item.name ? {...basePillStyle, backgroundColor: '#734df6'} : basePillStyle}
