@@ -137,13 +137,13 @@ const DashBoardScreen = () => {
               item.status == "audio_success" &&
               contentIdEmailSent[contentId] == false
             ) {
-              await sendEmailNotification(contentId);
-              setContentIdEmailSent((prevDict) => ({
-                ...prevDict,
-                [contentId]: true,
-              }));
-              user.user_saved[index].status = "notified";
-              await updateDocument("users", userId, user);
+              // await sendEmailNotification(contentId);
+              // setContentIdEmailSent((prevDict) => ({
+              //   ...prevDict,
+              //   [contentId]: true,
+              // }));
+              // user.user_saved[index].status = "notified";
+              // await updateDocument("users", userId, user);
             }
 
             const content = await getDocument("contents", contentId);
@@ -330,15 +330,15 @@ const DashBoardScreen = () => {
 
   const sendEmailNotification = async (contentId) => {
     const uuid = uuidv4();
-    await updateDocument("mail", uuid, {
-      to: userEmail,
-      template: {
-        name: "toResult",
-        data: {
-          contentId: contentId,
-        },
-      },
-    });
+    // await updateDocument("mail", uuid, {
+    //   to: userEmail,
+    //   template: {
+    //     name: "toResult",
+    //     data: {
+    //       contentId: contentId,
+    //     },
+    //   },
+    // });
   };
 
   const onInputChanged = () => {
