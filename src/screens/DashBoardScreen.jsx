@@ -122,28 +122,28 @@ const DashBoardScreen = () => {
         return limit(async() => {
           try {
             const contentId = item.content_id;
-            setContentIdEmailSent((prevDict) => ({
-              ...prevDict,
-              [contentId]: item.status && item.status == "notified",
-            }));
-
+            
             if (item.length) {
               totalLength += +item.length;
             }
-
-            if (
-              item.status &&
-              item.status == "audio_success" &&
-              contentIdEmailSent[contentId] == false
-            ) {
-              // await sendEmailNotification(contentId);
-              // setContentIdEmailSent((prevDict) => ({
-              //   ...prevDict,
-              //   [contentId]: true,
-              // }));
-              // user.user_saved[index].status = "notified";
-              // await updateDocument("users", userId, user);
-            }
+            
+            // setContentIdEmailSent((prevDict) => ({
+            //   ...prevDict,
+            //   [contentId]: item.status && item.status == "notified",
+            // }));
+            // if (
+            //   item.status &&
+            //   item.status == "audio_success" &&
+            //   contentIdEmailSent[contentId] == false
+            // ) {
+            //   await sendEmailNotification(contentId);
+            //   setContentIdEmailSent((prevDict) => ({
+            //     ...prevDict,
+            //     [contentId]: true,
+            //   }));
+            //   user.user_saved[index].status = "notified";
+            //   await updateDocument("users", userId, user);
+            // }
 
             const content = await getDocument("contents", contentId);
             if (content && 

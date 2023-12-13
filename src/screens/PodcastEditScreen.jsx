@@ -253,7 +253,7 @@ const PodcastEditScreen = () => {
 
         // console.log(`to send notification: ${toSendNotification}, content status: ${content.status}, is notification sent ${content.isNotificationSent}`)
         // if (toSendNotification && content.status === "script_success" && content.isNotificationSent == undefined) {
-        //   sendEmailNotification(contentId)
+        //   await sendEmailNotification(contentId)
         //   updateDocument('contents', contentId, {
         //     isNotificationSent: true
         //   })
