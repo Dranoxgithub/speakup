@@ -143,6 +143,7 @@ export const VoiceSettings = (props) => {
           }
           onClick={() => {
             setIsVoicePreviewShown((prevValue) => !prevValue);
+            setShowAddVoiceDropdown(false)
           }}
         >
           <p className="plainText" id="voiceSettingsText">
@@ -158,7 +159,10 @@ export const VoiceSettings = (props) => {
           <div className="addVoiceContainer">
             <button
               className="addVoiceButton"
-              onClick={() => setShowAddVoiceDropdown((prevValue) => !prevValue)}
+              onClick={() => {
+                setShowAddVoiceDropdown(prevValue => !prevValue)
+                setIsVoicePreviewShown(false)
+              }}
             >
               <p className="plainText">+ Add Voice</p>
             </button>
@@ -191,54 +195,59 @@ export const VoiceSettings = (props) => {
       {isVoicePreviewShown && (
         <div style={{ position: "relative" }} ref={voicePreviewDivRef}>
           <div className="selectionDropDownContainer">
-            {props.voiceLibrary.map((item, index) => (
-              <div key={item.name}>
-                <div
-                  className="selectionDropDownItem"
-                  onClick={() => handleVoiceSelection(item.name)}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    {item.audio &&
-                      (item.isPlaying ? (
-                        <FaPause
-                          size={18}
-                          onClick={(e) => toggleAudio(e, item.name)}
-                          style={{ marginRight: "10px" }}
-                        />
-                      ) : (
-                        <FaPlay
-                          size={18}
-                          onClick={(e) => toggleAudio(e, item.name)}
-                          style={{ marginRight: "10px" }}
-                        />
-                      ))}
-                    <p className="plainText">{item.name}</p>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    {item.tags.map((tag) => (
-                      <div key={tag} className="tagText">
-                        <p style={{ margin: "0px", fontFamily: "Poppins" }}>
-                          {tag}
-                        </p>
+            { props.voiceLibrary.filter(item => item.language === props.selectedLanguage || item.name === YOUR_OWN_VOICE).length > 0 ? 
+                props.voiceLibrary.filter(item => item.language === props.selectedLanguage || item.name === YOUR_OWN_VOICE).map(item => (
+                  <div key={item.name}>
+                    <div
+                      className="selectionDropDownItem"
+                      onClick={() => handleVoiceSelection(item.name)}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        {item.audio &&
+                          (item.isPlaying ? (
+                            <FaPause
+                              size={18}
+                              onClick={(e) => toggleAudio(e, item.name)}
+                              style={{ marginRight: "10px" }}
+                            />
+                          ) : (
+                            <FaPlay
+                              size={18}
+                              onClick={(e) => toggleAudio(e, item.name)}
+                              style={{ marginRight: "10px" }}
+                            />
+                          ))}
+                        <p className="plainText">{item.name}</p>
                       </div>
-                    ))}
+
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        {item.tags.map((tag) => (
+                          <div key={tag} className="tagText">
+                            <p style={{ margin: "0px", fontFamily: "Poppins" }}>
+                              {tag}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
+                )) : 
+                <div style={{padding: '15px 40px', cursor: 'not-allowed'}}>
+                  <p className="plainText" style={{textAlign: 'initial'}}>No voices available for {props.selectedLanguage}. Please clone your own voice.</p>
                 </div>
-              </div>
-            ))}
+            }
           </div>
         </div>
       )}
