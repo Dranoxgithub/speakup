@@ -333,6 +333,32 @@ const PodcastEditScreen = () => {
     }
   };
 
+  const updateBgmVolume = async (bgmVolume) => {
+    setBackgroundMusicVolume(bgmVolume)
+    const user = await getDocument('users', userId)
+    user.user_saved.map(item => {
+        if (item.content_id === contentId) {
+          item.bgm_volume = bgmVolume
+        }
+    })
+    await updateDocument('users', userId, user)
+  }
+
+  const updateSelectedVoice = async (voice) => {
+    setSelectedVoice(voice)
+    const user = await getDocument('users', userId)
+    user.user_saved.map(item => {
+      if (item.content_id === contentId) {
+        if (voice === YOUR_OWN_VOICE) {
+          item.voice = voiceId ?? userVoiceId
+        } else {
+          item.voice = voice
+        }
+      }
+    })
+    await updateDocument('users', userId, user)
+  }
+
   const sendEmailNotification = async (contentId) => {
     const uuid = uuidv4();
     await updateDocument("mail", uuid, {
@@ -412,7 +438,7 @@ const PodcastEditScreen = () => {
 
                   <MusicSettings 
                     backgroundMusicVolume={backgroundMusicVolume}
-                    setBackgroundMusicVolume={setBackgroundMusicVolume}
+                    setBackgroundMusicVolume={updateBgmVolume}
                     scrollToView={true}
                   />
                   
@@ -420,7 +446,7 @@ const PodcastEditScreen = () => {
                     voiceLibrary={voiceLibrary}
                     setVoiceLibrary={setVoiceLibrary}
                     selectedVoice={selectedVoice}
-                    setSelectedVoice={setSelectedVoice}
+                    setSelectedVoice={updateSelectedVoice}
                     setVoiceId={setVoiceId}
                     showAddVoice={false}
                     scrollToView={true}
