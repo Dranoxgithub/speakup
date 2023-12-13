@@ -73,11 +73,11 @@ const GoogleAuth = (props) => {
             }
 
             if (props.contentId) {
-                navigate(`/result?contentId=${props.contentId}`)
+                navigate(`${props.redirectPath}?contentId=${props.contentId}`)
                 return 
             }
 
-            navigate('/dashboard', { state: { errorMessage: errorMessage, contentUrl: props.contentUrl } })
+            navigate(props.redirectPath, { state: { errorMessage: errorMessage, contentUrl: props.contentUrl } })
         }
     }
 

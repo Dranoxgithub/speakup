@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getDocument, initializeFirebaseApp } from "../util/firebaseUtils";
 import { useAppSelector } from "../redux/hooks";
-import { getUserId } from "../redux/userSlice";
+import { getUserEmail, getUserId } from "../redux/userSlice";
 import { getAuth } from "@firebase/auth";
 import { updateDocument } from "../util/firebaseUtils";
 import { onSnapshot, getFirestore, doc } from "firebase/firestore";
@@ -24,12 +24,15 @@ import {
 import MusicSettings from "../components/MusicSettings";
 import WaitForResult from "../components/WaitForResult";
 import LoadingAnimation from "../components/LoadingAnimation";
+import { v4 as uuidv4 } from "uuid";
+import { onAuthStateChanged } from "@firebase/auth";
 
 const PodcastEditScreen = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
   const userId = useAppSelector(getUserId);
+  const userEmail = useAppSelector(getUserEmail);
   const totalAllowedLength = useAppSelector(getUserTotalAllowedLength);
   const totalUsedLength = useAppSelector(getUserTotalUsedLength);
 
@@ -46,6 +49,32 @@ const PodcastEditScreen = () => {
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
   const [loading, setLoading] = useState(false);
   const [notification, setShowNotification] = useState(false);
+ 
+  useEffect(() => {
+    const app = initializeFirebaseApp();
+    const auth = getAuth(app);
+  
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        // No user is signed in, redirect to singin page
+        navigate("/login", { 
+          replace: true,
+          state: {
+            redirectPath: '/edit',
+            contentId: queryParams.has("contentId")
+              ? queryParams.get("contentId")
+              : null,
+          }
+        });
+      }
+      // If user is signed in,clean up the fetchingUser state
+      setFetchingUser(false);
+  
+  });
+
+    // Cleanup subscription on component unmount
+    return () => unsubscribe();
+  }, []);
 
   const showNotificationTemporarily = () => {
     setShowNotification(true);
@@ -185,29 +214,6 @@ const PodcastEditScreen = () => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      if (queryParams.has("contentId")) {
-        setFetchingUser(false);
-        return;
-      }
-
-      const app = initializeFirebaseApp();
-      const auth = getAuth(app);
-      if (!auth.currentUser) {
-        navigate("/login", {
-          replace: true,
-          state: {
-            contentId: queryParams.has("contentId")
-              ? queryParams.get("contentId")
-              : null,
-          },
-        });
-      }
-      setFetchingUser(false);
-    }, 500);
-  }, []);
-
-  useEffect(() => {
     const handleOutsideClick = (event) => {
       const modalContent = document.querySelector(".profileDetailBox");
       if (modalContent && !modalContent.contains(event.target)) {
@@ -242,8 +248,17 @@ const PodcastEditScreen = () => {
           if (content.result.script.outro) {
             currentBody.push(content.result.script.outro);
           }
-          setBodyParas([...currentBody]);
+          // setBodyParas([...currentBody]);
         }
+
+        // console.log(`to send notification: ${toSendNotification}, content status: ${content.status}, is notification sent ${content.isNotificationSent}`)
+        // if (toSendNotification && content.status === "script_success" && content.isNotificationSent == undefined) {
+        //   sendEmailNotification(contentId)
+        //   updateDocument('contents', contentId, {
+        //     isNotificationSent: true
+        //   })
+        //   console.log(`email notification sent`)
+        // }
       }
     };
 
@@ -271,12 +286,18 @@ const PodcastEditScreen = () => {
           populateContentFromQueryParams(contentId);
 
           user.user_saved.map(async (item) => {
-            if (item.content_id === contentId && item.voice) {
-              if (AVAILABLE_VOICES.filter(voice => voice.name === item.voice).length > 0) {
-                setSelectedVoice(item.voice);
-              } else {
-                // when it is voice id, set it as your own voice
-                setSelectedVoice(YOUR_OWN_VOICE);
+            if (item.content_id === contentId) {
+              if (item.voice) {
+                if (AVAILABLE_VOICES.filter(voice => voice.name === item.voice).length > 0) {
+                  setSelectedVoice(item.voice);
+                } else {
+                  // when it is voice id, set it as your own voice
+                  setSelectedVoice(YOUR_OWN_VOICE);
+                }
+              }
+              
+              if (item.bgm_volume) {
+                setBackgroundMusicVolume(item.bgm_volume)
               }
             }
           });
@@ -310,6 +331,20 @@ const PodcastEditScreen = () => {
     } else {
       return "Body paragraph " + index;
     }
+  };
+
+  const sendEmailNotification = async (contentId) => {
+    const uuid = uuidv4();
+    await updateDocument("mail", uuid, {
+      to: userEmail,
+      template: {
+        name: "toEdit",
+        data: {
+          contentId: contentId,
+        },
+      },
+    });
+    console.log(`uuid: ${uuid}`)
   };
 
   return (
@@ -360,7 +395,7 @@ const PodcastEditScreen = () => {
               )}
 
               {bodyParas && bodyParas.length > 0 ?
-                <div>
+                <div style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                   {bodyParas.map((item, index) => (
                     <EditingParagraph
                       width={"900px"}
@@ -439,7 +474,10 @@ const PodcastEditScreen = () => {
                     )}
                   </div>
                 </div> : 
-                <WaitForResult page='edit' />
+                <WaitForResult 
+                  page='edit' 
+                  userId={userId}
+                />
             }
             </div>
           )}

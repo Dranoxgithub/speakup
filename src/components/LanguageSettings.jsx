@@ -54,7 +54,7 @@ const LanguageSettings = (props) => {
                         }}
                     >
                         <p className="plainText">
-                            Choose language
+                            Choose output language
                         </p>
                         { isLanguageSettingsShown ? <BsChevronUp size={20} /> : <BsChevronDown size={20} />}
                     </div>

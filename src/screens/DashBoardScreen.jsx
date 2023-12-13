@@ -31,7 +31,6 @@ const DashBoardScreen = () => {
   const userDisplayName = useAppSelector(getUserDisplayName);
   const userPhotoUrl = useAppSelector(getUserProfilePic)
 
-
   const navigate = useNavigate();
   const dispatch = useAppDispatch()
 
@@ -281,7 +280,12 @@ const DashBoardScreen = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
         // No user is signed in, redirect to singin page
-        navigate("/login", { replace: true });
+        navigate("/login", { 
+          replace: true,
+          state: {
+            redirectPath: '/dashboard'
+          }
+        });
       }
       // If user is signed in,clean up the fetchingUser state
       setFetchingUser(false);
@@ -330,15 +334,15 @@ const DashBoardScreen = () => {
 
   const sendEmailNotification = async (contentId) => {
     const uuid = uuidv4();
-    // await updateDocument("mail", uuid, {
-    //   to: userEmail,
-    //   template: {
-    //     name: "toResult",
-    //     data: {
-    //       contentId: contentId,
-    //     },
-    //   },
-    // });
+    await updateDocument("mail", uuid, {
+      to: userEmail,
+      template: {
+        name: "toResult",
+        data: {
+          contentId: contentId,
+        },
+      },
+    });
   };
 
   const onInputChanged = () => {

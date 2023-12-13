@@ -6,6 +6,7 @@ import { useAppSelector } from "../redux/hooks";
 import { getUserId } from "../redux/userSlice";
 import { secondsToLengthText } from "../util/helperFunctions";
 import { getAuth } from "@firebase/auth";
+import { onAuthStateChanged } from "@firebase/auth";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import UpgradePlanAlert from "../components/UpgradePlanAlert";
@@ -59,45 +60,89 @@ const PodcastResultScreen = () => {
     }, [queryParams])
 
     useEffect(() => {
-        const checkLoginStatus = () => {
-          const app = initializeFirebaseApp();
-          const auth = getAuth(app);
-          if (!auth.currentUser) {
+        const app = initializeFirebaseApp();
+        const auth = getAuth(app);
+      
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          if (!user) {
             if (isDemoResult) {
-                return true
+                setFetchingUser(false)
+                return
             }
 
             if (queryParams && queryParams.has('contentId') && DEMO_CONTENTS.includes(queryParams.get('contentId'))) {
-                return true
+                setFetchingUser(false)
+                return
             }
 
-            return false
+            // No user is signed in, redirect to singin page
+            navigate("/login", { 
+              replace: true,
+              state: {
+                redirectPath: '/result',
+                contentId: queryParams.has("contentId")
+                  ? queryParams.get("contentId")
+                  : null,
+              }
+            });
           }
+          // If user is signed in,clean up the fetchingUser state
+          setFetchingUser(false);
+      
+      });
 
-          return true
-        }
-    
-        const retryWithTimeout = (fn, retryInterval, maxDuration) => {
-          const startTime = Date.now();
-        
-          const retry = async () => {
-            const result = await fn();
-        
-            if (result) {
-              setFetchingUser(false);
-              return
-            } else if (Date.now() - startTime < maxDuration) {
-              setTimeout(retry, retryInterval);
-            } else {
-              navigate("/login", { replace: true });
-            }
-          };
-        
-          retry();
-        }
-    
-        retryWithTimeout(checkLoginStatus, 500, 5000)
+      // Cleanup subscription on component unmount
+      return () => unsubscribe();
     }, []);
+
+    // useEffect(() => {
+    //     const checkLoginStatus = () => {
+    //       const app = initializeFirebaseApp();
+    //       const auth = getAuth(app);
+    //       if (!auth.currentUser) {
+    //         if (isDemoResult) {
+    //             return true
+    //         }
+
+    //         if (queryParams && queryParams.has('contentId') && DEMO_CONTENTS.includes(queryParams.get('contentId'))) {
+    //             return true
+    //         }
+
+    //         return false
+    //       }
+
+    //       return true
+    //     }
+    
+    //     const retryWithTimeout = (fn, retryInterval, maxDuration) => {
+    //       const startTime = Date.now();
+        
+    //       const retry = async () => {
+    //         const result = await fn();
+        
+    //         if (result) {
+    //           setFetchingUser(false);
+    //           return
+    //         } else if (Date.now() - startTime < maxDuration) {
+    //           setTimeout(retry, retryInterval);
+    //         } else {
+    //           navigate("/login", { 
+    //             replace: true, 
+    //             state: {
+    //                 redirectPath: '/result',
+    //                 contentId: queryParams.has("contentId")
+    //                     ? queryParams.get("contentId")
+    //                     : null,
+    //             }
+    //           });
+    //         }
+    //       };
+        
+    //       retry();
+    //     }
+    
+    //     retryWithTimeout(checkLoginStatus, 500, 5000)
+    // }, []);
     
     useEffect(() => {
         const handleOutsideClick = (event) => {
@@ -252,7 +297,7 @@ const PodcastResultScreen = () => {
                     <div className="dashboardContainer" style={{margin: '0px 0px 150px 0px', width: '950px'}}>
                         <p className="plainText" style={{fontSize: '38px', textAlign: 'initial', margin: '60px 0px', color: '#2B1C50'}}>{title}</p>
                         
-                        {!audioUrl && <WaitForResult page='result' />}
+                        {!audioUrl && <WaitForResult page='result' userId={userId} />}
 
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
                             <div className="resultPageContentContainer">

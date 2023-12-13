@@ -2,12 +2,12 @@ import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { getStorage, ref, getBlob } from "@firebase/storage";
 
 export const AVAILABLE_VOICES = [
-  { name: "Alex", tags: ["american", "male", "young"] },
-  { name: "Bruce", tags: ["american", "male", "middle-aged"] },
-  { name: "Joanne", tags: ["american", "female", "young"] },
-  { name: "Valley Girl", tags: ["american", "female", "young"] },
-  { name: "Victoria", tags: ["british", "female", "middle-aged"] },
-  { name: "Zeus", tags: ["british", "male", "middle-aged"] },
+  { name: "Alex", tags: ["american", "male", "young"], language: 'English' },
+  { name: "Bruce", tags: ["american", "male", "middle-aged"], language: 'English' },
+  { name: "Joanne", tags: ["american", "female", "young"], language: 'English' },
+  { name: "Valley Girl", tags: ["american", "female", "young"], language: 'English' },
+  { name: "Victoria", tags: ["british", "female", "middle-aged"], language: 'English' },
+  { name: "Zeus", tags: ["british", "male", "middle-aged"], language: 'English' },
 ];
 
 export const getUserVoicePreviewAudio = async (userId: string) => {

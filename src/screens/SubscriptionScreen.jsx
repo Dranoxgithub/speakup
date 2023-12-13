@@ -8,6 +8,7 @@ import { getFirestore, onSnapshot, doc } from "firebase/firestore"
 import SubscriptionTable from "../components/SubscriptionTable"
 import Footer from "../components/Footer"
 import LoadingAnimation from "../components/LoadingAnimation"
+import { onAuthStateChanged } from "@firebase/auth"
 
 const SubscriptionScreen = () => {
     const navigate = useNavigate()
@@ -24,38 +25,61 @@ const SubscriptionScreen = () => {
         }
     }, [])
 
+    // useEffect(() => {
+    //     const checkLoginStatus = () => {
+    //       const app = initializeFirebaseApp();
+    //       const auth = getAuth(app);
+    //       if (!auth.currentUser) {
+    //         return false
+    //       }
+    //       setUserId(auth.currentUser.uid)
+    //       return true
+    //     }
+    
+    //     const retryWithTimeout = (fn, retryInterval, maxDuration) => {
+    //       const startTime = Date.now();
+        
+    //       const retry = async () => {
+    //         const result = await fn();
+        
+    //         if (result) {
+    //           setFetchingUser(false);
+    //           return
+    //         } else if (Date.now() - startTime < maxDuration) {
+    //           setTimeout(retry, retryInterval);
+    //         } else {
+    //           navigate("/login", { replace: true });
+    //         }
+    //       };
+        
+    //       retry();
+    //     }
+    
+    //     retryWithTimeout(checkLoginStatus, 500, 5000)
+    //   }, [navigate]);
+
     useEffect(() => {
-        const checkLoginStatus = () => {
-          const app = initializeFirebaseApp();
-          const auth = getAuth(app);
-          if (!auth.currentUser) {
-            return false
+        const app = initializeFirebaseApp();
+        const auth = getAuth(app);
+      
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          if (!user) {
+            // No user is signed in, redirect to singin page
+            navigate("/login", { 
+                replace: true,
+                state: {
+                    redirectPath: '/subscription'
+                } 
+            });
           }
-          setUserId(auth.currentUser.uid)
-          return true
-        }
+          // If user is signed in,clean up the fetchingUser state
+          setFetchingUser(false);
+      
+      });
     
-        const retryWithTimeout = (fn, retryInterval, maxDuration) => {
-          const startTime = Date.now();
-        
-          const retry = async () => {
-            const result = await fn();
-        
-            if (result) {
-              setFetchingUser(false);
-              return
-            } else if (Date.now() - startTime < maxDuration) {
-              setTimeout(retry, retryInterval);
-            } else {
-              navigate("/login", { replace: true });
-            }
-          };
-        
-          retry();
-        }
-    
-        retryWithTimeout(checkLoginStatus, 500, 5000)
-      }, [navigate]);
+        // Cleanup subscription on component unmount
+        return () => unsubscribe();
+      }, []);
 
     useEffect(() => {
         const handleOutsideClick = (event) => {

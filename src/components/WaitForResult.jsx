@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import Toggle from 'react-toggle'
+import { getDocument, updateDocument } from "../util/firebaseUtils";
 
 const WaitForResult = (props) => {
     const editLines = [
@@ -22,12 +24,25 @@ const WaitForResult = (props) => {
     const [currentCharIndex, setCurrentCharIndex] = useState(0);
     const timeoutRef = useRef(null);
 
+    const [acceptEmailNotification, setAcceptEmailNotification] = useState()
+
     useEffect(() => {
-        if (props.page && props.page == 'edit') {
-            setLines(editLines)
-        } else if (props.page && props.page == 'result') {
-            setLines(resultLines)
+        if (lines.length == 0) {
+            if (props.page && props.page == 'edit') {
+                setLines(editLines)
+            } else if (props.page && props.page == 'result') {
+                setLines(resultLines)
+            }
         }
+
+        getDocument('users', props.userId).then(userDoc => {
+            if (userDoc.acceptEmailNotification == null || userDoc.acceptEmailNotification == undefined) {
+                userDoc.acceptEmailNotification = true
+                updateDocument('users', props.userId, userDoc)
+            }
+
+            setAcceptEmailNotification(userDoc.acceptEmailNotification)
+        })
 
         setCurrentLine(0);
         setCurrentCharIndex(0);
@@ -35,7 +50,7 @@ const WaitForResult = (props) => {
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
         }
-    }, [props]);
+    }, []);
     
     useEffect(() => {
         if (lines[currentLine]) {
@@ -62,7 +77,14 @@ const WaitForResult = (props) => {
             }
         };
     }, [currentCharIndex, currentLine, lines]);
-    
+
+    const updateUserPreference = async () => {
+        setAcceptEmailNotification(prevValue => !prevValue)
+        const userDoc = await getDocument('users', props.userId)
+        await updateDocument('users', props.userId, {
+            acceptEmailNotification: !userDoc.acceptEmailNotification
+        })
+    }
 
     return (
         <div className="waitForResultContainer">
@@ -91,16 +113,16 @@ const WaitForResult = (props) => {
                 }
             </p>
 
-            {/* { currentLine == lines.length - 1 && (
+            {/* { currentLine == lines.length - 1 && ( */}
                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
                     <p className="plainText" style={{margin: '10px 20px 10px 0px', fontSize: '18px', fontWeight: '400', color: '#2B1C50'}}>Email notification</p>
                     <Toggle
-                        defaultChecked={true}
+                        defaultChecked={acceptEmailNotification ?? true}
                         icons={false}
-                        onChange={() => {}} 
+                        onChange={updateUserPreference} 
                     />
                 </div>
-            )} */}
+            {/* )} */}
         </div>
     )
 }
