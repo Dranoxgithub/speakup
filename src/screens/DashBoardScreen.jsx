@@ -9,7 +9,6 @@ import PodcastResultPreview from "../components/PodcastResultPreview";
 import { getStorage, ref, getBlob } from "firebase/storage";
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { getUserId, getUserEmail, setUserTotalAllowedLength, setUserTotalUsedLength, getUserDisplayName, getUserProfilePic } from "../redux/userSlice";
-import { v4 as uuidv4 } from "uuid";
 import { onSnapshot, getFirestore, doc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import DetailedUrlInput from "../components/DetailedUrlInput";
@@ -38,10 +37,10 @@ const DashBoardScreen = () => {
   const [inputContent, setInputContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetchingUser, setFetchingUser] = useState(true);
+  const [globalLoading, setGlobalLoading] = useState(false);
 
   const [contentList, setContentList] = useState([]);
   const [draftList, setDraftList] = useState([]);
-  const [contentIdEmailSent, setContentIdEmailSent] = useState({});
 
   const [userVoiceId, setUserVoiceId] = useState();
   const [showModal, setShowModal] = useState(false);
@@ -126,32 +125,12 @@ const DashBoardScreen = () => {
             if (item.length) {
               totalLength += +item.length;
             }
-            
-            // setContentIdEmailSent((prevDict) => ({
-            //   ...prevDict,
-            //   [contentId]: item.status && item.status == "notified",
-            // }));
-            // if (
-            //   item.status &&
-            //   item.status == "audio_success" &&
-            //   contentIdEmailSent[contentId] == false
-            // ) {
-            //   await sendEmailNotification(contentId);
-            //   setContentIdEmailSent((prevDict) => ({
-            //     ...prevDict,
-            //     [contentId]: true,
-            //   }));
-            //   user.user_saved[index].status = "notified";
-            //   await updateDocument("users", userId, user);
-            // }
 
             const content = await getDocument("contents", contentId);
             if (content && 
               item.status && 
               (item.status == 'audio_pending' || 
-              item.status == 'audio_success' || 
-              // item.status == 'audio_failed' || 
-              item.status == 'notified')) {
+              item.status == 'audio_success')) {
               const title = content.original_content.title;
               let script;
               let blobInfo;
@@ -332,19 +311,6 @@ const DashBoardScreen = () => {
     };
   }, [showModal]);
 
-  const sendEmailNotification = async (contentId) => {
-    const uuid = uuidv4();
-    await updateDocument("mail", uuid, {
-      to: userEmail,
-      template: {
-        name: "toResult",
-        data: {
-          contentId: contentId,
-        },
-      },
-    });
-  };
-
   const onInputChanged = () => {
     setErrorMessage();
   };
@@ -358,10 +324,8 @@ const DashBoardScreen = () => {
 
   return (
     <div>
-      {fetchingUser ? (
-        <div style={{padding: '30%'}}>
-          <LoadingAnimation />
-        </div>
+      {fetchingUser || globalLoading ? (
+        <LoadingAnimation />
       ) : (
         <div className="dashboardContainer">
           <Header 
@@ -387,6 +351,8 @@ const DashBoardScreen = () => {
             totalAllowedLength={totalAllowedLength}
             canEditAd={canEditAd}
             canCloneVoice={canCloneVoice}
+            loading={globalLoading}
+            setLoading={setGlobalLoading}
           />
 
           {errorMessage &&

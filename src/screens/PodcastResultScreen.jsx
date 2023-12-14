@@ -75,7 +75,7 @@ const PodcastResultScreen = () => {
                 return
             }
 
-            // No user is signed in, redirect to singin page
+            // No user is signed in, redirect to signin page
             navigate("/login", { 
               replace: true,
               state: {
@@ -277,7 +277,7 @@ const PodcastResultScreen = () => {
     return (
         <div>
             {fetchingUser ? (
-                <div style={{padding: '30%'}}>
+                <div>
                     <LoadingAnimation />
                 </div>
             ) : 
@@ -326,16 +326,24 @@ const PodcastResultScreen = () => {
                             <div style={{width: '200px'}}>
                                 {/* <button
                                     className="resultPageButton"
-                                    style={{backgroundColor: '#fff', borderStyle: 'solid', borderRadius: '20px', borderColor: '#d9d9d9', marginBottom: '20px'}}
-                                    onClick={getPodcastDownloadUrl}
+                                    style={{backgroundColor: '#fff', borderStyle: 'solid', borderRadius: '20px', borderColor: '#d9d9d9'}}
+                                    onClick={() => {}}
                                 >
                                     <p className="plainText" style={{color: '#fff', fontSize: '20px', color: '#2B1C50'}}>Publish Guide</p>
                                 </button> */}
+
                                 <button
                                     className={audioUrl ? "resultPageButton" : "noDisplay"}
                                     onClick={getPodcastDownloadUrl}
                                 >
                                     <p className="plainText" style={{color: '#fff', fontSize: '20px'}}>Download</p>
+                                </button>
+
+                                <button
+                                    className={audioUrl ? "resultPageButton" : "noDisplay"}
+                                    onClick={() => {}}
+                                >
+                                    <p className="plainText" style={{color: '#fff', fontSize: '20px'}}>Share</p>
                                 </button>
                             </div>
                         </div>

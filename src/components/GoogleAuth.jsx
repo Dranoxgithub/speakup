@@ -4,7 +4,7 @@ import { fetchUrl } from "../ajax/ajaxUtils";
 import { useState } from "react";
 import { createUserDocument, getDocument, updateDocument } from "../util/firebaseUtils";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
-import Loading from "./Loading";
+import LoadingAnimation from "./LoadingAnimation";
 import { generatePodcast } from "../util/helperFunctions";
 import {FcGoogle} from 'react-icons/fc'
 
@@ -77,14 +77,14 @@ const GoogleAuth = (props) => {
                 return 
             }
 
-            navigate(props.redirectPath, { state: { errorMessage: errorMessage, contentUrl: props.contentUrl } })
+            navigate(props.redirectPath ?? '/dashboard', { state: { errorMessage: errorMessage, contentUrl: props.contentUrl } })
         }
     }
 
     return (
         <div style={{width: '100%'}}>
             { loading ? 
-                <Loading /> : 
+                <LoadingAnimation /> : 
                 <button className='loginButton' onClick={signup}>
                     <FcGoogle size={30} style={{position: 'absolute', left: '25'}} />
                     <p className='plainText16px'>Continue with Google</p>

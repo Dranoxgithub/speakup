@@ -9,6 +9,7 @@ import { getAuth } from "@firebase/auth";
 import { cloneVoice } from "../util/helperFunctions";
 import MultiLanguageSelection from "./MultiLanguageSelection";
 import { AVAILABLE_LANGUAGES } from "./DetailedUrlInput";
+import Loading from "./Loading";
 
 const AddVoiceRecordNowPopup = (props) => {
     const [recordingStatus, setRecordingStatus] = useState('initial')
@@ -165,6 +166,8 @@ const AddVoiceRecordNowPopup = (props) => {
                         <p className="plainText" style={{fontSize: '16px', fontWeight: '400', textDecorationLine: 'underline', cursor: 'pointer'}} onClick={handleReRecord}>Re-record</p>
                     </div>
                 )}
+
+                {recordingStatus == 'uploading' && <Loading />}
 
                 {errorMessage && 
                     <div>

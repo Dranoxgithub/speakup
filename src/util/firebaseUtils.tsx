@@ -26,7 +26,8 @@ export async function createUserDocument(uid: string) {
         id: uid, 
         quota: 10,
         user_saved: demos,
-        subscription: 'Free'
+        subscription: 'Free',
+        acceptEmailNotification: true
       });
       return true;
     }

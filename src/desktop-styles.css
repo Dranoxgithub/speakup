@@ -243,6 +243,7 @@
     cursor: pointer;
     background-color: #734df6;
     width: 200px;
+    margin-bottom: 20px;
   }
 
   .customizedInputBlock {

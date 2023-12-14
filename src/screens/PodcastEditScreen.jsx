@@ -250,15 +250,6 @@ const PodcastEditScreen = () => {
           }
           setBodyParas([...currentBody]);
         }
-
-        // console.log(`to send notification: ${toSendNotification}, content status: ${content.status}, is notification sent ${content.isNotificationSent}`)
-        // if (toSendNotification && content.status === "script_success" && content.isNotificationSent == undefined) {
-        //   await sendEmailNotification(contentId)
-        //   updateDocument('contents', contentId, {
-        //     isNotificationSent: true
-        //   })
-        //   console.log(`email notification sent`)
-        // }
       }
     };
 
@@ -359,24 +350,10 @@ const PodcastEditScreen = () => {
     await updateDocument('users', userId, user)
   }
 
-  const sendEmailNotification = async (contentId) => {
-    const uuid = uuidv4();
-    await updateDocument("mail", uuid, {
-      to: userEmail,
-      template: {
-        name: "toEdit",
-        data: {
-          contentId: contentId,
-        },
-      },
-    });
-    console.log(`uuid: ${uuid}`)
-  };
-
   return (
     <div>
-      {fetchingUser ? (
-        <div style={{padding: '30%'}}>
+      {fetchingUser || loading ? (
+        <div>
           <LoadingAnimation />
         </div>
       ) : (
@@ -456,9 +433,6 @@ const PodcastEditScreen = () => {
                   />
 
                   <div className="editPageSubmitButtonGroup">
-                    {loading ? (
-                      <Loading />
-                    ) : (
                       <div className="editPageSubmitButtonGroup">
                         <button
                           className="editPageSubmitButton"
@@ -497,7 +471,6 @@ const PodcastEditScreen = () => {
                           </p>
                         </button>
                       </div>
-                    )}
                   </div>
                 </div> : 
                 <WaitForResult 

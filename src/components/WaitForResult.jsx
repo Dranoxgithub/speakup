@@ -24,7 +24,7 @@ const WaitForResult = (props) => {
     const [currentCharIndex, setCurrentCharIndex] = useState(0);
     const timeoutRef = useRef(null);
 
-    const [acceptEmailNotification, setAcceptEmailNotification] = useState()
+    const [userDoc, setUserDoc] = useState()
 
     useEffect(() => {
         if (lines.length == 0) {
@@ -35,21 +35,21 @@ const WaitForResult = (props) => {
             }
         }
 
-        getDocument('users', props.userId).then(userDoc => {
-            if (userDoc.acceptEmailNotification == null || userDoc.acceptEmailNotification == undefined) {
-                userDoc.acceptEmailNotification = true
-                updateDocument('users', props.userId, userDoc)
-            }
-
-            setAcceptEmailNotification(userDoc.acceptEmailNotification)
-        })
-
         setCurrentLine(0);
         setCurrentCharIndex(0);
         // Clear the timeouts if they exist.
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
         }
+
+        getDocument('users', props.userId).then(userDoc => {
+            if (userDoc.acceptEmailNotification == null || userDoc.acceptEmailNotification == undefined) {
+                userDoc.acceptEmailNotification = true
+                updateDocument('users', props.userId, userDoc)
+            }
+            
+            setUserDoc(userDoc)
+        })
     }, []);
     
     useEffect(() => {
@@ -78,12 +78,12 @@ const WaitForResult = (props) => {
         };
     }, [currentCharIndex, currentLine, lines]);
 
+    useEffect(() => {
+    })
+
     const updateUserPreference = async () => {
-        setAcceptEmailNotification(prevValue => !prevValue)
-        const userDoc = await getDocument('users', props.userId)
-        await updateDocument('users', props.userId, {
-            acceptEmailNotification: !userDoc.acceptEmailNotification
-        })
+        userDoc.acceptEmailNotification = !userDoc.acceptEmailNotification
+        await updateDocument('users', props.userId, userDoc)
     }
 
     return (
@@ -113,16 +113,16 @@ const WaitForResult = (props) => {
                 }
             </p>
 
-            {/* { currentLine == lines.length - 1 && ( */}
+            { userDoc && (
                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
                     <p className="plainText" style={{margin: '10px 20px 10px 0px', fontSize: '18px', fontWeight: '400', color: '#2B1C50'}}>Email notification</p>
                     <Toggle
-                        defaultChecked={acceptEmailNotification ?? true}
+                        defaultChecked={userDoc.acceptEmailNotification}
                         icons={false}
                         onChange={updateUserPreference} 
                     />
                 </div>
-            {/* )} */}
+            )}
         </div>
     )
 }

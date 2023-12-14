@@ -9,7 +9,6 @@ import { getAuth } from "@firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { YOUR_OWN_VOICE } from "./VoiceSettings";
-import Loading from "./Loading";
 import Popup from "../components/Popup";
 import { initializeFirebaseApp } from "../util/firebaseUtils";
 import { AVAILABLE_VOICES, getUserVoicePreviewAudio } from "../util/voice";
@@ -96,8 +95,6 @@ const DetailedUrlInput = (props) => {
 
   const userId = useAppSelector(getUserId);
   const navigate = useNavigate();
-
-  const [loading, setLoading] = useState(false);
 
   const [selectedLanguage, setSelectedLanguage] = useState('English')
   const [podcastTitle, setPodcastTitle] = useState();
@@ -206,10 +203,10 @@ const DetailedUrlInput = (props) => {
   }, [voiceId]);
 
   const wordCountCheck = async () => {
-    setLoading(true);
+    props.setLoading(true);
     if (totalMinLength + props.totalUsedLength > props.totalAllowedLength) {
       setShowUpgradePlanAlert(true);
-      setLoading(false);
+      props.setLoading(false);
       return;
     }
 
@@ -249,7 +246,7 @@ const DetailedUrlInput = (props) => {
         }
       }
     } else {
-      setLoading(false);
+      props.setLoading(false);
       setIsPopupOpen(true);
     }
   };
@@ -348,7 +345,7 @@ const DetailedUrlInput = (props) => {
           const response = await generatePodcast(
             userIdToken,
             userId,
-            setLoading,
+            props.setLoading,
             inputParams
           );
           if (response === 'string') {
@@ -392,7 +389,7 @@ const DetailedUrlInput = (props) => {
         const response = await generatePodcast(
           userIdToken,
           userId,
-          setLoading,
+          props.setLoading,
           inputParams
         );
         if (response === 'string') {
@@ -425,7 +422,7 @@ const DetailedUrlInput = (props) => {
   };
 
   const isButtonDisabled = () => {
-    if (loading) {
+    if (props.loading) {
       return true;
     }
 
@@ -586,8 +583,6 @@ const DetailedUrlInput = (props) => {
           <p className="plainText">{scriptOnly ? 'Generate Script' : 'Generate Script & Audio'}</p>
         </button>
       </div>
-
-      {loading && <Loading />}
 
       {showUpgradePlanAlert && (
         <UpgradePlanAlert

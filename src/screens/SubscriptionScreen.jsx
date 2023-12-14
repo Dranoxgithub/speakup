@@ -122,7 +122,7 @@ const SubscriptionScreen = () => {
     return (
         <div style={{height: '100%'}}>
             {fetchingUser ? (
-                <div style={{padding: '30%'}}>
+                <div>
                     <LoadingAnimation />
                 </div>
             ) :
