@@ -2,6 +2,7 @@ import purple_logo from '../assets/purple_logo.png'
 import UserInfoDisplay from "./UserInfoDisplay";
 import { BiTimeFive } from "react-icons/bi";
 import { AiOutlineArrowLeft } from "react-icons/ai";
+import { Tooltip } from "@mui/material";
 
 const Header = (props) => {
     return (
@@ -13,12 +14,14 @@ const Header = (props) => {
                         display: "flex",
                         flexDirection: "row",
                         alignItems: "center",
-                        padding: '10px 0px'
+                        
                     }}
                 >
-                <img src={purple_logo} height={36} style={{marginRight: '10px', fill: '#2b1c50'}} />
+                <img src={purple_logo} height={30} style={{marginRight: '10px', fill: '#2b1c50'}} />
                 
-                    <h1 className="dashboardHeaderText">SpeakUp</h1>
+                    <a href="https://startspeakup.com" target="_blank" rel="noopener noreferrer">
+                      <Tooltip title="SpeakUp AI is the leading podcasting copilot"><h1 className="dashboardHeaderText">SpeakUp</h1></Tooltip>
+                    </a>
                     <div className="betaTag">
                         <p className="plainText">BETA</p>
                     </div> 

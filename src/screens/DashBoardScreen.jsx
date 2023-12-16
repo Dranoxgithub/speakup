@@ -53,6 +53,7 @@ const DashBoardScreen = () => {
   const [isMobileView, setIsMobileView] = useState(false)
   const [showMobileDisplayNotReadyAlert, setShowMobileDisplayNotReadyAlert] = useState(true)
 
+
   useEffect(() => {
     setIsMobileView(window.outerWidth <= 480)
   }, [])

@@ -15,6 +15,7 @@ import { MdOutlineContentCopy } from 'react-icons/md'
 import LoadingAnimation from "../components/LoadingAnimation";
 import { doc, getFirestore, onSnapshot } from "firebase/firestore";
 import WaitForResult from "../components/WaitForResult";
+import { Backdrop } from "@mui/material";
 
 export const DEMO_CONTENTS = ['Rfg4OgKngtJ6eSmrD17Q', 'bZMp8rqMZcs7gZQDWSrg']
 
@@ -258,7 +259,7 @@ const PodcastResultScreen = () => {
     }
 
     const goBackToDashboard = () => {
-        navigate('/Dashboard', {replace: true})
+        navigate('/dashboard', {replace: true})
     }
 
     const copyContentToClipboard = async (content) => {
