@@ -5,6 +5,7 @@ import { BsSoundwave } from "react-icons/bs";
 import { MdFileUpload } from "react-icons/md";
 import AddVoiceUploadFilePopup from "./AddVoiceUploadFilePopup";
 import AddVoiceRecordNowPopup from "./AddVoiceRecordNowPopup";
+import { Tooltip } from "@mui/material";
 
 export const YOUR_OWN_VOICE = "Your Own Voice";
 
@@ -135,6 +136,7 @@ export const VoiceSettings = (props) => {
           justifyContent: "center",
         }}
       >
+        <Tooltip title="Podcast narration language - for languages other than English, please clone your voice first." placement="left" arrow>
         <div
           className={
             isVoicePreviewShown
@@ -155,6 +157,7 @@ export const VoiceSettings = (props) => {
             <BsChevronDown size={20} id="voiceSettingsDown" />
           )}
         </div>
+        </Tooltip>
         {(props.showAddVoice == null || props.showAddVoice) && ( // show this section when either this field is not defined(for backward compatability) or it is set to true
           <div className="addVoiceContainer">
             <button

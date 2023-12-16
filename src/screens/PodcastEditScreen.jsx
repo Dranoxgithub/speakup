@@ -26,6 +26,7 @@ import WaitForResult from "../components/WaitForResult";
 import LoadingAnimation from "../components/LoadingAnimation";
 import { v4 as uuidv4 } from "uuid";
 import { onAuthStateChanged } from "@firebase/auth";
+import { Alert, Snackbar } from "@mui/material";
 
 const PodcastEditScreen = () => {
   const location = useLocation();
@@ -35,7 +36,7 @@ const PodcastEditScreen = () => {
   const userEmail = useAppSelector(getUserEmail);
   const totalAllowedLength = useAppSelector(getUserTotalAllowedLength);
   const totalUsedLength = useAppSelector(getUserTotalUsedLength);
-
+  const [open, setOpen] = useState(false);
   const [contentId, setContentId] = useState();
   const [title, setTitle] = useState()
   const [estimatedDuration, setEstimatedDuration] = useState(0);
@@ -50,6 +51,11 @@ const PodcastEditScreen = () => {
   const [loading, setLoading] = useState(false);
   const [notification, setShowNotification] = useState(false);
  
+
+  const handleClose = () => {
+    setShowNotification(false);
+  };
+
   useEffect(() => {
     const app = initializeFirebaseApp();
     const auth = getAuth(app);
@@ -368,8 +374,18 @@ const PodcastEditScreen = () => {
             setShowModal={setShowModal}
           />
 
+
+                {notification && (
+                  <Snackbar open={notification} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+                    <Alert severity="success" sx={{ width: '100%' }} variant="filled">
+                      Draft saved!
+                    </Alert>
+                  </Snackbar>
+                )}
+              
+
           {error ? (
-            <h2>{error}</h2>
+            <Alert severity="error" style={{marginTop: '40px'}}> {error} </Alert>
           ) : (
             <div
               className="dashboardContainer"
@@ -390,12 +406,6 @@ const PodcastEditScreen = () => {
               >
                 {title}
               </p>
-
-              {notification && (
-                <div class="alert alert-success notification" role="alert">
-                  ✔️ Saved
-                </div>
-              )}
 
               {bodyParas && bodyParas.length > 0 ?
                 <div style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -442,7 +452,7 @@ const PodcastEditScreen = () => {
                             className="plainText"
                             style={{ fontSize: "20px", fontWeight: "800" }}
                           >
-                            Save Draft
+                            Save draft
                           </p>
                         </button>
                         <button
@@ -457,7 +467,7 @@ const PodcastEditScreen = () => {
                               fontWeight: "800",
                             }}
                           >
-                            Generate Audio
+                            Generate audio
                           </p>
                           <p
                             className="plainText"

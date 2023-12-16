@@ -7,10 +7,13 @@ import { initializeFirebaseApp } from "../util/firebaseUtils";
 import LoadingAnimation from "./LoadingAnimation";
 import { generatePodcast } from "../util/helperFunctions";
 import {FcGoogle} from 'react-icons/fc'
+import mixpanel from 'mixpanel-browser';
 
+ 
 const GoogleAuth = (props) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
+     
 
     const signup = async () => {
         console.log(`content url is: ${props.contentUrl}`)
@@ -71,7 +74,6 @@ const GoogleAuth = (props) => {
                     errorMessage = response;
                 }
             }
-
             if (props.contentId) {
                 navigate(`${props.redirectPath}?contentId=${props.contentId}`)
                 return 

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import MultiLanguageSelection from "./MultiLanguageSelection";
+import { Tooltip } from "@mui/material";
 
 const LanguageSettings = (props) => {
     
@@ -33,6 +34,7 @@ const LanguageSettings = (props) => {
     }, []);
 
     return (
+        <Tooltip title="Change your podcast script and narration language" placement="left" arrow>
         <div ref={languageSettingsDivRef} style={{display: 'flex'}}>
             { !isLanguageSettingsShown ? 
                 <div
@@ -70,6 +72,7 @@ const LanguageSettings = (props) => {
                 </div>
             }
         </div>
+        </Tooltip>
     )
 }
 

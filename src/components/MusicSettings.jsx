@@ -1,6 +1,7 @@
 import { BACKGROUND_MUSIC_VOLUME } from "./DetailedUrlInput";
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import { useState, useRef, useEffect } from "react";
+import { Tooltip } from "@mui/material";
 
 const MusicSettings = (props) => {
     const [isModeDropdownShown, setIsModeDropdownShown] = useState(false);
@@ -38,7 +39,9 @@ const MusicSettings = (props) => {
     }, []);
 
     return (
+        
         <div ref={modeSelectionDivRef} style={{display: 'flex', flexDirection: 'column'}}>
+            <Tooltip title="Change your background music volume" placement="left" arrow>
             <div
                 className={isModeDropdownShown ? "selectedDashboardCustomizedInput" : "dashboardCustomizedInput"}
                 onClick={() => {
@@ -56,6 +59,7 @@ const MusicSettings = (props) => {
                 </p>
                 { isModeDropdownShown ? <BsChevronUp size={20} /> : <BsChevronDown size={20} id='musicSettingsDown' />}
             </div>
+            </Tooltip>
 
             { isModeDropdownShown && (
                 <div style={{ position: "relative" }}>
@@ -85,6 +89,7 @@ const MusicSettings = (props) => {
                 </div>
             )}
         </div>
+        
     )
 }
 
