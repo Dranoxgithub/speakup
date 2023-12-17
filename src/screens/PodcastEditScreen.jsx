@@ -237,6 +237,7 @@ const PodcastEditScreen = () => {
   }, [showModal]);
 
   useEffect(() => {
+    document.title = 'Preview'
     const processSnapshot = async (doc) => {
       const content = doc.data();
       if (content) {
@@ -496,6 +497,7 @@ const PodcastEditScreen = () => {
       {showUpgradePlanAlert && (
         <UpgradePlanAlert
           userId={userId}
+          from='PodcastEditScreen'
           closeModal={() => setShowUpgradePlanAlert(false)}
         />
       )}

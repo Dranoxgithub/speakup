@@ -59,6 +59,7 @@ const SubscriptionScreen = () => {
     //   }, [navigate]);
 
     useEffect(() => {
+        document.title = 'Subscription'
         const app = initializeFirebaseApp();
         const auth = getAuth(app);
       

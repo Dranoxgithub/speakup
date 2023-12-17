@@ -6,6 +6,8 @@ import { getAuth, signOut } from "@firebase/auth"
 import { useNavigate } from "react-router-dom"
 import {RiMoneyCnyCircleFill} from 'react-icons/ri'
 import {PiSignOutBold} from 'react-icons/pi'
+import * as amplitude from '@amplitude/analytics-browser';
+
 
 const UserInfoDisplay = (props) => {
     const profilePic = useAppSelector(getUserProfilePic)
@@ -21,6 +23,7 @@ const UserInfoDisplay = (props) => {
         const app = initializeFirebaseApp()
         const auth = getAuth(app)
         await signOut(auth)
+        amplitude.reset()
         window.location.replace('https://www.startspeakup.com/')
     }
 

@@ -7,12 +7,13 @@ import { initializeFirebaseApp } from "../util/firebaseUtils";
 import LoadingAnimation from "./LoadingAnimation";
 import { generatePodcast } from "../util/helperFunctions";
 import {FcGoogle} from 'react-icons/fc'
-import mixpanel from 'mixpanel-browser';
+import * as amplitude from '@amplitude/analytics-browser';
 
- 
+
 const GoogleAuth = (props) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
+    amplitude.init('78a3f6dc1b48a892475f48595bd58367');
      
 
     const signup = async () => {
@@ -27,6 +28,11 @@ const GoogleAuth = (props) => {
             // The signed-in user info.
 
             const user = result.user;
+            amplitude.setUserId(user.uid)
+            const eventProperties = {
+                signUpMethod: 'google',
+              };
+            amplitude.track('Auth', eventProperties);
             await createUserDocument(user.uid)
 
             let errorMessage

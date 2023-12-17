@@ -58,6 +58,7 @@ const PodcastResultScreen = () => {
             setIsDemoResult(true)
             return
         }
+        document.title = 'Result'
     }, [queryParams])
 
     useEffect(() => {
