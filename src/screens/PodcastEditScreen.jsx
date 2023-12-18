@@ -183,7 +183,6 @@ const PodcastEditScreen = () => {
         },
       },
     });
-    amplitude.track("Button Clicked", {buttonName: 'Save draft', page: 'Edit page'})
   };
 
   const generateAudioOnly = async () => {
@@ -451,7 +450,10 @@ const PodcastEditScreen = () => {
                       <div className="editPageSubmitButtonGroup">
                         <button
                           className="editPageSubmitButton"
-                          onClick={showLoadingWhileSavingEdit}
+                          onClick={() => {
+                            amplitude.track("Button Clicked", {buttonName: 'Save draft', page: 'Edit page'})
+                            showLoadingWhileSavingEdit();
+                          }}
                         >
                           <p
                             className="plainText"
@@ -462,7 +464,10 @@ const PodcastEditScreen = () => {
                         </button>
                         <button
                           className="editPageSubmitButtonPurple"
-                          onClick={generateAudioOnly}
+                          onClick={() => {
+                            amplitude.track("Button Clicked", {buttonName: 'Generate audio', page: 'Edit page'})
+                            generateAudioOnly();
+                          }}
                         >
                           <p
                             className="plainText"

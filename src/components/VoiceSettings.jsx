@@ -147,6 +147,7 @@ export const VoiceSettings = (props) => {
           onClick={() => {
             setIsVoicePreviewShown((prevValue) => !prevValue);
             setShowAddVoiceDropdown(false)
+            amplitude.track("Settings Viewed", { page: "Voice settings" });
           }}
         >
           <p className="plainText" id="voiceSettingsText">

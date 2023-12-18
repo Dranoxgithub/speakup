@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Toggle from 'react-toggle'
 import { getDocument, updateDocument } from "../util/firebaseUtils";
+import * as amplitude from '@amplitude/analytics-browser';
 
 const WaitForResult = (props) => {
     const editLines = [
@@ -82,6 +83,7 @@ const WaitForResult = (props) => {
     })
 
     const updateUserPreference = async () => {
+        amplitude.track('Settings Changed', {settingName: 'Email notification', emailNotify: !userDoc.acceptEmailNotification})
         userDoc.acceptEmailNotification = !userDoc.acceptEmailNotification
         await updateDocument('users', props.userId, userDoc)
     }

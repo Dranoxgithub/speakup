@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import MultiLanguageSelection from "./MultiLanguageSelection";
 import { Tooltip } from "@mui/material";
+import * as amplitude from '@amplitude/analytics-browser';
 
 const LanguageSettings = (props) => {
     
@@ -41,6 +42,7 @@ const LanguageSettings = (props) => {
                     className="dashboardCustomizedInput"
                     onClick={() => {
                         setIsLanguageSettingsShown(prevValue => !prevValue)
+                        amplitude.track('Settings Viewed', {page: 'Language settings', language: props.selectedLanguage})
                     }}
                 >
                     <p className="plainText" id='languageSettingsText'>
@@ -67,6 +69,7 @@ const LanguageSettings = (props) => {
                         setSelectedLanguage={(language) => {
                             props.setSelectedLanguage(language)
                             setIsLanguageSettingsShown(prevValue => !prevValue)
+                            amplitude.track('Settings Changed', {language: language, settingName: 'Language'})
                         }}
                     />
                 </div>

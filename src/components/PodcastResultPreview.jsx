@@ -5,6 +5,7 @@ import {RiDeleteBin6Fill} from 'react-icons/ri'
 import {PiDownloadSimpleDuotone, PiDownloadSimpleFill} from 'react-icons/pi'
 import {DEMO_CONTENTS} from '../screens/PodcastResultScreen'
 import { secondsToHHMMSS } from "../util/helperFunctions"
+import * as amplitude from '@amplitude/analytics-browser';
 
 const PodcastResultPreview = (props) => {
     const [hoverPreviewBox, setHoverPreviewBox] = useState(false)
@@ -35,6 +36,14 @@ const PodcastResultPreview = (props) => {
         tempLink.click();
     }
 
+    const handlePlay = () => {
+        amplitude.track('Button Clicked', {buttonName: 'Play podcast', page: 'Dashboard'})
+    }
+
+    const handlePause = () => {
+        amplitude.track('Button Clicked', {buttonName: 'Pause podcast', page: 'Dashboard'})
+    }
+
     return (
         <div className='previewContainer' onClick={navigateToResult} onMouseEnter={() => setHoverPreviewBox(true)} onMouseLeave={() => setHoverPreviewBox(false)}>
             <div style={{ position: 'absolute', left: '35px', top: '25px', display: 'flex', flexDirection: 'row' }}>
@@ -50,7 +59,7 @@ const PodcastResultPreview = (props) => {
             
             <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0px 20px', height: '35px'}}>
             { props.audioUrl ? 
-                <audio controls name="podcast" style={{marginBottom: '10px'}}>
+                <audio controls name="podcast" style={{marginBottom: '10px'}} onPlay={handlePlay} onPause={handlePause}>
                     <source src={props.audioUrl} type='audio/mp3' />
                 </audio> : 
                 <div>
@@ -76,6 +85,7 @@ const PodcastResultPreview = (props) => {
                                     onClick={(e) => {
                                         e.stopPropagation()
                                         getPodcastDownloadUrl()
+                                        amplitude.track('Button Clicked', {buttonName: 'Download podcast', page: 'Dashboard'})
                                     }}
                                 /> :
                                 <PiDownloadSimpleDuotone 
@@ -86,6 +96,7 @@ const PodcastResultPreview = (props) => {
                                     onClick={(e) => {
                                         e.stopPropagation()
                                         getPodcastDownloadUrl()
+                                        amplitude.track('Button Clicked', {buttonName: 'Download podcast', page: 'Dashboard'})
                                     }}
                                 />)
                         }

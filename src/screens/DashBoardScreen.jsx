@@ -390,7 +390,9 @@ const DashBoardScreen = () => {
                       status={item.status}
                       script={item.script}
                       urls={item.urls}
-                      deleteContent={() => deleteContent(item.contentId)}
+                      deleteContent={() => {deleteContent(item.contentId)
+                      amplitude.track('Content Deleted', {contentId: item.contentId, type: 'Draft'})
+                      }}
                     />
                   ))}
                 </div>
@@ -427,7 +429,8 @@ const DashBoardScreen = () => {
                       created={item.created}
                       urls={item.urls}
                       status={item.status}
-                      deleteContent={() => deleteContent(item.contentId)}
+                      deleteContent={() => {deleteContent(item.contentId)
+                      amplitude.track('Content Deleted', {contentId: item.contentId, type: 'History'})}}
                     />
                   ))}
                 </div>
