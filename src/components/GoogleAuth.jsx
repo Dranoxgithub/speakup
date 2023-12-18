@@ -28,12 +28,10 @@ const GoogleAuth = (props) => {
             // The signed-in user info.
 
             const user = result.user;
-            amplitude.setUserId(user.uid)
-            const eventProperties = {
-                signUpMethod: 'google',
-              };
-            amplitude.track('Auth', eventProperties);
-            await createUserDocument(user.uid)
+            const isReturningUser = await createUserDocument(user.uid)
+            const type = isReturningUser ? 'SignUp' : 'Login'
+            amplitude.setUserId(user.email)
+            amplitude.track('Auth', {type: type, method: 'Google'});
 
             let errorMessage
             const userDoc = await getDocument('users', user.uid)

@@ -20,6 +20,7 @@ import Footer from '../components/Footer'
 import Header from "../components/Header";
 import MobileDisplayNotReadyAlert from "../components/MobileDisplayNotReadyAlert";
 import LoadingAnimation from "../components/LoadingAnimation";
+import * as amplitude from '@amplitude/analytics-browser';
 
 const PREMIUM_SUBSCRIPTION_PLAN = ["Creator", "Growing Business"];
 
@@ -267,9 +268,9 @@ const DashBoardScreen = () => {
           }
         });
       }
+      amplitude.track('Page Viewed', {page: 'Dashboard', signedIn: userId ? true : false})
       // If user is signed in,clean up the fetchingUser state
       setFetchingUser(false);
-  
   });
 
     // Cleanup subscription on component unmount
@@ -292,8 +293,6 @@ const DashBoardScreen = () => {
     bootIntercom();
   }, [userId, userEmail, userDisplayName, userPhotoUrl]);
   
-
-
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -443,6 +442,7 @@ const DashBoardScreen = () => {
       {showUpgradePlanAlert && (
         <UpgradePlanAlert
           userId={userId}
+          from="Add more time button"
           closeModal={() => setShowUpgradePlanAlert(false)}
         />
       )}

@@ -1,6 +1,6 @@
 import getFirebaseConfig from "./firebaseConfig";
 import firebase from "firebase/compat/app";
-import { getFirestore, getDoc, doc, setDoc } from "firebase/firestore";
+import { getFirestore, getDoc, doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export async function createUserDocument(uid: string) {
   try {
@@ -27,7 +27,8 @@ export async function createUserDocument(uid: string) {
         quota: 10,
         user_saved: demos,
         subscription: 'Free',
-        acceptEmailNotification: true
+        acceptEmailNotification: true,
+        created_at: serverTimestamp(),
       });
       return true;
     }

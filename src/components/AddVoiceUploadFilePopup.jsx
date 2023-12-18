@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import { AiOutlineClose } from "react-icons/ai"
 import { PiUploadSimple } from "react-icons/pi"
 import { CiCircleRemove } from "react-icons/ci"
@@ -9,6 +10,7 @@ import { getUserId } from "../redux/userSlice";
 import { cloneVoice } from "../util/helperFunctions";
 import Loading from "./Loading";
 import { getAuth } from "@firebase/auth";
+import * as amplitude from '@amplitude/analytics-browser';
 
 const MAX_FILE_SIZE = 1e+7
 
@@ -55,6 +57,7 @@ const AddVoiceUploadFilePopup = (props) => {
 
     const updateFileList = (fileList) => {
         if (fileList && fileList[0]) {
+            amplitude.track('Button Clicked', {buttonName: 'Voice samples selected', page: 'Upload voice samples'})
             const selectedFiles = Array.from(fileList).filter(
                 (file) => file.type === "audio/mpeg" && file.size <= MAX_FILE_SIZE
             )
@@ -85,7 +88,7 @@ const AddVoiceUploadFilePopup = (props) => {
             setErrorMessage(`No voice samples found. Please upload files and try again.`)
             return
         }
-
+        amplitude.track('Button Clicked', {buttonName: 'Save voice', page: 'Upload voice samples'})
         try {
             setUploading(true)
             const listRef = ref(storage, `clone/${userId}`);
@@ -114,6 +117,10 @@ const AddVoiceUploadFilePopup = (props) => {
             props.setVoice(voiceId)
             props.closeModal()
             props.showNotificationTemporarily()
+            amplitude.track('Voice Cloned', {page: 'Upload voice samples'})
+            const identify = new amplitude.Identify().set('voiceCloneId', voiceId)
+            identify.set('voiceLanguage', 'Unknown')
+            amplitude.identify(identify)
         } catch (error) {
             const errorMsg = `Error uploading files: ${error}`
             console.error(errorMsg);

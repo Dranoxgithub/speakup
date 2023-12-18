@@ -86,6 +86,7 @@ const CustomizedInput = (props) => {
       {showUpgradePlanAlert && (
         <UpgradePlanAlert
           userId={props.userId}
+          from="Ads customization"
           closeModal={() => setShowUpgradePlanAlert(false)}
         />
       )}

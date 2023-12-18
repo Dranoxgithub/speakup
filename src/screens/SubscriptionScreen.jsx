@@ -9,14 +9,17 @@ import SubscriptionTable from "../components/SubscriptionTable"
 import Footer from "../components/Footer"
 import LoadingAnimation from "../components/LoadingAnimation"
 import { onAuthStateChanged } from "@firebase/auth"
+import { getUserId } from "../redux/userSlice"
+import { useAppSelector } from "../redux/hooks"
+import * as amplitude from '@amplitude/analytics-browser';
 
 const SubscriptionScreen = () => {
     const navigate = useNavigate()
-
+    const userId = useAppSelector(getUserId)
     const [fetchingUser, setFetchingUser] = useState(true)
     const [showModal, setShowModal] = useState(false)
-    const [userId, setUserId] = useState()
     const [userSubscription, setUserSubscription] = useState()
+    const [startTime, setStartTime] = useState()
 
     // Update Intercom URL changes so that user can receive latest messages
     useEffect(() => {
@@ -25,39 +28,7 @@ const SubscriptionScreen = () => {
         }
     }, [])
 
-    // useEffect(() => {
-    //     const checkLoginStatus = () => {
-    //       const app = initializeFirebaseApp();
-    //       const auth = getAuth(app);
-    //       if (!auth.currentUser) {
-    //         return false
-    //       }
-    //       setUserId(auth.currentUser.uid)
-    //       return true
-    //     }
-    
-    //     const retryWithTimeout = (fn, retryInterval, maxDuration) => {
-    //       const startTime = Date.now();
-        
-    //       const retry = async () => {
-    //         const result = await fn();
-        
-    //         if (result) {
-    //           setFetchingUser(false);
-    //           return
-    //         } else if (Date.now() - startTime < maxDuration) {
-    //           setTimeout(retry, retryInterval);
-    //         } else {
-    //           navigate("/login", { replace: true });
-    //         }
-    //       };
-        
-    //       retry();
-    //     }
-    
-    //     retryWithTimeout(checkLoginStatus, 500, 5000)
-    //   }, [navigate]);
-
+    // Check if user is signed in
     useEffect(() => {
         document.title = 'Subscription'
         const app = initializeFirebaseApp();
@@ -75,12 +46,12 @@ const SubscriptionScreen = () => {
           }
           // If user is signed in,clean up the fetchingUser state
           setFetchingUser(false);
-      
+          setStartTime(Date.now())
       });
     
         // Cleanup subscription on component unmount
         return () => unsubscribe();
-      }, []);
+      }, [navigate]);
 
     useEffect(() => {
         const handleOutsideClick = (event) => {
@@ -117,6 +88,9 @@ const SubscriptionScreen = () => {
     }, [userId])
 
     const goBackToDashboard = () => {
+        const endTime = Date.now()
+        const duration = (endTime - startTime) / 1000
+        amplitude.track('Page Viewed', {duration: duration, page: 'Upgrade plan modal', userId: userId, from: 'Subscription page'})
         navigate('/dashboard', {replace: true})
     }
     
@@ -127,6 +101,7 @@ const SubscriptionScreen = () => {
                     <LoadingAnimation />
                 </div>
             ) :
+            <div>
                 <div className="resultContainer">
                     <div className="headerContainer">
                         <div className="backNavigator" onClick={goBackToDashboard} >
@@ -140,8 +115,9 @@ const SubscriptionScreen = () => {
 
                     <SubscriptionTable userId={userId}/>
                     
-                    <Footer />
                 </div>
+                <Footer />
+            </div>
             }
             
         </div>   

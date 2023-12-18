@@ -15,9 +15,10 @@ import { MdOutlineContentCopy } from 'react-icons/md'
 import LoadingAnimation from "../components/LoadingAnimation";
 import { doc, getFirestore, onSnapshot } from "firebase/firestore";
 import WaitForResult from "../components/WaitForResult";
-import { Backdrop } from "@mui/material";
+import * as amplitude from '@amplitude/analytics-browser';
 
 export const DEMO_CONTENTS = ['Rfg4OgKngtJ6eSmrD17Q', 'bZMp8rqMZcs7gZQDWSrg']
+
 
 const PodcastResultScreen = () => {
     const location = useLocation()
@@ -42,9 +43,10 @@ const PodcastResultScreen = () => {
 
     const [showModal, setShowModal] = useState(false)
     const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
+    
 
     const navigate = useNavigate()
-
+    document.title = 'Podcast Result'
     // Update Intercom URL changes so that user can receive latest messages
     useEffect(() => {
         if (window.Intercom) {
@@ -56,9 +58,9 @@ const PodcastResultScreen = () => {
         if (queryParams.has('contentId') && DEMO_CONTENTS.includes(queryParams.get('contentId'))) {
             setFetchingUser(false)
             setIsDemoResult(true)
+            amplitude.track('Page Viewed', {page: 'Demo'})
             return
         }
-        document.title = 'Result'
     }, [queryParams])
 
     useEffect(() => {
@@ -90,62 +92,13 @@ const PodcastResultScreen = () => {
           }
           // If user is signed in,clean up the fetchingUser state
           setFetchingUser(false);
-      
+          amplitude.track('Page Viewed', {page: 'Result', signedIn: true})
       });
 
       // Cleanup subscription on component unmount
       return () => unsubscribe();
     }, []);
 
-    // useEffect(() => {
-    //     const checkLoginStatus = () => {
-    //       const app = initializeFirebaseApp();
-    //       const auth = getAuth(app);
-    //       if (!auth.currentUser) {
-    //         if (isDemoResult) {
-    //             return true
-    //         }
-
-    //         if (queryParams && queryParams.has('contentId') && DEMO_CONTENTS.includes(queryParams.get('contentId'))) {
-    //             return true
-    //         }
-
-    //         return false
-    //       }
-
-    //       return true
-    //     }
-    
-    //     const retryWithTimeout = (fn, retryInterval, maxDuration) => {
-    //       const startTime = Date.now();
-        
-    //       const retry = async () => {
-    //         const result = await fn();
-        
-    //         if (result) {
-    //           setFetchingUser(false);
-    //           return
-    //         } else if (Date.now() - startTime < maxDuration) {
-    //           setTimeout(retry, retryInterval);
-    //         } else {
-    //           navigate("/login", { 
-    //             replace: true, 
-    //             state: {
-    //                 redirectPath: '/result',
-    //                 contentId: queryParams.has("contentId")
-    //                     ? queryParams.get("contentId")
-    //                     : null,
-    //             }
-    //           });
-    //         }
-    //       };
-        
-    //       retry();
-    //     }
-    
-    //     retryWithTimeout(checkLoginStatus, 500, 5000)
-    // }, []);
-    
     useEffect(() => {
         const handleOutsideClick = (event) => {
             const modalContent = document.querySelector('.profileDetailBox');
@@ -257,6 +210,7 @@ const PodcastResultScreen = () => {
         tempLink.href = downloadUrl;
         tempLink.setAttribute('download', `${title}.mp3`);
         tempLink.click();
+        amplitude.track('Button Clicked', {buttonName: 'Download podcast', page: 'Result'})
     }
 
     const goBackToDashboard = () => {
@@ -264,6 +218,7 @@ const PodcastResultScreen = () => {
     }
 
     const copyContentToClipboard = async (content) => {
+        amplitude.track('Button Clicked', {buttonName: 'Copy content', page: 'Result'})
         let contentToCopy = ''
         if (typeof content === 'string') {
             content.split('<br>').map(item => {
@@ -275,6 +230,16 @@ const PodcastResultScreen = () => {
             }
         }
     }
+
+    const handlePlay = () => {
+        amplitude.track('Button Clicked', {buttonName: 'Play podcast', page: 'Result'})
+    }
+
+    const handlePause = () => {
+        const seek = document.querySelector('.audioPlayer').currentTime
+        amplitude.track('Button Clicked', {buttonName: 'Pause podcast', page: 'Result', duration: seek})
+    }
+
 
     return (
         <div>
@@ -318,7 +283,7 @@ const PodcastResultScreen = () => {
                                         { duration && <p className="plainText" style={{fontSize: '16px', color: '#828282', fontWeight: '500', marginBottom: '10px'}}>{secondsToLengthText(duration)}</p>}
                                     </div>
                                     { audioUrl &&
-                                        <audio controls name="podcast" className="audioPlayer">
+                                        <audio controls name="podcast" className="audioPlayer" onPlay={handlePlay} onPause={handlePause}>
                                             <source src={audioUrl} type='audio/mp3' />
                                         </audio>
                                     }
@@ -343,7 +308,7 @@ const PodcastResultScreen = () => {
 
                                 <button
                                     className={audioUrl ? "resultPageButton" : "noDisplay"}
-                                    onClick={() => {}}
+                                    onClick={() => {amplitude.track('Button Clicked', {buttonName: 'Share podcast', page: 'Result'})}}
                                 >
                                     <p className="plainText" style={{color: '#fff', fontSize: '20px'}}>Share</p>
                                 </button>
@@ -377,6 +342,7 @@ const PodcastResultScreen = () => {
             {showUpgradePlanAlert && (
                 <UpgradePlanAlert
                 userId={userId}
+                from="Result page"
                 closeModal={() => setShowUpgradePlanAlert(false)}
                 />
             )}

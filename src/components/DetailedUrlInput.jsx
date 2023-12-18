@@ -588,6 +588,7 @@ const DetailedUrlInput = (props) => {
         <UpgradePlanAlert
           userId={userId}
           closeModal={() => setShowUpgradePlanAlert(false)}
+          from="Insufficient quota for the podcast length"
         />
       )}
     </div>

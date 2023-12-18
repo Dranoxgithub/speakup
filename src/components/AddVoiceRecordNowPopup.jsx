@@ -10,6 +10,7 @@ import { cloneVoice } from "../util/helperFunctions";
 import MultiLanguageSelection from "./MultiLanguageSelection";
 import { AVAILABLE_LANGUAGES } from "./DetailedUrlInput";
 import Loading from "./Loading";
+import * as amplitude from '@amplitude/analytics-browser';
 
 const AddVoiceRecordNowPopup = (props) => {
     const [recordingStatus, setRecordingStatus] = useState('initial')
@@ -59,6 +60,7 @@ const AddVoiceRecordNowPopup = (props) => {
 
     const handleRecordAndSubmit = async () => {
         if (recordingStatus == 'initial') {
+            amplitude.track('Button Clicked', {buttonName: 'Start recording', page: 'Record voice sample'})
             setErrorMessage()
             navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
@@ -110,6 +112,11 @@ const AddVoiceRecordNowPopup = (props) => {
                     props.showNotificationTemporarily()
                     setRecordingStatus('initial')
                     setAudioChunks([])
+                    amplitude.track('Voice Cloned', {page: 'Record voice sample'})
+                    const identify = new amplitude.Identify().set('voiceCloneId', voiceId)
+                    identify.set('voiceLanguage', props.selectedLanguage)
+                    amplitude.identify(identify)
+
                 }
             }
         }

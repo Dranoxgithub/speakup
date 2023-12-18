@@ -6,6 +6,7 @@ import { MdFileUpload } from "react-icons/md";
 import AddVoiceUploadFilePopup from "./AddVoiceUploadFilePopup";
 import AddVoiceRecordNowPopup from "./AddVoiceRecordNowPopup";
 import { Tooltip } from "@mui/material";
+import * as amplitude from "@amplitude/analytics-browser";
 
 export const YOUR_OWN_VOICE = "Your Own Voice";
 
@@ -165,6 +166,7 @@ export const VoiceSettings = (props) => {
               onClick={() => {
                 setShowAddVoiceDropdown(prevValue => !prevValue)
                 setIsVoicePreviewShown(false)
+                amplitude.track("Button Clicked", {buttonName: "Add Voice"})
               }}
             >
               <p className="plainText">+ Add Voice</p>
@@ -175,7 +177,11 @@ export const VoiceSettings = (props) => {
                 <div
                   className="selectionDropDownItem"
                   style={{padding: '15px 20px', justifyContent: 'space-between'}}
-                  onClick={handleRecordNow}
+                  onClick={() => {
+                    handleRecordNow()
+                    amplitude.track('Button Clicked', {buttonName: 'Record voice samples'})
+                    }
+                  }
                 >
                   <BsSoundwave size={25} />
                   <p className="plainText" style={{fontWeight: '500'}}>Record now</p>
@@ -184,7 +190,10 @@ export const VoiceSettings = (props) => {
                 <div
                   className="selectionDropDownItem"
                   style={{padding: '15px 20px', justifyContent: 'space-between'}}
-                  onClick={handleUploadFile}
+                  onClick={() => {
+                    handleUploadFile()
+                    amplitude.track('Button Clicked', {buttonName: 'Upload voice samples'})
+                  }}
                 >
                   <MdFileUpload size={25} />
                   <p className="plainText" style={{fontWeight: '500'}}>Upload a file</p>

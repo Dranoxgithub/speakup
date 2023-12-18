@@ -12,6 +12,7 @@ import * as amplitude from '@amplitude/analytics-browser';
 const UserInfoDisplay = (props) => {
     const profilePic = useAppSelector(getUserProfilePic)
     const displayName = useAppSelector(getUserDisplayName)
+    const email = useAppSelector(getUserEmail)
     const navigate = useNavigate()
 
     const showOrHideModal = (e) => {
@@ -20,10 +21,10 @@ const UserInfoDisplay = (props) => {
     }
 
     const signoutUser = async () => {
+        amplitude.reset()
         const app = initializeFirebaseApp()
         const auth = getAuth(app)
         await signOut(auth)
-        amplitude.reset()
         window.location.replace('https://www.startspeakup.com/')
     }
 
@@ -49,7 +50,7 @@ const UserInfoDisplay = (props) => {
                 }
                 { props.showModal ? 
                     <div className="profileDetailBox">
-                        <h3 className="userName">Signed in as {displayName}</h3>
+                        <h3 className="userName">Signed in as {displayName}<br/><span style={{color: 'grey', fontSize: 'smaller'}}>{email}</span></h3>
                         <div className="divider" />
                         <div className="profileSelection" onClick={navigateToSubscriptionPage}>
                             <RiMoneyCnyCircleFill size={20} style={{marginLeft: '20px'}} color="#2d3142"/>

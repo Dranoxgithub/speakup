@@ -508,6 +508,8 @@
     margin: 20px;
     color: #2d3142;
     font-size: 16px;
+    word-wrap: break-word;
+    line-height: normal;
   }
 
   .profileSelection {
