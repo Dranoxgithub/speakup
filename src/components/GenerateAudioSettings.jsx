@@ -67,6 +67,7 @@ const GenerateAudioSettings = (props) => {
         <UpgradePlanAlert
           userId={props.userId}
           closeModal={() => setShowUpgradePlanAlert(false)}
+          from="Voice clone or ads customization"
         />
       )}
     </div>

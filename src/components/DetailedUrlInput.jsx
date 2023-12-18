@@ -16,6 +16,7 @@ import { getStorage, ref, getBlob } from "@firebase/storage";
 import UpgradePlanAlert from "./UpgradePlanAlert";
 import GenerateAudioSettings from "./GenerateAudioSettings";
 import CreateInfoHelper from "./CreateInfoHelper";
+import * as amplitude from "@amplitude/analytics-browser";
 
 export const AVAILABLE_LANGUAGES = [
   { name: 'English', script: "I want SpeakUp AI to create an artificial version of my voice that I can user to create speech that sounds like me. I am training my voice by reading the following statement:\n\nOn Earth, everyone has their own voice. It's like having a special sound that no one else has. We use our voices to tell stories, share ideas, and make beautiful things.\n\nIn a small town, there was a group of friends who loved to tell stories. They would sit under a big tree and each would tell a story using their voice. One friend had a voice that was deep and strong, like a drum. Another had a voice that was light and cheerful, like a bird singing in the morning.\n\nOne day, they decided to use their voices to make something special. They wanted to show how different voices can come together to create something beautiful. They started to plan a big show for their town.\n\nEach friend wrote a part of the story. They practiced speaking clearly and loudly so everyone could hear. They used their voices to make the characters in the story come to life. Some parts of the story were funny and made people laugh. Other parts were serious and made people think.\n\nOn the day of the show, people from all over the town came to listen. The friends stood under the big tree and started to tell their story. Each voice was different, but together they sounded amazing. People clapped and smiled as they listened.\n\nAnd from that day on, the friends met under the tree every week to tell new stories. They learned that every voice is important and that together, they can make the world a more interesting and beautiful place."  },
@@ -460,6 +461,10 @@ const DetailedUrlInput = (props) => {
               setActiveTab("url");
               setShowCreateFromUrlHelper(true);
               props.setInputContent("");
+              amplitude.track("Settings Changed", {
+                settingName: "Input content type",
+                contentType: "URL",
+              });
             }}
           >
             <p className="plainText">Create from URLs</p>
@@ -470,6 +475,10 @@ const DetailedUrlInput = (props) => {
               setActiveTab("text");
               setShowCreateFromTextHelper(true);
               props.setInputContent("");
+              amplitude.track("Settings Changed", {
+                settingName: "Input content type",
+                contentType: "Text",
+              });
             }}
           >
             <p className="plainText">Create from text</p>
@@ -577,7 +586,14 @@ const DetailedUrlInput = (props) => {
           className={
             !isButtonDisabled() ? "navigateButton" : "disabledNavigateButton"
           }
-          onClick={wordCountCheck}
+          onClick={() => {
+            const type = scriptOnly ? 'script' : 'script & audio'
+            amplitude.track("Button Clicked", {
+              buttonName: "Generate " + type + " button",
+              page: "Dashboard",
+            });
+            wordCountCheck();
+          }}
           disabled={isButtonDisabled()}
         >
           <p className="plainText">{scriptOnly ? 'Generate script' : 'Generate script & audio'}</p>
@@ -588,6 +604,7 @@ const DetailedUrlInput = (props) => {
         <UpgradePlanAlert
           userId={userId}
           closeModal={() => setShowUpgradePlanAlert(false)}
+          from="Insufficient quota for the podcast length"
         />
       )}
     </div>

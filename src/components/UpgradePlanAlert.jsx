@@ -1,10 +1,23 @@
 import SubscriptionTable from "./SubscriptionTable"
 import { AiOutlineClose } from "react-icons/ai"
+import * as amplitude from '@amplitude/analytics-browser';
+import { useEffect, useState } from "react";
 
 const UpgradePlanAlert = (props) => {
+
+    //calculate view duration (between user first see the subscription table and close modal) and update amplitude tracking event on close modal
+    const [startTime, setStartTime] = useState(Date.now())
+    useEffect(() => {
+        setStartTime(Date.now())
+    }, [])
+
+    
     const closeModal = (e) => {
         e.stopPropagation()
         props.closeModal()
+        const endTime = Date.now()
+        const duration = (endTime - startTime) / 1000
+        amplitude.track('Page Viewed', {duration: duration, page: 'Upgrade plan modal', userId: props.userId, from: props.from})
     }
 
     return (

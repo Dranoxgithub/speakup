@@ -3,6 +3,7 @@ import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import Toggle from 'react-toggle'
 import { BACKGROUND_MUSIC_VOLUME, PODCAST_STYLES } from "./DetailedUrlInput";
 import { Tooltip } from "@mui/material";
+import * as amplitude from '@amplitude/analytics-browser';
 
 const PodcastSettings = (props) => {
     const basePillStyle = { margin: '0px 0px 10px 0px', padding: '10px 50px', cursor: 'pointer' }
@@ -25,6 +26,12 @@ const PodcastSettings = (props) => {
             setIsPodcastSettingsShown(false);
         }
     };
+
+    useEffect(() => {
+        if (isPodcastSettingsShown) {
+            amplitude.track('Settings Viewed', {page: 'Podcast settings'})
+        }
+    }, [isPodcastSettingsShown])
 
     useEffect(() => {
         // Add event listener when the component mounts

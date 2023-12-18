@@ -13,7 +13,6 @@ import {
 } from "../util/voice";
 import { getStorage, ref, getBlob } from "@firebase/storage";
 import { VoiceSettings, YOUR_OWN_VOICE } from "../components/VoiceSettings";
-import Loading from "../components/Loading";
 import Header from "../components/Header";
 import UpgradePlanAlert from "../components/UpgradePlanAlert";
 import EditingParagraph from "../components/EditingParagraph";
@@ -24,9 +23,9 @@ import {
 import MusicSettings from "../components/MusicSettings";
 import WaitForResult from "../components/WaitForResult";
 import LoadingAnimation from "../components/LoadingAnimation";
-import { v4 as uuidv4 } from "uuid";
 import { onAuthStateChanged } from "@firebase/auth";
 import { Alert, Snackbar } from "@mui/material";
+import * as amplitude from '@amplitude/analytics-browser';
 
 const PodcastEditScreen = () => {
   const location = useLocation();
@@ -75,7 +74,7 @@ const PodcastEditScreen = () => {
       }
       // If user is signed in,clean up the fetchingUser state
       setFetchingUser(false);
-  
+      amplitude.track('Page Viewed', {page: 'Edit page'})
   });
 
     // Cleanup subscription on component unmount
@@ -156,12 +155,14 @@ const PodcastEditScreen = () => {
     const currentBody = [...bodyParas];
     currentBody.splice(index, 1);
     setBodyParas(currentBody);
+    amplitude.track("Button Clicked", {buttonName: 'Delete paragraph', page: 'Edit page', paragraphIndex: index})
   };
 
   const handleInsertBelow = (index) => {
     const currentBody = [...bodyParas];
     currentBody.splice(index + 1, 0, "");
     setBodyParas(currentBody);
+    amplitude.track("Button Clicked", {buttonName: 'Insert paragraph', page: 'Edit page', paragraphIndex: index})
   };
   const showLoadingWhileSavingEdit = async () => {
     setLoading(true);
@@ -203,6 +204,8 @@ const PodcastEditScreen = () => {
       withMusic: backgroundMusicVolume && backgroundMusicVolume != 0 ? true : false,
       bgmVolume: backgroundMusicVolume,
     };
+
+    amplitude.track("Button Clicked", {buttonName: 'Generate audio', page: 'Edit page'})
 
     const app = initializeFirebaseApp();
     const auth = getAuth(app);
@@ -447,7 +450,10 @@ const PodcastEditScreen = () => {
                       <div className="editPageSubmitButtonGroup">
                         <button
                           className="editPageSubmitButton"
-                          onClick={showLoadingWhileSavingEdit}
+                          onClick={() => {
+                            amplitude.track("Button Clicked", {buttonName: 'Save draft', page: 'Edit page'})
+                            showLoadingWhileSavingEdit();
+                          }}
                         >
                           <p
                             className="plainText"
@@ -458,7 +464,10 @@ const PodcastEditScreen = () => {
                         </button>
                         <button
                           className="editPageSubmitButtonPurple"
-                          onClick={generateAudioOnly}
+                          onClick={() => {
+                            amplitude.track("Button Clicked", {buttonName: 'Generate audio', page: 'Edit page'})
+                            generateAudioOnly();
+                          }}
                         >
                           <p
                             className="plainText"
