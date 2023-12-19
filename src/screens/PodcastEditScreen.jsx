@@ -32,10 +32,8 @@ const PodcastEditScreen = () => {
   const queryParams = new URLSearchParams(location.search);
 
   const userId = useAppSelector(getUserId);
-  const userEmail = useAppSelector(getUserEmail);
   const totalAllowedLength = useAppSelector(getUserTotalAllowedLength);
   const totalUsedLength = useAppSelector(getUserTotalUsedLength);
-  const [open, setOpen] = useState(false);
   const [contentId, setContentId] = useState();
   const [title, setTitle] = useState()
   const [estimatedDuration, setEstimatedDuration] = useState(0);
@@ -49,6 +47,8 @@ const PodcastEditScreen = () => {
   const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
   const [loading, setLoading] = useState(false);
   const [notification, setShowNotification] = useState(false);
+  const [backgroundMusicVolume, setBackgroundMusicVolume] = useState()
+  const [selectedLanguage, setSelectedLanguage] = useState()
  
 
   const handleClose = () => {
@@ -88,7 +88,6 @@ const PodcastEditScreen = () => {
     }, 3000);
   };
 
-  const [backgroundMusicVolume, setBackgroundMusicVolume] = useState()
   // Update Intercom URL changes so that user can receive latest messages
   useEffect(() => {
     if (window.Intercom) {
@@ -117,12 +116,12 @@ const PodcastEditScreen = () => {
     Promise.all(asyncOperations).then(async (newVoiceLibrary) => {
       if (userVoiceId) {
         newVoiceLibrary = [
-          ...newVoiceLibrary,
           {
             name: YOUR_OWN_VOICE,
             tags: [],
             audio: await getUserVoicePreviewAudio(userId),
           },
+          ...newVoiceLibrary,
         ];
       }
       setVoiceLibrary(newVoiceLibrary);
@@ -300,6 +299,10 @@ const PodcastEditScreen = () => {
               if (item.bgm_volume) {
                 setBackgroundMusicVolume(item.bgm_volume)
               }
+
+              if (item.language) {
+                setSelectedLanguage(item.language)
+              }
             }
           });
 
@@ -444,6 +447,7 @@ const PodcastEditScreen = () => {
                     canCloneVoice={false}
                     setShowUpgradePlanAlert={() => {}}
                     showNotificationTemporarily={() => {}}
+                    selectedLanguage={selectedLanguage}
                   />
 
                   <div className="editPageSubmitButtonGroup">

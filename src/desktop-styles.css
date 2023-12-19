@@ -629,6 +629,8 @@
     position: absolute;
     width: 900px;
     background-color: white;
+    max-height: 400px;
+    overflow: auto;
   }
 
   .selectionDropDownItem {
@@ -637,7 +639,7 @@
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    padding: 15px 40px;
+    padding: 12px 40px;
     border-bottom: 0.5px solid #ebebeb;
     border-radius: 20px;
   }

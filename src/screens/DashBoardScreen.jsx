@@ -202,7 +202,8 @@ const DashBoardScreen = () => {
         setUserVoiceId(user["clone_voice_id"]);
         const subscriptionPlan = user["subscription"];
         setCanEditAd(PREMIUM_SUBSCRIPTION_PLAN.filter(z => subscriptionPlan && subscriptionPlan.includes(z)).length > 0)
-        setCanCloneVoice(PREMIUM_SUBSCRIPTION_PLAN.filter(z => subscriptionPlan && subscriptionPlan.includes(z)).length > 0);
+        setCanCloneVoice(true)
+        // setCanCloneVoice(PREMIUM_SUBSCRIPTION_PLAN.filter(z => subscriptionPlan && subscriptionPlan.includes(z)).length > 0);
         const totalAllowedLength = user["quota"] ? +user["quota"] : 0
         setTotalAllowedLength(totalAllowedLength);
         dispatch(setUserTotalAllowedLength(totalAllowedLength))

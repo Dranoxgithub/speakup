@@ -247,8 +247,8 @@ export const VoiceSettings = (props) => {
                         }}
                       >
                         {item.tags.map((tag) => (
-                          <div key={tag} className="tagText">
-                            <p style={{ margin: "0px", fontFamily: "Poppins" }}>
+                          <div key={tag} className="tagText" style={{padding: '2px 12px'}}>
+                            <p style={{ margin: "0px", fontFamily: "Poppins", color: '#5e5e5e' }}>
                               {tag}
                             </p>
                           </div>
