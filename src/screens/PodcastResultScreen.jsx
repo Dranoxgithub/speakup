@@ -16,9 +16,10 @@ import LoadingAnimation from "../components/LoadingAnimation";
 import { doc, getFirestore, onSnapshot } from "firebase/firestore";
 import WaitForResult from "../components/WaitForResult";
 import * as amplitude from '@amplitude/analytics-browser';
+import SharePodcastPopup from "../components/SharePodcastPopup";
+import { SHA256 } from 'crypto-js';
 
 export const DEMO_CONTENTS = ['Rfg4OgKngtJ6eSmrD17Q', 'bZMp8rqMZcs7gZQDWSrg']
-
 
 const PodcastResultScreen = () => {
     const location = useLocation()
@@ -38,12 +39,19 @@ const PodcastResultScreen = () => {
     const [duration, setDuration] = useState()
     const [error, setError] = useState()
     const [fetchingUser, setFetchingUser] = useState(true)
+    const [contentId, setContentId] = useState()
+    const [originalUserId, setOriginalUserId] = useState()
 
-    const [isDemoResult, setIsDemoResult] = useState(false)
+    const [canView, setCanView] = useState(false)
+    const [canDownload, setCanDownload] = useState(true)
 
     const [showModal, setShowModal] = useState(false)
     const [showUpgradePlanAlert, setShowUpgradePlanAlert] = useState(false);
+
+    const [showSharePodcastPopup, setShowSharePodcastPopup] = useState(false);
+    const [showWaitForResult, setShowWaitForResult] = useState(false)
     
+    const [loadingContent, setLoadingContent] = useState(true)
 
     const navigate = useNavigate()
     document.title = 'Podcast Result'
@@ -52,14 +60,53 @@ const PodcastResultScreen = () => {
         if (window.Intercom) {
             window.Intercom('update')
         }
+
+        setTimeout(() => {
+            setShowWaitForResult(true)
+        }, 3000)
     }, [])
 
-    useEffect(() => {
-        if (queryParams.has('contentId') && DEMO_CONTENTS.includes(queryParams.get('contentId'))) {
+    const checkPermission = async (hash, contentId) => {
+        const contentDoc = await getDocument('contents', contentId)
+        const authorId = contentDoc['user_id']
+        const viewHash = SHA256(`${authorId}view`).toString()
+        const downloadHash = SHA256(`${authorId}download`).toString()
+
+        if (hash == viewHash) {
             setFetchingUser(false)
-            setIsDemoResult(true)
-            amplitude.track('Page Viewed', {page: 'Demo'})
-            return
+            setCanView(true)
+            setCanDownload(false)
+            return true
+        }
+
+        if (hash == downloadHash) {
+            setFetchingUser(false)
+            setCanView(true)
+            return true
+        }
+
+        return false
+    }
+
+    useEffect(() => {
+        if (queryParams.has('contentId')) {
+            const cid = queryParams.get('contentId')
+            setContentId(cid)
+            getDocument('contents', cid).then(contentDoc => {
+                setOriginalUserId(contentDoc['user_id'])
+            })    
+            
+
+            if (DEMO_CONTENTS.includes(cid)) {
+                setFetchingUser(false)
+                setCanView(true)
+                setCanDownload(true)
+                amplitude.track('Page Viewed', {page: 'Demo'})
+            }
+
+            if (queryParams.has('uid')) {
+                checkPermission(queryParams.get('uid'), cid)
+            }        
         }
     }, [queryParams])
 
@@ -69,12 +116,14 @@ const PodcastResultScreen = () => {
       
         const unsubscribe = onAuthStateChanged(auth, (user) => {
           if (!user) {
-            if (isDemoResult) {
+            if (canView) {
                 setFetchingUser(false)
                 return
             }
 
-            if (queryParams && queryParams.has('contentId') && DEMO_CONTENTS.includes(queryParams.get('contentId'))) {
+            if (queryParams) {
+                if ((queryParams.has('contentId') && DEMO_CONTENTS.includes(queryParams.get('contentId'))) ||
+                    (queryParams.has('uid') && queryParams.has('contentId') && checkPermission(queryParams.get('uid'), queryParams.get('contentId'))))
                 setFetchingUser(false)
                 return
             }
@@ -140,6 +189,7 @@ const PodcastResultScreen = () => {
             const content = doc.data()
             if (content) {
                 setTitle(content.original_content.title)
+                setOriginalUserId(content['user_id'])
                 if (content.result) {
                     if (content.result.script) {
                         setScript(content.result.script.best_summary)
@@ -180,28 +230,24 @@ const PodcastResultScreen = () => {
         }
 
         const populateContent = async () => {
-            if (queryParams.has('contentId')) {
-                const contentId = queryParams.get("contentId")
-                const user = await getDocument('users', userId)
-                if (user && user.user_saved && user.user_saved.filter(item => item.content_id == contentId).length > 0 || isDemoResult) {
-                    populateContentFromQueryParams(contentId)
-                    console.log(`populated content from query params`)
-                } else {
-                    console.log(`setting error to no permission - isDemo: ${isDemoResult}`)
-                    setError(`Sorry, you don't have permission to view the content :(`)
-                }
-            }
-    
             if (location.state) {
                 populateContentFromState()
-                console.log(`populated content from navigation state`)
             }
+
+            populateContentFromQueryParams(contentId)
+            console.log(`populated content from query params`)
         }
 
-        if ((userId || isDemoResult) && location) {
-            populateContent() 
-        }       
-    }, [location, userId, isDemoResult])
+        if (originalUserId && contentId) {
+            if ((userId == originalUserId || canView) && contentId) {
+                setError()
+                populateContent()
+            } else {
+                setError(`Sorry, you don't have permission to view the content :(`)
+            }
+            setLoadingContent(false)
+        }
+    }, [location, userId, canView, contentId, originalUserId])
 
     const getPodcastDownloadUrl = async () => {
         var data = new Blob([blob], {type: 'audio/mp3'});
@@ -240,10 +286,15 @@ const PodcastResultScreen = () => {
         amplitude.track('Button Clicked', {buttonName: 'Pause podcast', page: 'Result', duration: seek})
     }
 
+    const handleShare = () => {
+        setShowSharePodcastPopup(true)
+        amplitude.track('Button Clicked', {buttonName: 'Share podcast', page: 'Result'})
+    }
+
 
     return (
         <div>
-            {fetchingUser ? (
+            {loadingContent || fetchingUser ? (
                 <div>
                     <LoadingAnimation />
                 </div>
@@ -260,11 +311,11 @@ const PodcastResultScreen = () => {
                 />
                 
                 {error ? 
-                    <h2>{error}</h2> : 
+                    <p className="plainText" style={{height: 'calc(100vh - 240px)', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>{error}</p> : 
                     <div className="dashboardContainer" style={{margin: '0px 0px 150px 0px', width: '950px'}}>
                         <p className="plainText" style={{fontSize: '38px', textAlign: 'initial', margin: '60px 0px', color: '#2B1C50'}}>{title}</p>
                         
-                        {!audioUrl && <WaitForResult page='result' userId={userId} />}
+                        {!audioUrl && showWaitForResult && <WaitForResult page='result' userId={userId} />}
 
                         <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
                             <div className="resultPageContentContainer">
@@ -296,22 +347,27 @@ const PodcastResultScreen = () => {
                                     style={{backgroundColor: '#fff', borderStyle: 'solid', borderRadius: '20px', borderColor: '#d9d9d9'}}
                                     onClick={() => {}}
                                 >
-                                    <p className="plainText" style={{color: '#fff', fontSize: '20px', color: '#2B1C50'}}>Publish Guide</p>
+                                    <p className="plainText" style={{fontSize: '20px', color: '#2B1C50'}}>Publish Guide</p>
                                 </button> */}
 
-                                <button
-                                    className={audioUrl ? "resultPageButton" : "noDisplay"}
-                                    onClick={getPodcastDownloadUrl}
-                                >
-                                    <p className="plainText" style={{color: '#fff', fontSize: '20px'}}>Download</p>
-                                </button>
+                                {(canDownload || originalUserId == userId) && 
+                                    <button
+                                        className={audioUrl ? "resultPageButton" : "noDisplay"}
+                                        onClick={getPodcastDownloadUrl}
+                                    >
+                                        <p className="plainText" style={{color: '#fff', fontSize: '20px'}}>Download</p>
+                                    </button>
+                                }
 
-                                <button
-                                    className={audioUrl ? "resultPageButton" : "noDisplay"}
-                                    onClick={() => {amplitude.track('Button Clicked', {buttonName: 'Share podcast', page: 'Result'})}}
-                                >
-                                    <p className="plainText" style={{color: '#fff', fontSize: '20px'}}>Share</p>
-                                </button>
+                                {originalUserId == userId &&
+                                    <button
+                                        className={audioUrl ? "resultPageButton" : "noDisplay"}
+                                        style={{backgroundColor: '#fff', borderStyle: 'solid', borderRadius: '20px', borderColor: '#d9d9d9'}}
+                                        onClick={handleShare}
+                                    >
+                                        <p className="plainText" style={{fontSize: '20px', color: '#2B1C50'}}>Share</p>
+                                    </button>
+                                }
                             </div>
                         </div>
 
@@ -341,9 +397,18 @@ const PodcastResultScreen = () => {
 
             {showUpgradePlanAlert && (
                 <UpgradePlanAlert
-                userId={userId}
-                from="Result page"
-                closeModal={() => setShowUpgradePlanAlert(false)}
+                    userId={userId}
+                    from="Result page"
+                    closeModal={() => setShowUpgradePlanAlert(false)}
+                />
+            )}
+
+            {showSharePodcastPopup && (
+                <SharePodcastPopup 
+                    userId={userId}
+                    title={title}
+                    contentId={contentId}
+                    closeModal={() => setShowSharePodcastPopup(false)}
                 />
             )}
         </div>

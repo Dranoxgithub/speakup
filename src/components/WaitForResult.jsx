@@ -44,12 +44,14 @@ const WaitForResult = (props) => {
         }
 
         getDocument('users', props.userId).then(userDoc => {
-            if (userDoc.acceptEmailNotification == null || userDoc.acceptEmailNotification == undefined) {
-                userDoc.acceptEmailNotification = true
-                updateDocument('users', props.userId, userDoc)
+            if (userDoc) {
+                if (userDoc.acceptEmailNotification == null || userDoc.acceptEmailNotification == undefined) {
+                    userDoc.acceptEmailNotification = true
+                    updateDocument('users', props.userId, userDoc)
+                }
+                
+                setUserDoc(userDoc)
             }
-            
-            setUserDoc(userDoc)
         })
     }, []);
     

@@ -15,7 +15,7 @@ const PodcastResultPreview = (props) => {
     const navigate = useNavigate()
 
     const navigateToResult = () => {
-        navigate('/result', {state: {
+        navigate(`/result?contentId=${props.contentId}`, {state: {
             title: props.title,
             script: props.script,
             blob: props.blob,

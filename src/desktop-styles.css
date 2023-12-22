@@ -1066,6 +1066,53 @@
     /* Ensures it appears above other content */
   }
 
+  .shareTabButton {
+    background-color: #E9E8EC;
+    border-radius: 20px;
+    border: none;
+    padding: 10px 30px;
+  }
+
+  .shareTabButtonDisabled {
+    background-color: #fff;
+    border: none;
+    padding: 10px 30px;
+  }
+
+  .shareMessageInput {
+    padding: 1rem;
+    border-radius: 20px;
+    border-color: #734DF6;
+    border-width: 2px;
+    margin-bottom: 1rem;
+    font-family: "Poppins";
+    background-color: #ffffff;
+    font-size: 16px;
+    color: #000;
+    font-weight: 500;
+    outline: 0;
+    width: 70%;
+    min-height: 200px;
+    max-height: 500px;
+    resize: none;
+    box-shadow: 0 0 1px 2px #B0AEFB;
+  }
+  
+  .shareContainerFooter {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: rgb(247, 246, 240);
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    padding: 0px 50px;
+    height: 80px;
+  }
+
   #languagePill:hover {
     background-color: #d9d1fb;
   }
