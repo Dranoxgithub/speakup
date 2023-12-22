@@ -24,6 +24,7 @@ const LoginScreen = () => {
 
     useEffect(() => {
         setIsMobileView(window.outerWidth <= 480)
+        document.title = 'Sign in with Google'
     }, [])
 
     useEffect(() => {

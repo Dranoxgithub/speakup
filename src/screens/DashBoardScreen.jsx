@@ -57,6 +57,7 @@ const DashBoardScreen = () => {
 
   useEffect(() => {
     setIsMobileView(window.outerWidth <= 480)
+    document.title = 'Dashboard'
   }, [])
 
   const populateAudioBlob = async (url) => {

@@ -56,6 +56,7 @@ const PodcastEditScreen = () => {
   };
 
   useEffect(() => {
+    document.title = 'Script Edit'
     const app = initializeFirebaseApp();
     const auth = getAuth(app);
   
@@ -239,12 +240,12 @@ const PodcastEditScreen = () => {
   }, [showModal]);
 
   useEffect(() => {
-    document.title = 'Preview'
     const processSnapshot = async (doc) => {
       const content = doc.data();
       if (content) {
         if (content.original_content) {
           setTitle(content.original_content.title)
+          document.title = `Script Edit - ${content.original_content.title}`
         }
         if (content.result) {
           var currentBody = [];
