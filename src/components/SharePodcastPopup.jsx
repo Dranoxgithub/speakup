@@ -41,7 +41,8 @@ const SharePodcastPopup = (props) => {
 
     useEffect(() => {
         const hash = SHA256(`${props.userId}${selectedPermission}`).toString()
-        setShareMessage(`Hey friends! 😊 Check out my <XXX podcast> - ${props.title}. This is a special edition. It's like nothing I've done before. Would mean a lot if you could give it a listen. Created with #SpeakUpAI #PodcastLaunch 🎉\nhttps://app.startspeakup.com/result?contentId=${props.contentId}&uid=${hash}`)
+        const podcastName = props.podcastName && props.podcastName != 'a podcast' ? `"${props.podcastName}"` : `podcast`
+        setShareMessage(`Hey friends! 😊 Check out my ${podcastName} - ${props.title}. This is a special edition. It's like nothing I've done before. Would mean a lot if you could give it a listen. Created with #SpeakUpAI #PodcastLaunch 🎉\nhttps://app.startspeakup.com/result?contentId=${props.contentId}&uid=${hash}`)
     }, [selectedPermission])
 
     const showCopiedNotificationTemporarily = () => {

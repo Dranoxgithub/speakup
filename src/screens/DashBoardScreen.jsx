@@ -133,14 +133,16 @@ const DashBoardScreen = () => {
               item.status && 
               (item.status == 'audio_pending' || 
               item.status == 'audio_success')) {
-              const title = content.original_content.title;
+              let title;
               let script;
               let blobInfo;
               let duration;
               let shownotes;
               let urls;
+              const podcastName = content['podcast_title']
               if (content.original_content) {
                 urls = content.original_content.urls;
+                title = content.original_content.title;
               }
               if (content.result) {
                 if (content.result.script) {
@@ -159,6 +161,7 @@ const DashBoardScreen = () => {
               return {
                 contentId: contentId,
                 title: title,
+                podcastName: podcastName,
                 script: script,
                 blob: blobInfo ? blobInfo.blob : undefined,
                 audioUrl: blobInfo ? blobInfo.audioUrl : undefined,
@@ -422,6 +425,7 @@ const DashBoardScreen = () => {
                       key={item.contentId}
                       contentId={item.contentId}
                       title={item.title}
+                      podcastName={item.podcastName}
                       script={item.script}
                       blob={item.blob}
                       audioUrl={item.audioUrl}

@@ -41,6 +41,7 @@ const PodcastResultScreen = () => {
     const [fetchingUser, setFetchingUser] = useState(true)
     const [contentId, setContentId] = useState()
     const [originalUserId, setOriginalUserId] = useState()
+    const [podcastName, setPodcastName] = useState()
 
     const [canView, setCanView] = useState(false)
     const [canDownload, setCanDownload] = useState(true)
@@ -189,6 +190,7 @@ const PodcastResultScreen = () => {
             const content = doc.data()
             if (content) {
                 setTitle(content.original_content.title)
+                setPodcastName(content['podcast_title'])
                 setOriginalUserId(content['user_id'])
                 if (content.result) {
                     if (content.result.script) {
@@ -220,6 +222,7 @@ const PodcastResultScreen = () => {
 
         const populateContentFromState = () => {
             setTitle(location.state.title)
+            setPodcastName(location.state.podcastName)
             setScript(location.state.script)
             setBlob(location.state.blob)
             setAudioUrl(location.state.audioUrl)
@@ -407,6 +410,7 @@ const PodcastResultScreen = () => {
                 <SharePodcastPopup 
                     userId={userId}
                     title={title}
+                    podcastName={podcastName}
                     contentId={contentId}
                     closeModal={() => setShowSharePodcastPopup(false)}
                 />
