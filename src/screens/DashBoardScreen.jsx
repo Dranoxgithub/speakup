@@ -77,6 +77,10 @@ const DashBoardScreen = () => {
       const limit = pLimit(5)
       const asyncOperations = user.user_saved.map((item) => {
         return limit(async () => {
+          if (item['deleted'] != null && item['deleted'] != undefined && item['deleted'] === true) {
+            return null;
+          }
+
           try {
             const contentId = item.content_id;
             const content = await getDocument("contents", contentId);
@@ -121,13 +125,17 @@ const DashBoardScreen = () => {
       const limit = pLimit(5)
       const asyncOperations = user.user_saved.map((item, index) => {
         return limit(async() => {
+          if (item.length) {
+            totalLength += +item.length;
+          }
+
+          if (item['deleted'] != null && item['deleted'] != undefined && item['deleted'] === true) {
+            return null;
+          }
+
           try {
             const contentId = item.content_id;
             
-            if (item.length) {
-              totalLength += +item.length;
-            }
-
             const content = await getDocument("contents", contentId);
             if (content && 
               item.status && 
@@ -321,8 +329,11 @@ const DashBoardScreen = () => {
 
   const deleteContent = async (contentId) => {
     const user = await getDocument('users', userId)
-    user.user_saved = user.user_saved.filter(item => item.content_id != contentId)
-
+    user.user_saved.map(item => {
+      if (item.content_id === contentId) {
+        item['deleted'] = true
+      }
+    })
     await updateDocument('users', userId, user)
   }
 
