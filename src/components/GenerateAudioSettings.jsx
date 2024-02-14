@@ -29,6 +29,7 @@ const GenerateAudioSettings = (props) => {
         canCloneVoice={props.canCloneVoice}
         setShowUpgradePlanAlert={setShowUpgradePlanAlert}
         showNotificationTemporarily={props.showNotificationTemporarily}
+        isVoiceCloneDisabled={props.isVoiceCloneDisabled}
       />
 
       {/* <MusicSettings 

@@ -448,6 +448,7 @@ const PodcastEditScreen = () => {
                     setShowUpgradePlanAlert={() => {}}
                     showNotificationTemporarily={() => {}}
                     selectedLanguage={selectedLanguage}
+                    isVoiceCloneDisabled={true}
                   />
 
                   <div className="editPageSubmitButtonGroup">

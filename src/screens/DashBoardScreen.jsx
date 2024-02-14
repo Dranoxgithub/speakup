@@ -54,6 +54,7 @@ const DashBoardScreen = () => {
   const [isMobileView, setIsMobileView] = useState(false)
   const [showMobileDisplayNotReadyAlert, setShowMobileDisplayNotReadyAlert] = useState(true)
 
+  const [isVoiceCloneDisabled, setIsVoiceCloneDisabled] = useState(false)
 
   useEffect(() => {
     setIsMobileView(window.outerWidth <= 480)
@@ -123,6 +124,7 @@ const DashBoardScreen = () => {
     if (user.user_saved) {
       let totalLength = 0;
       const limit = pLimit(5)
+      let numPendingAudio = 0
       const asyncOperations = user.user_saved.map((item, index) => {
         return limit(async() => {
           if (item.length) {
@@ -131,6 +133,12 @@ const DashBoardScreen = () => {
 
           if (item['deleted'] != null && item['deleted'] != undefined && item['deleted'] === true) {
             return null;
+          }
+
+          const timeSinceCreated = Math.abs(new Date(item['created_at']).getTime() - new Date().getTime())
+          const millisecondsIn24Hours = 24 * 60 * 60 * 1000
+          if (timeSinceCreated <= millisecondsIn24Hours && item['status'] === 'audio_pending') {
+            numPendingAudio++
           }
 
           try {
@@ -190,6 +198,8 @@ const DashBoardScreen = () => {
       const totalUsedLength = Math.floor(totalLength / 60)
       setTotalUsedLength(totalUsedLength);
       dispatch(setUserTotalUsedLength(totalUsedLength))
+
+      setIsVoiceCloneDisabled(numPendingAudio > 0)
       return list.filter((item) => item && item != null).reverse();
     }
     return [];
@@ -368,6 +378,7 @@ const DashBoardScreen = () => {
             canCloneVoice={canCloneVoice}
             loading={globalLoading}
             setLoading={setGlobalLoading}
+            isVoiceCloneDisabled={isVoiceCloneDisabled}
           />
 
           {errorMessage &&

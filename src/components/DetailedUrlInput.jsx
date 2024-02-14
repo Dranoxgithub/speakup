@@ -572,6 +572,7 @@ const DetailedUrlInput = (props) => {
           backgroundMusicVolume={backgroundMusicVolume}
           setBackgroundMusicVolume={setBackgroundMusicVolume}
           showNotificationTemporarily={showNotificationTemporarily}
+          isVoiceCloneDisabled={props.isVoiceCloneDisabled}
         />
         {notification && (
           <div className="alert alert-success" role="alert">

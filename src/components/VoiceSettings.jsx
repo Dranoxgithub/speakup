@@ -162,16 +162,28 @@ export const VoiceSettings = (props) => {
         </Tooltip>
         {(props.showAddVoice == null || props.showAddVoice) && ( // show this section when either this field is not defined(for backward compatability) or it is set to true
           <div className="addVoiceContainer">
-            <button
-              className="addVoiceButton"
-              onClick={() => {
-                setShowAddVoiceDropdown(prevValue => !prevValue)
-                setIsVoicePreviewShown(false)
-                amplitude.track("Button Clicked", {buttonName: "Add Voice"})
-              }}
-            >
-              <p className="plainText">+ Add Voice</p>
-            </button>
+            {props.isVoiceCloneDisabled ? 
+              <Tooltip title="Voice clone is temporarily unavailable. Please wait for the ongoing audio generation job to finish." arrow>
+                  <button
+                    className="addVoiceButton"
+                    disabled
+                    style={{cursor: 'not-allowed'}}
+                  >
+                        <p className="plainText">+ Add Voice</p>
+                  </button>
+              </Tooltip>:
+
+              <button
+                className="addVoiceButton"
+                onClick={() => {
+                  setShowAddVoiceDropdown(prevValue => !prevValue)
+                  setIsVoicePreviewShown(false)
+                  amplitude.track("Button Clicked", {buttonName: "Add Voice"})
+                }}
+              >
+                    <p className="plainText">+ Add Voice</p>
+              </button>
+            }
 
             { showAddVoiceDropdown && 
               <div className="selectionDropDownContainer" style={{width: '100%', marginTop: '10px'}}>
